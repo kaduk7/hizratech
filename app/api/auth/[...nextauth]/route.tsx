@@ -6,7 +6,7 @@ import { NextAuthOptions,AuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
 
-const authOptions: AuthOptions = {
+const authOptions: NextAuthOptions = {
 
   providers: [
     CredentialsProvider({
@@ -95,4 +95,4 @@ const authOptions: AuthOptions = {
 }
 
 const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST, authOptions };
