@@ -2,17 +2,17 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import * as bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions ,AuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
 
   providers: [
     CredentialsProvider({
       name: 'Sign in',
       credentials: {
-        username: {
+        usernama: {
           label: 'Usernama',
           type: 'text',
           placeholder: 'Usernama'
@@ -25,13 +25,13 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.username || !credentials.password) {
+        if (!credentials?.usernama || !credentials.password) {
           return null
         }
 
         const user = await prisma.userTb.findUnique({
           where: {
-            usernama: credentials.username
+            usernama: credentials.usernama
           },
           include: {
             KaryawanTb: {
