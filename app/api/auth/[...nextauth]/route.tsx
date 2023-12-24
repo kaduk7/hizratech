@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Sign in',
       credentials: {
-        usernama: {
+        username: {
           label: 'Usernama',
           type: 'text',
           placeholder: 'Usernama'
@@ -25,13 +25,13 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.usernama || !credentials.password) {
+        if (!credentials?.username || !credentials.password) {
           return null
         }
 
         const user = await prisma.userTb.findUnique({
           where: {
-            usernama: credentials.usernama
+            usernama: credentials.username
           },
           include: {
             KaryawanTb: {
@@ -94,4 +94,5 @@ export const authOptions: NextAuthOptions = {
   },
 }
 
-export default NextAuth(authOptions);
+const handler = NextAuth(authOptions)
+export { handler as GET, handler as POST }
