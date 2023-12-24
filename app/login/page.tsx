@@ -44,8 +44,8 @@ const Login = () => {
         title: 'Login Berhasil'
       })
       setTimeout(function () {
-        // router.push('/')
-        window.location.reload()
+        router.push('/')
+        // window.location.reload()
       }, 1500);
     }
   };
