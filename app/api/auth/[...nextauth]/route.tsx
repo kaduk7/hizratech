@@ -1,4 +1,4 @@
-import NextAuth from "next-auth/next";
+import nextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import * as bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
@@ -94,5 +94,5 @@ export const authOptions: NextAuthOptions = {
   },
 }
 
-const handler = NextAuth(authOptions)
+const handler = nextAuth(authOptions)
 export { handler as GET, handler as POST }
