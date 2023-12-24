@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "rimraf .next",
+    "clean:node_modules": "rimraf node_modules"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
@@ -45,6 +47,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "prisma": "^5.7.0",
+    "rimraf": "^5.0.5",
     "typescript": "^5"
   }
 }
