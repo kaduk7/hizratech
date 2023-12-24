@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DivisiTb {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pengumumanDivisiTb PengumumanDivisiTb[]
+  KaryawanTb         KaryawanTb[]
+}
+
+model KaryawanTb {
+  id           Int      @id @default(autoincrement())
+  nama         String
+  tempatLahir  String
+  tanggalLahir DateTime
+  alamat       String
+  hp           String   @unique
+  email        String   @unique
+  divisiId     Int
+  foto         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  DivisiTb         DivisiTb           @relation(fields: [divisiId], references: [id], onDelete: Cascade)
+  JobdeskTb        JobdeskTb[]
+  RequestJobdeskTb RequestJobdeskTb[]
+  UserTb           UserTb?
+  HakAksesTb       HakAksesTb?
+  BeritaTb         BeritaTb[]
+  KomentarTb       KomentarTb[]
+}
+
+model JobdeskTb {
+  id                 Int       @id @default(autoincrement())
+  karyawanId         Int
+  namaJob            String
+  keterangan         String
+  tanggalMulai       DateTime
+  deadline           DateTime
+  team               String
+  namaTeam           String
+  status             String
+  suratTugas         String
+  beritaAcara        String
+  laporanAnggaran    String
+  tanggalPelaksanaan DateTime?
+  file               String?
+  alasan             String?
+  keteranganAkhir    String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  KaryawanTb KaryawanTb @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+}
+
+model RequestJobdeskTb {
+  id           Int      @id @default(autoincrement())
+  karyawanId   Int
+  namaJob      String
+  keterangan   String
+  tanggalMulai DateTime
+  deadline     DateTime
+  status       String
+  team         String
+  namaTeam     String
+  alasan       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  KaryawanTb KaryawanTb @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+}
+
+model BeritaTb {
+  id            Int      @id @default(autoincrement())
+  judul         String
+  tanggalBerita DateTime
+  isi           String
+  foto          String?
+  karyawanId    Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  KaryawanTb KaryawanTb   @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+  KomentarTb KomentarTb[]
+}
+
+model KomentarTb {
+  id         Int      @id @default(autoincrement())
+  beritaId   Int
+  karyawanId Int
+  isi        String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  BeritaTb   BeritaTb   @relation(fields: [beritaId], references: [id], onDelete: Cascade)
+  KaryawanTb KaryawanTb @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+}
+
+model PengumumanTb {
+  id                Int      @id @default(autoincrement())
+  judul             String
+  tanggalPengumuman DateTime
+  isi               String
+  foto              String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  pengumumanDivisiTb PengumumanDivisiTb[]
+}
+
+model PengumumanDivisiTb {
+  id           Int      @id @default(autoincrement())
+  pengumumanId Int
+  divisiId     Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  divisiTb     DivisiTb     @relation(fields: [divisiId], references: [id], onDelete: Cascade)
+  pengumumanTb PengumumanTb @relation(fields: [pengumumanId], references: [id], onDelete: Cascade)
+}
+
+model UserTb {
+  id         Int      @id @default(autoincrement())
+  karyawanId Int      @unique
+  usernama   String   @unique
+  password   String
+  status     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  KaryawanTb KaryawanTb @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+}
+
+model HakAksesTb {
+  id           Int      @id @default(autoincrement())
+  karyawanId   Int      @unique
+  datakaryawan String
+  informasi    String
+  jobdesk      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  KaryawanTb KaryawanTb @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+}
