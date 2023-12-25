@@ -39,15 +39,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
   }
-
-
-  // if (pathname.startsWith("/admin")) {
-  //     if (token?.status === "Admin") {
-  //       const url = new URL('/', request.url);
-  //       return NextResponse.redirect(url);
-  //     }
-  //   }
-
+  
   if (pathname.startsWith("/admin/karyawan")) {
     if (token?.hakAksesDatakaryawan !== "Ya") {
       const url = new URL('/', request.url);
