@@ -98,6 +98,7 @@ const authOptions: NextAuthOptions = {
     maxAge: 60 * 20,
     updateAge: 60 * 20,
   },
+  
 }
 
 const handler = NextAuth(authOptions)

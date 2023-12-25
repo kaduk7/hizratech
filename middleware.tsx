@@ -40,6 +40,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+
   // if (pathname.startsWith("/admin")) {
   //     if (token?.status === "Admin") {
   //       const url = new URL('/', request.url);
