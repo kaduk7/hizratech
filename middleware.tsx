@@ -11,10 +11,6 @@ const disableAuth: string[] = [
   "/favicon.ico",
 ];
 
-const datakaryawan: string[] = [
-  "/admin/karyawan",
-  "/admin/divisi",
-];
 
 const loginPath: string = "/login";
 
@@ -44,7 +40,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-
+  // if (pathname.startsWith("/admin")) {
+  //     if (token?.status === "Admin") {
+  //       const url = new URL('/', request.url);
+  //       return NextResponse.redirect(url);
+  //     }
+  //   }
 
   if (pathname.startsWith("/admin/karyawan")) {
     if (token?.hakAksesDatakaryawan !== "Ya") {

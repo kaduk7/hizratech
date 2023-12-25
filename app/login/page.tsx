@@ -1,7 +1,7 @@
 "use client"
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 
@@ -24,6 +24,8 @@ const Login = () => {
     }
   })
 
+
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     const login = await signIn('credentials', {
@@ -45,7 +47,7 @@ const Login = () => {
       })
       setTimeout(function () {
         // router.push('/')
-        // window.location.reload()
+        window.location.reload()
       }, 1500);
     }
   };
