@@ -6,6 +6,7 @@
     "axe/forms": "off",
     "no-inline-styles": "off",
     "axe/parsing": "off",
-    "axe/name-role-value": "off"
+    "axe/name-role-value": "off",
+    "typescript-config/is-valid": "off"
   }
 }
