@@ -80,7 +80,9 @@ const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       session = token as any;
-      return session;
+      // session = token as any;
+      // return session;
+      return { ...session, csrfToken: generateCSRFToken() };
     },
 
   },
@@ -97,3 +99,7 @@ const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
+function generateCSRFToken() {
+  throw new Error("Function not implemented.");
+}
+
