@@ -22,7 +22,6 @@ export async function middleware(request: NextRequest) {
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
-  console.log('tes',token)
 
   if (token && pathname.match(loginPath)) {
     const url = new URL('/', request.url);
