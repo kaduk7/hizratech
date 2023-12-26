@@ -23,6 +23,8 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  
+
   if (token && pathname.match(loginPath)) {
     const url = new URL('/', request.url);
     return NextResponse.redirect(url);
