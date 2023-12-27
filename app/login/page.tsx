@@ -47,7 +47,8 @@ const Login = () => {
       })
       setTimeout(function () {
         // router.push('/')
-        window.location.reload()
+        // window.location.reload()
+        window.location.href='/'
       }, 1500);
     }
   };

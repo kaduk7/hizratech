@@ -20,7 +20,6 @@ export const POST = async (request: Request) => {
         })
         return NextResponse.json({ pesan: 'berhasil' })
     } finally {
-        await prisma.$disconnect();
     }
 }
 

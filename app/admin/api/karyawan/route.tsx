@@ -73,6 +73,6 @@ export const GET = async () => {
         });
         return NextResponse.json(karyawan, { status: 200 })
     } finally {
-        await prisma.$disconnect();
+       
     }
 }

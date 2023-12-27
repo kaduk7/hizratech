@@ -37,7 +37,7 @@ export const POST = async (request: Request) => {
 
         return NextResponse.json({ pesan: 'berhasil' })
     } finally {
-        await prisma.$disconnect();
+        // await prisma.$disconnect();
     }
 };
 
@@ -45,7 +45,7 @@ export const POST = async (request: Request) => {
 
 export const GET = async (request: NextRequest) => {
     try {
-        const jobdesk = await prisma.beritaTb.findMany({
+        const berita = await prisma.beritaTb.findMany({
 
             include: {
                 KaryawanTb: true
@@ -54,7 +54,7 @@ export const GET = async (request: NextRequest) => {
                 createdAt: "desc"
             }
         });
-        return NextResponse.json(jobdesk, { status: 200 })
+        return NextResponse.json(berita, { status: 200 })
         
     } finally {
         await prisma.$disconnect();

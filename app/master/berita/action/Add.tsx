@@ -29,18 +29,14 @@ function Add() {
 
     useEffect(() => {
         ref.current?.focus();
-        fetchDataTOKEN()
+        fetchDataprofil()
     }, [])
 
-    const fetchDataTOKEN = async () => {
-        try {
-            const response = await fetch(`/admin/api/token`);
+    const fetchDataprofil = async () => {
+            const response = await fetch(`/admin/api/profil`);
             const result = await response.json();
-            setKaryawanId(String(result.karyawanId))
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+            setKaryawanId(result.id)
+    }
 
     useEffect(() => {
         if (!file) {
@@ -88,7 +84,7 @@ function Add() {
                 })
                 setTimeout(function () {
                     clearForm();
-                    router.refresh()
+                    // router.refresh()
                 }, 1500);
             }
         } catch (error) {

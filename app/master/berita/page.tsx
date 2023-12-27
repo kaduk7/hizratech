@@ -1,23 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
-import React, { SyntheticEvent, useEffect, useState } from 'react'
-import Image from "next/image"
-import moment from 'moment'
-import axios from 'axios'
-import Swal from 'sweetalert2'
+import React, { useEffect, useState } from 'react'
 import Add from './action/Add'
-import { useSession } from "next-auth/react";
 import Update from './action/Update'
 import Delete from './action/Delete'
-import { Pagination, Badge } from 'react-bootstrap';
 import Link from 'next/link'
 import Komentar from './action/Komentar'
-import { classNames } from 'primereact/utils'
 
 const Berita = () => {
-    const session = useSession()
-    const [karyawanIdcek, setKaryawanIdcek] = useState('')
-    const [divisiadmin, setDivisiAdmin] = useState('')
     const [dataBerita, setDataBerita] = useState([])
     const [dataBeritaTerbaru, setDataBeritaTerbaru] = useState([])
     const [dataBeritaTop, setDataBeritaTop] = useState([])
@@ -28,40 +18,12 @@ const Berita = () => {
     const [karyawanId, setKaryawanId] = useState('')
     const [namaAvatar, setNamaAvatar] = useState('')
     const [nama, setNama] = useState('')
-    const [alamat, setAlamat] = useState("")
-    const [tempatLahir, setTempatLahir] = useState("")
-    const [tanggalLahir, setTanggalLahir] = useState("")
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [hp, setHp] = useState("")
     const [namaDivisi, setNamadivisi] = useState("")
     const [foto, setFoto] = useState("")
     const [preview, setPreview] = useState("")
     const [file, setFile] = useState<File | null>()
     const [currentTime, setCurrentTime] = useState(new Date());
-
-    const [st, setSt] = useState(false);
-    const handleTampil = (x: any) => setSt(true);
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [itemsPerPage, setItemsPerPage] = useState(5);
-
-    const filteredData = dataBerita.filter((item: any) =>
-        item.judul.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-
-    const paginate = (pageNumber: any) => setCurrentPage(pageNumber);
-
-    const handleItemsPerPageChange = (e: any) => {
-        setItemsPerPage(parseInt(e.target.value, 10));
-        setCurrentPage(1);
-    };
-
 
     useEffect(() => {
         if (!file) {
@@ -75,12 +37,11 @@ const Berita = () => {
     }, [file])
 
     useEffect(() => {
-        fetchDataTOKEN()
         fetchDataberita()
         fetchDataberitaterbaru()
         fetchDataberitop()
         fetchDataprofil()
-    }, [dataBerita])
+    }, [dataBerita,dataBeritaTerbaru,dataBeritaTop])
 
     const fetchDataprofil = async () => {
         try {
@@ -89,18 +50,15 @@ const Berita = () => {
             setKaryawanId(result.id)
             setNama(result.nama);
             setNamaAvatar(result.nama);
-            setTanggalLahir(moment(result.tanggalLahir).format('YYYY-MM-DD'));
-            setTempatLahir(result.tempatLahir);
-            setAlamat(result.alamat);
-            setHp(result.hp);
-            setEmail(result.email);
             setNamadivisi(result.DivisiTb.nama)
             setFoto(result?.foto)
+            setEmail(result.email)
             setPreview(result?.foto)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
 
     const fetchDataberita = async () => {
         try {
@@ -136,16 +94,7 @@ const Berita = () => {
         }
     };
 
-    const fetchDataTOKEN = async () => {
-        try {
-            const response = await fetch(`/admin/api/token`);
-            const result = await response.json();
-            setKaryawanIdcek(result.karyawanId)
-            setDivisiAdmin(result.namaDivisi)
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+
 
 
     const KalkulasiWaktu = (newsTime: any) => {
@@ -447,7 +396,7 @@ const Berita = () => {
                                                                         <span>{KalkulasiWaktu(x.createdAt)}</span>
                                                                     </div>
                                                                 </div>
-                                                                {String(x.karyawanId) === String(karyawanIdcek) ?
+                                                                {String(x.karyawanId) === String(karyawanId) ?
 
                                                                     <div className="dropdown custom-dropdown ">
                                                                         <div
@@ -488,7 +437,7 @@ const Berita = () => {
                                                                         </div>
                                                                     </div>
                                                                     :
-                                                                    divisiadmin === 'Admin' ?
+                                                                    namaDivisi === 'Admin' ?
                                                                         <div className="dropdown custom-dropdown ">
                                                                             <div
                                                                                 className="btn sharp btn-primary light tp-btn  ms-3"
@@ -557,7 +506,7 @@ const Berita = () => {
                                                                 <div className="mt-3 ms-3">
                                                                     <div className='col'>
                                                                         <a>
-                                                                            <span style={{ fontSize: 15 }} className={!st && x.id ? 'two-line-paragraph' : ''} dangerouslySetInnerHTML={{ __html: x.isi }} />
+                                                                            <span style={{ fontSize: 15 }} className={'two-line-paragraph'} dangerouslySetInnerHTML={{ __html: x.isi }} />
 
                                                                             {/* {!st && x.id ?
                                                                                 <a type='button' className='mt-1' style={{ fontWeight: 'bold' }} onClick={() => setSt(!st && x.id)} > Lihat selengkapnya</a>

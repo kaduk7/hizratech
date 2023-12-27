@@ -24,6 +24,5 @@ export const GET = async (request: NextRequest) => {
     })
     return NextResponse.json(profil, { status: 201 })
   } finally {
-    await prisma.$disconnect();
   }
 }

@@ -48,7 +48,6 @@ export const GET = async (request: NextRequest) => {
         })
         return NextResponse.json(sekolah, { status: 201 })
     } finally {
-        await prisma.$disconnect();
     }
 }
 
