@@ -1,7 +1,5 @@
 "use client"
 import Add from "./action/Add"
-import Update from "./action/Update"
-import Delete from "./action/Delete"
 import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -40,14 +38,7 @@ const Karyawan = () => {
     setGlobalFilterValue(value);
   };
 
-  const action = (rowData: any) => {
-    return (
-      <React.Fragment>
-        <Update karyawan={rowData} hakAkses={rowData.HakAksesTb} caridivisiId={rowData.divisiId} />
-        <Delete karyawanId={rowData.id} />
-      </React.Fragment>
-    );
-  };
+
 
 
   return (
@@ -93,7 +84,6 @@ const Karyawan = () => {
                 <Column header="No" headerStyle={{ width: '3rem' }} body={(data, options) => options.rowIndex + 1}></Column>
                 <Column field="nama" header="Nama Karyawan" style={{ width: 200 }}></Column>
                 <Column field="DivisiTb.nama" header="Divisi" style={{ width: 100 }}></Column>
-                <Column body={action} header="Action" style={{ width: 100 }} ></Column>
               </DataTable>
             </div>
           </div>
