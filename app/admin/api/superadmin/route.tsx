@@ -8,30 +8,9 @@ export const POST = async (request: Request) => {
 
         const formData = await request.formData()
 
-        const cekemail = await prisma.karyawanTb.findUnique({
-            where: {
-                email: String(formData.get('email'))
-            },
-        })
-
-        const cekhp = await prisma.karyawanTb.findUnique({
-            where: {
-                hp: String(formData.get('hp'))
-            },
-        })
-
-        if (cekemail) {
-            return NextResponse.json({ pesan: "Email sudah ada" })
-        }
-        if (cekhp) {
-            return NextResponse.json({ pesan: "No Hp sudah ada" })
-        }
         await prisma.karyawanTb.create({
             data: {
                 nama: String(formData.get('nama')),
-                tempatLahir: String(formData.get('tempatlahir')),
-                tanggalLahir: String(formData.get('tanggallahir')),
-                alamat: String(formData.get('alamat')),
                 hp: String(formData.get('hp')),
                 email: String(formData.get('email')),
                 divisiId: Number(formData.get('divisiId')),

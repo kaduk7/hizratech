@@ -4,6 +4,7 @@ import { useState, SyntheticEvent, useEffect, useRef } from "react"
 import { JobdeskTb, KaryawanTb } from "@prisma/client"
 import Modal from 'react-bootstrap/Modal';
 import moment from "moment"
+import { supabaseUrl,supabaseBUCKET } from "@/app/helper";
 
 function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: KaryawanTb }) {
 
@@ -129,6 +130,11 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                                         {status}
                                     </div>
                                     :
+                                    status === "Dalam Proses" ?
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "blue" }}>
+                                        {status}
+                                    </div>
+                                    :
                                     status === "Selesai" ?
                                         <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "green" }}>
                                             {status}
@@ -149,7 +155,7 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                             <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Surat Tugas </div>
                             <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
                             <u className="col-sm-7" >
-                                <a href={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/file/${fileSuratTugasValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Download</a>
+                                <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/file/${fileSuratTugasValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Download</a>
                             </u>
                         </div>
 
@@ -157,7 +163,7 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                             <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Berita Acara </div>
                             <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
                             <u className="col-sm-7" >
-                                <a href={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/file/${fileBeritaAcaraValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Download</a>
+                                <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/file/${fileBeritaAcaraValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Download</a>
                             </u>
                         </div>
 
@@ -165,7 +171,7 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                             <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Laporan Anggaran </div>
                             <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
                             <u className="col-sm-7" >
-                                <a href={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/file/${fileAnggaranValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Download</a>
+                                <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/file/${fileAnggaranValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Download</a>
                             </u>
                         </div>
 
@@ -198,7 +204,7 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                                 <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>File Kegiatan</div>
                                 <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
                                 <u className="col-sm-7" >
-                                    <a href={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/file/${fileValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Klik Disini</a>
+                                    <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/file/${fileValue}`} target="_blank" style={{ fontFamily: "initial", fontSize: 20, color: "red" }}>Klik Disini</a>
                                 </u>
                             </div>
                             :

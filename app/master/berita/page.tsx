@@ -6,6 +6,7 @@ import Update from './action/Update'
 import Delete from './action/Delete'
 import Link from 'next/link'
 import Komentar from './action/Komentar'
+import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
 const Berita = () => {
     const [dataBerita, setDataBerita] = useState([])
@@ -41,7 +42,7 @@ const Berita = () => {
         fetchDataberitaterbaru()
         fetchDataberitop()
         fetchDataprofil()
-    }, [dataBerita,dataBeritaTerbaru,dataBeritaTop])
+    }, [dataBerita, dataBeritaTerbaru, dataBeritaTop])
 
     const fetchDataprofil = async () => {
         try {
@@ -94,9 +95,6 @@ const Berita = () => {
         }
     };
 
-
-
-
     const KalkulasiWaktu = (newsTime: any) => {
         const timeDifference = currentTime.getTime() - new Date(newsTime).getTime();
         const Hari = Math.floor(timeDifference / (24 * 1000 * 60 * 60));
@@ -128,14 +126,6 @@ const Berita = () => {
         }
     };
 
-    const maxBaris = 3;
-    const isiHTML = 'besar'
-    const isiHTML2 = 'kecil'
-
-
-
-
-
     return (
         <div>
             <div className="row">
@@ -148,7 +138,7 @@ const Berita = () => {
                             <div className="profile-info">
                                 <div className="profile-photo">
                                     <img
-                                        src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/foto-profil/${preview}`}
+                                        src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${preview}`}
                                         className="img-fluid rounded-circle"
                                         alt=""
                                     />
@@ -262,7 +252,7 @@ const Berita = () => {
                                     <div className="profile-blog">
                                         <h5 className="text-primary d-inline">Today Highlights</h5>
                                         <img
-                                            src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/berita-images/${fotoTop}`}
+                                            src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${fotoTop}`}
                                             alt=""
                                             className="img-fluid mt-4 mb-4 w-100 rounded"
                                         />
@@ -288,14 +278,14 @@ const Berita = () => {
 
                                                 <a
                                                     key={x.id}
-                                                    href={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/berita-images/${x.foto}`}
+                                                    href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${x.foto}`}
                                                     target="_blank"
                                                     data-exthumbimage="images/profile/2.jpg"
                                                     data-src="images/profile/2.jpg"
                                                     className="mb-1 col-lg-4 col-xl-4 col-sm-4 col-6"
                                                 >
                                                     <img
-                                                        src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/berita-images/${x.foto}`}
+                                                        src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${x.foto}`}
                                                         alt=""
                                                         className="px-1 py-1 img-fluid rounded"
                                                     />
@@ -318,7 +308,7 @@ const Berita = () => {
 
                                             <div className="media pt-3 pb-3" key={x.id}>
                                                 <img
-                                                    src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/berita-images/${x.foto}`}
+                                                    src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${x.foto}`}
                                                     alt="image"
                                                     className="me-3 rounded"
                                                     width={75}
@@ -382,7 +372,7 @@ const Berita = () => {
                                                             <div className="card-header border-0">
                                                                 <div className="products">
                                                                     <img
-                                                                        src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/foto-profil/${x.KaryawanTb.foto}`}
+                                                                        src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${x.KaryawanTb.foto}`}
                                                                         className="avatar avatar-md rounded-circle"
                                                                         alt=""
                                                                     />
@@ -479,7 +469,7 @@ const Berita = () => {
                                                             <div className="card-body pt-0">
                                                                 <div className="post-img">
                                                                     <img
-                                                                        src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/berita-images/${x.foto}`}
+                                                                        src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${x.foto}`}
                                                                         alt=""
                                                                     />
                                                                 </div>
@@ -554,12 +544,7 @@ const Berita = () => {
                     </div>
                 </div>
             </div>
-
-
-
         </div>
-
-
     )
 }
 

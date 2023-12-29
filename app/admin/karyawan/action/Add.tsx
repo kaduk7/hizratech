@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
+import moment from "moment";
 
 function Add() {
     const session = useSession()
     const [nama, setNama] = useState("")
     const [tempatLahir, setTempatlahir] = useState("")
-    const [tanggalLahir, setTanggallahir] = useState("")
+    const [tanggalLahir, setTanggallahir] = useState('2000-01-01')
     const [alamat, setAlamat] = useState("")
     const [hp, setHp] = useState("")
     const [password, setPassword] = useState("")
@@ -36,6 +37,10 @@ function Add() {
 
     const setfokusemail = () => {
         refemail.current?.focus();
+    }
+
+    const setfokushp = () => {
+        refhp.current?.focus();
     }
 
     const handleClose = () => {
@@ -68,7 +73,7 @@ function Add() {
     function clearForm() {
         setNama('')
         setTempatlahir('')
-        setTanggallahir('')
+        setTanggallahir('2000-01-01')
         setAlamat('')
         setHp('')
         setPassword('')
@@ -124,7 +129,7 @@ function Add() {
                     timer: 1500
                 })
                 setTimeout(function () {
-                    refhp.current?.focus();
+                    setfokushp()
                 }, 1600);
             }
 
@@ -148,7 +153,7 @@ function Add() {
     }
 
     const handleCheckboxChangeKaryawan = () => {
-        setKaryawanCek(!karyawanCek); 
+        setKaryawanCek(!karyawanCek);
         if (!karyawanCek) {
             setKaryawanCekValue("Ya")
         }
@@ -158,7 +163,7 @@ function Add() {
     };
 
     const handleCheckboxChangeinformasi = () => {
-        setInformasiCek(!informasiCek); 
+        setInformasiCek(!informasiCek);
         if (!informasiCek) {
             setInformasiCekValue("Ya")
         }
@@ -168,7 +173,7 @@ function Add() {
     };
 
     const handleCheckboxChangeJobdesk = () => {
-        setJobdeskCek(!jobdeskCek); 
+        setJobdeskCek(!jobdeskCek);
         if (!jobdeskCek) {
             setJobdeskCekValue("Ya")
         }
@@ -206,42 +211,7 @@ function Add() {
                                     value={nama} onChange={(e) => setNama(e.target.value)}
                                 />
                             </div>
-                        </div>
 
-                        <div className="row">
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tempat Lahir</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tempatLahir} onChange={(e) => setTempatlahir(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Lahir</label>
-                                <input
-                                    required
-                                    type="date"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tanggalLahir} onChange={(e) => setTanggallahir(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Alamat</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={alamat} onChange={(e) => setAlamat(e.target.value)}
-                                />
-                            </div>
                         </div>
 
                         <div className="row">
@@ -272,7 +242,7 @@ function Add() {
                             </div>
                         </div>
 
-                        <div className="row mb-3">
+                        <div className="row">
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Email</label>
                                 <input
@@ -287,7 +257,7 @@ function Add() {
 
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Password</label>
-                                <div className="input-group">
+                                <div className="input-group input-success">
                                     <input
                                         required
                                         type={st ? "text" : "password"}
@@ -298,17 +268,57 @@ function Add() {
                                         value={password} onChange={(e) => setPassword(e.target.value)}
                                     />
                                     {st ?
-                                        <button onClick={() => setSt(!st)} className="btn btn-success" type="button">
+                                        <button onClick={() => setSt(!st)} className="input-group-text border-0" type="button">
                                             <i className="mdi mdi-eye-off" />
                                         </button>
                                         :
-                                        <button onClick={() => setSt(!st)} className="btn btn-success" type="button">
+                                        <button onClick={() => setSt(!st)} className="input-group-text border-0" type="button">
                                             <i className="mdi mdi-eye" />
                                         </button>
                                     }
                                 </div>
                             </div>
+
                         </div>
+
+                        <div className="row">
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tempat Lahir</label>
+                                <input
+                                    // required
+                                    type="text"
+                                    className="form-control"
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    value={tempatLahir} onChange={(e) => setTempatlahir(e.target.value)}
+                                />
+                            </div>
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Lahir</label>
+                                <input
+                                    // required
+                                    type="date"
+                                    className="form-control"
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    value={tanggalLahir} onChange={(e) => setTanggallahir(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row  mb-3">
+                            <div className="mb-3 col-md-12">
+                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Alamat</label>
+                                <textarea
+                                    // required
+                                    className="form-control"
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    value={alamat} onChange={(e) => setAlamat(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+
+
+
 
                         {session?.data?.status === 'Admin' ?
                             <div className="row">

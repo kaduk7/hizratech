@@ -8,24 +8,18 @@ import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 
 function Add() {
-    const session = useSession()
+
     const [nama, setNama] = useState("")
-    const [tempatLahir, setTempatlahir] = useState("")
-    const [tanggalLahir, setTanggallahir] = useState("")
-    const [alamat, setAlamat] = useState("")
-    const [hp, setHp] = useState("")
     const [password, setPassword] = useState("")
+    const [hp, setHp] = useState("")
     const [email, setEmail] = useState("")
     const [divisiId, setDivisiId] = useState("")
     const [namadivisi, setNamadivisi] = useState("")
     const [selectdivisi, setSelectdivisi] = useState([])
 
-    const [karyawanCek, setKaryawanCek] = useState(false)
-    const [informasiCek, setInformasiCek] = useState(false)
-    const [jobdeskCek, setJobdeskCek] = useState(false)
-    const [karyawanCekValue, setKaryawanCekValue] = useState("Tidak")
-    const [informasiCekValue, setInformasiCekValue] = useState("Tidak")
-    const [jobdeskCekValue, setJobdeskCekValue] = useState("Tidak")
+    const [karyawanCekValue, setKaryawanCekValue] = useState("Ya")
+    const [informasiCekValue, setInformasiCekValue] = useState("Ya")
+    const [jobdeskCekValue, setJobdeskCekValue] = useState("Ya")
 
     const router = useRouter()
     const [show, setShow] = useState(false);
@@ -34,9 +28,6 @@ function Add() {
     const refhp = useRef<HTMLInputElement>(null);
     const [st, setSt] = useState(false);
 
-    const setfokusemail = () => {
-        refemail.current?.focus();
-    }
 
     const handleClose = () => {
         setShow(false);
@@ -67,17 +58,11 @@ function Add() {
 
     function clearForm() {
         setNama('')
-        setTempatlahir('')
-        setTanggallahir('')
-        setAlamat('')
         setHp('')
         setPassword('')
         setEmail('')
         setDivisiId('')
         setSt(false)
-        setKaryawanCek(false)
-        setInformasiCek(false)
-        setJobdeskCek(false)
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
@@ -85,9 +70,6 @@ function Add() {
         try {
             const formData = new FormData()
             formData.append('nama', nama)
-            formData.append('tempatlahir', tempatLahir)
-            formData.append('tanggallahir', new Date(tanggalLahir).toISOString())
-            formData.append('alamat', alamat)
             formData.append('hp', hp)
             formData.append('email', email)
             formData.append('password', password)
@@ -97,36 +79,11 @@ function Add() {
             formData.append('informasiCekValue', informasiCekValue)
             formData.append('jobdeskCekValue', jobdeskCekValue)
 
-            const xxx = await axios.post(`/admin/api/karyawan`, formData, {
+            const xxx = await axios.post(`/admin/api/superadmin`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-
-            if (xxx.data.pesan == 'Email sudah ada') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'Email sudah terdaftar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    setfokusemail()
-                }, 1500);
-            }
-            if (xxx.data.pesan == 'No Hp sudah ada') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'No Hp sudah terdaftar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    refhp.current?.focus();
-                }, 1600);
-            }
 
             if (xxx.data.pesan == 'berhasil') {
                 handleClose();
@@ -147,35 +104,7 @@ function Add() {
         }
     }
 
-    const handleCheckboxChangeKaryawan = () => {
-        setKaryawanCek(!karyawanCek); // Mengubah nilai isChecked menjadi kebalikannya
-        if (!karyawanCek) {
-            setKaryawanCekValue("Ya")
-        }
-        else {
-            setKaryawanCekValue("Tidak")
-        }
-    };
-
-    const handleCheckboxChangeinformasi = () => {
-        setInformasiCek(!informasiCek); // Mengubah nilai isChecked menjadi kebalikannya
-        if (!informasiCek) {
-            setInformasiCekValue("Ya")
-        }
-        else {
-            setInformasiCekValue("Tidak")
-        }
-    };
-
-    const handleCheckboxChangeJobdesk = () => {
-        setJobdeskCek(!jobdeskCek); // Mengubah nilai isChecked menjadi kebalikannya
-        if (!jobdeskCek) {
-            setJobdeskCekValue("Ya")
-        }
-        else {
-            setJobdeskCekValue("Tidak")
-        }
-    };
+  
 
 
     return (
@@ -204,42 +133,6 @@ function Add() {
                                     className="form-control"
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
                                     value={nama} onChange={(e) => setNama(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tempat Lahir</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tempatLahir} onChange={(e) => setTempatlahir(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Lahir</label>
-                                <input
-                                    required
-                                    type="date"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tanggalLahir} onChange={(e) => setTanggallahir(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Alamat</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={alamat} onChange={(e) => setAlamat(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -311,64 +204,7 @@ function Add() {
                         </div>
 
 
-                            <div className="row">
-                                <div className="mb-3 col-md-12">
-                                    <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Hak Akses</label>
-                                    <div className="row">
-                                        <div className="col-xl-4 col-xxl-4 col-4">
-                                            <div className="form-check custom-checkbox mb-3">
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="karyawancek"
-                                                    checked={karyawanCek}
-                                                    onChange={handleCheckboxChangeKaryawan}
-                                                />
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor="karyawancek"
-                                                    style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>
-                                                    Data Karyawan
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-4 col-xxl-4 col-4">
-                                            <div className="form-check custom-checkbox mb-3 checkbox-info">
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="informasicek"
-                                                    checked={informasiCek}
-                                                    onChange={handleCheckboxChangeinformasi}
-                                                />
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor="informasicek"
-                                                    style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>
-                                                    Informasi
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-4 col-xxl-4 col-4">
-                                            <div className="form-check custom-checkbox mb-3 checkbox-success">
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="jobdeskcek"
-                                                    checked={jobdeskCek}
-                                                    onChange={handleCheckboxChangeJobdesk}
-                                                />
-                                                <label
-                                                    className="form-check-label"
-                                                    htmlFor="jobdeskcek"
-                                                    style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>
-                                                    Jobdesk
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
 
                     </Modal.Body>
                     <Modal.Footer>

@@ -15,19 +15,42 @@ export const POST = async (request: Request) => {
             },
         })
 
-        const divId = JSON.parse(String(formData.get('selected'))) as any[];
+        const lastId = await prisma.pengumumanTb.findFirst({
+            orderBy: {
+                id: 'desc',
+            },
+        });
 
-        var x = [];
-        for (let i = 0; i < divId.length; i++) {
-            x.push({
-                pengumumanId: Number(formData.get('pengumumanId')),
-                divisiId: divId[i].value,
-            });
+        if (lastId) {
+            const noId = lastId.id;
+            const divId = JSON.parse(String(formData.get('selected'))) as any[];
+
+            var x = [];
+            for (let i = 0; i < divId.length; i++) {
+                x.push({
+                    pengumumanId: noId,
+                    divisiId: divId[i].value,
+                });
+            }
+    
+            await prisma.pengumumanDivisiTb.createMany({
+                data: x
+            })
         }
 
-        await prisma.pengumumanDivisiTb.createMany({
-            data: x
-        })
+        // const divId = JSON.parse(String(formData.get('selected'))) as any[];
+
+        // var x = [];
+        // for (let i = 0; i < divId.length; i++) {
+        //     x.push({
+        //         pengumumanId: Number(formData.get('pengumumanId')),
+        //         divisiId: divId[i].value,
+        //     });
+        // }
+
+        // await prisma.pengumumanDivisiTb.createMany({
+        //     data: x
+        // })
 
         return NextResponse.json([pengumuman], { status: 201 })
     } finally {

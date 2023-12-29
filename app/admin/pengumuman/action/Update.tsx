@@ -9,6 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import Select from 'react-select';
 import { Editor } from '@tinymce/tinymce-react';
+import { StyleSelect } from "@/app/helper"
 
 function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
     const [judul, setJudul] = useState(pengumuman.judul)
@@ -71,29 +72,12 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
         setPatokan(options)
     }
 
-
-
     const refreshform = async () => {
         setJudul(pengumuman.judul)
         setTanggalPengumuman(moment(pengumuman.tanggalPengumuman).format("YYYY-MM-DD"))
         setIsi(pengumuman.isi)
         mencaridivisi()
     }
-
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            boxShadow: state.isFocused ? '0 0 0 2px #007bff' : null,
-        }),
-        option: (provided: any, state: any) => ({
-            ...provided,
-            fontSize: 20,
-            color: "black",
-            fontFamily: "initial",
-        }),
-    };
 
     const handleEditorChange = (content: any, editor: any) => {
         setIsi(content);;
@@ -102,7 +86,6 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
         const newdivisi = selectdivisiId === patokan ? 'no' : 'yes'
-        // selectdivisiId.forEach(async (item: any) => {
         const formData = new FormData()
         formData.append('judul', judul)
         formData.append('tanggalPengumuman', new Date(tanggalPengumuman).toISOString())
@@ -110,7 +93,6 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
         formData.append('newdivisi', newdivisi)
         formData.append('pengumumanId', String(pengumumanId))
         formData.append('selected', JSON.stringify(selectedOptions))
-        // formData.append('divisiId', item.value)
 
         const xxx = await axios.patch(`/admin/api/pengumuman/${pengumuman.id}`, formData, {
             headers: {
@@ -131,8 +113,6 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
             router.refresh()
 
         }, 1500);
-
-        // })
     }
 
 
@@ -160,7 +140,7 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
                                     options={datadivisi}
                                     value={selectedOptions}
                                     onChange={handleSelectChange}
-                                    styles={customStyles}
+                                    styles={StyleSelect}
                                 />
                             </div>
                         </div>

@@ -5,6 +5,7 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import { BeritaTb, KaryawanTb } from "@prisma/client";
+import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
 function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb }) {
     const [beritaId, setBeritaId] = useState(berita.id)
@@ -156,7 +157,7 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                     <div className="card-header border-0">
                                         <div className="products">
                                             <img
-                                                src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/foto-profil/${previewAvatar}`}
+                                                src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${previewAvatar}`}
                                                 className="avatar avatar-md rounded-circle"
                                                 alt=""
                                             />
@@ -212,7 +213,7 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                     </div>
                                     <div className="card-body pt-0">
                                         <div className="post-img">
-                                            <img src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/berita-images/${preview}`} alt="" />
+                                            <img src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${preview}`} alt="" />
                                         </div>
                                         <div className="post-see d-flex align-items-center mt-3">
                                             <div className="avatar-list avatar-list-stacked">
@@ -259,7 +260,7 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                 {dataKomentarBerita.map((x: any, index) => (
                                     <div className="blog-post" key={x.id}>
                                         <div className="post-1">
-                                            <img src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/foto-profil/${x.KaryawanTb.foto}`} className="avatar rounded-circle me-2 custome-avatar" alt="" />
+                                            <img src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${x.KaryawanTb.foto}`} className="avatar rounded-circle me-2 custome-avatar" alt="" />
                                             <div className="post-data">
                                                 <span className="badge badge-secondary light border-0 badge-sm">{x.KaryawanTb.nama}</span>
                                                 <h4 dangerouslySetInnerHTML={{ __html: x.isi }}></h4>
@@ -282,7 +283,7 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                 <div className="input-group mb-3  input-info">
                                     <span className=" mx-2">
                                         <img
-                                            src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/foto-profil/${previewAvatarUser}`}
+                                            src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${previewAvatarUser}`}
                                             className="avatar avatar-md rounded-circle"
                                             alt=""
                                         />

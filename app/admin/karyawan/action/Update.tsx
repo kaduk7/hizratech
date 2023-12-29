@@ -12,9 +12,9 @@ import { useSession } from "next-auth/react"
 function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisiId: Number }) {
     const session = useSession()
     const [nama, setNama] = useState(karyawan.nama)
-    const [tempatLahir, setTempatlahir] = useState(karyawan.tempatLahir)
-    const [tanggalLahir, setTanggallahir] = useState(moment(karyawan.tanggalLahir).format("YYYY-MM-DD"))
-    const [alamat, setAlamat] = useState(karyawan.alamat)
+    const [tempatLahir, setTempatlahir] = useState(karyawan?.tempatLahir || "")
+    const [tanggalLahir, setTanggallahir] = useState(moment(karyawan?.tanggalLahir).format("YYYY-MM-DD"))
+    const [alamat, setAlamat] = useState(karyawan?.alamat || "")
     const [hp, setHp] = useState(karyawan.hp)
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState(karyawan.email)
@@ -37,7 +37,10 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
         refreshform()
     }
 
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+
+    }
 
     useEffect(() => {
         divisi();
@@ -73,9 +76,9 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
     const refreshform = () => {
         setNama(karyawan.nama)
-        setTempatlahir(karyawan.tempatLahir)
-        setTanggallahir(moment(karyawan.tanggalLahir).format("YYYY-MM-DD"))
-        setAlamat(karyawan.alamat)
+        setTempatlahir(karyawan?.tempatLahir || '')
+        setTanggallahir(moment(karyawan?.tanggalLahir).format("YYYY-MM-DD"))
+        setAlamat(karyawan?.alamat || '')
         setHp(karyawan.hp)
         setEmail(karyawan.email)
         setDivisiId(String(karyawan.divisiId))
@@ -93,9 +96,9 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
-        const newemail = email === karyawan.email ? 'no' : 'yes'
-        const newhp = hp === karyawan.hp ? 'no' : 'yes'
-
+        const newpass = password == "" ? 'no' : 'yes'
+        const newadmin = namadivisi == "" ? 'no' : 'yes'
+        console.log('ttt', newadmin)
         try {
             const formData = new FormData()
             formData.append('nama', nama)
@@ -105,7 +108,8 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
             formData.append('hp', hp)
             formData.append('email', email)
             formData.append('password', password)
-            formData.append('newemail', newemail)
+            formData.append('newpass', newpass)
+            formData.append('newadmin', newadmin)
             formData.append('divisiId', divisiId)
             formData.append('namadivisi', namadivisi)
             formData.append('karyawanCekValue', karyawanCekValue)
@@ -161,7 +165,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
     }
 
     const handleCheckboxChangeKaryawan = () => {
-        setKaryawanCek(!karyawanCek); 
+        setKaryawanCek(!karyawanCek);
         if (!karyawanCek) {
             setKaryawanCekValue("Ya")
         }
@@ -171,7 +175,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
     };
 
     const handleCheckboxChangeinformasi = () => {
-        setInformasiCek(!informasiCek); 
+        setInformasiCek(!informasiCek);
         if (!informasiCek) {
             setInformasiCekValue("Ya")
         }
@@ -181,7 +185,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
     };
 
     const handleCheckboxChangeJobdesk = () => {
-        setJobdeskCek(!jobdeskCek); 
+        setJobdeskCek(!jobdeskCek);
         if (!jobdeskCek) {
             setJobdeskCekValue("Ya")
         }
@@ -192,7 +196,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
     return (
         <>
-           <span onClick={handleShow} className="btn btn-success shadow btn-xl sharp mx-1"><i className="fa fa-edit"></i></span>
+            <span onClick={handleShow} className="btn btn-success shadow btn-xl sharp mx-1"><i className="fa fa-edit"></i></span>
             <Modal
                 dialogClassName="modal-lg"
                 show={show}
@@ -217,42 +221,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                                     value={nama} onChange={(e) => setNama(e.target.value)}
                                 />
                             </div>
-                        </div>
 
-                        <div className="row">
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tempat Lahir</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tempatLahir} onChange={(e) => setTempatlahir(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Lahir</label>
-                                <input
-                                    required
-                                    type="date"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tanggalLahir} onChange={(e) => setTanggallahir(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Alamat</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={alamat} onChange={(e) => setAlamat(e.target.value)}
-                                />
-                            </div>
                         </div>
 
                         <div className="row">
@@ -282,7 +251,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                             </div>
                         </div>
 
-                        <div className="row mb-3">
+                        <div className="row">
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Email</label>
                                 <input
@@ -296,7 +265,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Password</label>
-                                <div className="input-group">
+                                <div className="input-group input-success">
                                     <input
 
                                         type={st ? "text" : "password"}
@@ -307,17 +276,56 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                                         value={password} onChange={(e) => setPassword(e.target.value)}
                                     />
                                     {st ?
-                                        <button onClick={() => setSt(!st)} className="btn btn-success" type="button">
+                                        <button onClick={() => setSt(!st)} className="input-group-text border-0" type="button">
                                             <i className="mdi mdi-eye-off" />
                                         </button>
                                         :
-                                        <button onClick={() => setSt(!st)} className="btn btn-success" type="button">
+                                        <button onClick={() => setSt(!st)} className="input-group-text border-0" type="button">
                                             <i className="mdi mdi-eye" />
                                         </button>
                                     }
                                 </div>
                             </div>
                         </div>
+
+                        <div className="row">
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tempat Lahir</label>
+                                <input
+                                    // required
+                                    type="text"
+                                    className="form-control"
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    value={tempatLahir} onChange={(e) => setTempatlahir(e.target.value)}
+                                />
+                            </div>
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Lahir</label>
+                                <input
+                                    // required
+                                    type="date"
+                                    className="form-control"
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    value={tanggalLahir} onChange={(e) => setTanggallahir(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row  mb-3">
+                            <div className="mb-3 col-md-12">
+                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Alamat</label>
+                                <textarea
+                                    // required
+                                    className="form-control"
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    value={alamat} onChange={(e) => setAlamat(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+
+
+
 
                         {session?.data?.status === 'Admin' ?
                             <div className="row">
@@ -329,10 +337,10 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                                                 <input
                                                     type="checkbox"
                                                     className="form-check-input"
+                                                    style={{ fontFamily: "initial", color: "black", borderColor: "grey" }}
                                                     id="karyawancek"
                                                     checked={karyawanCek}
                                                     onChange={handleCheckboxChangeKaryawan}
-                                                    style={{ fontFamily: "initial", color: "black", borderColor: "grey" }}
                                                 />
                                                 <label
                                                     className="form-check-label"
@@ -347,10 +355,10 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                                                 <input
                                                     type="checkbox"
                                                     className="form-check-input"
+                                                    style={{ fontFamily: "initial", color: "black", borderColor: "grey" }}
                                                     id="informasicek"
                                                     checked={informasiCek}
                                                     onChange={handleCheckboxChangeinformasi}
-                                                    style={{ fontFamily: "initial", color: "black", borderColor: "grey" }}
                                                 />
                                                 <label
                                                     className="form-check-label"
@@ -365,10 +373,10 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                                                 <input
                                                     type="checkbox"
                                                     className="form-check-input"
+                                                    style={{ fontFamily: "initial", color: "black", borderColor: "grey" }}
                                                     id="jobdeskcek"
                                                     checked={jobdeskCek}
                                                     onChange={handleCheckboxChangeJobdesk}
-                                                    style={{ fontFamily: "initial", color: "black", borderColor: "grey" }}
                                                 />
                                                 <label
                                                     className="form-check-label"

@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 import moment from "moment"
 import Select from 'react-select';
+import { supabase,supabaseBUCKET,supabaseUrl } from "@/app/helper"
 
 function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanTb }) {
 
@@ -25,8 +26,11 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
     const [fileAnggaran, setFileAnggaran] = useState<File | null>()
 
     const [previewSurat, setPreviewSurat] = useState(jobdesk.suratTugas)
+    const [cekpreviewSurat, setCekPreviewSurat] = useState(jobdesk.suratTugas)
     const [previewBerita, setPreviewBerita] = useState(jobdesk.beritaAcara)
+    const [cekpreviewBerita, setCekPreviewBerita] = useState(jobdesk.beritaAcara)
     const [previewAnggaran, setPreviewAnggaran] = useState(jobdesk.laporanAnggaran)
+    const [cekpreviewAnggaran, setCekPreviewAnggaran] = useState(jobdesk.laporanAnggaran)
     const router = useRouter()
     const [show, setShow] = useState(false);
 
@@ -41,7 +45,15 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
         refreshform()
     }
 
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        setPreviewSurat(jobdesk.suratTugas)
+        setCekPreviewSurat(jobdesk.suratTugas)
+        setPreviewBerita(jobdesk.beritaAcara)
+        setCekPreviewBerita(jobdesk.beritaAcara)
+        setPreviewAnggaran(jobdesk.laporanAnggaran)
+        setCekPreviewAnggaran(jobdesk.laporanAnggaran)
+    }
 
     useEffect(() => {
         divisi();
@@ -86,7 +98,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
             setPreviewAnggaran(jobdesk.laporanAnggaran)
             return
         }
-        const objectUrlAnggaran= URL.createObjectURL(fileAnggaran)
+        const objectUrlAnggaran = URL.createObjectURL(fileAnggaran)
         setPreviewAnggaran(objectUrlAnggaran)
 
         return () => URL.revokeObjectURL(objectUrlAnggaran)
@@ -152,9 +164,9 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
 
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
-        const newsurat = previewSurat === jobdesk.suratTugas ? 'no' : 'yes'
-        const newberita = previewBerita === jobdesk.beritaAcara ? 'no' : 'yes'
-        const newanggaran = previewAnggaran === jobdesk.laporanAnggaran ? 'no' : 'yes'
+        const newsurat = previewSurat === cekpreviewSurat ? 'no' : 'yes'
+        const newberita = previewBerita === cekpreviewBerita ? 'no' : 'yes'
+        const newanggaran = previewAnggaran === cekpreviewAnggaran ? 'no' : 'yes'
         try {
             const formData = new FormData()
             formData.append('namaJob', namaJob)
@@ -172,6 +184,33 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
             formData.append('fileSuratTugas', fileSuratTugas as File)
             formData.append('fileBeritaAcara', fileBeritaAcara as File)
             formData.append('fileAnggaran', fileAnggaran as File)
+
+            if (newsurat === 'yes') {
+                const fileSuratTugas2 = formData.get('fileSuratTugas') as File;
+                const namaunikSurat = Date.now() + '-' + fileSuratTugas2.name
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`file/${namaunikSurat}`, fileSuratTugas2);
+                formData.append('namaunikSurat', namaunikSurat)
+            }
+
+            if (newberita=== 'yes') {
+                const fileBeritaAcara2 = formData.get('fileBeritaAcara') as File;
+                const namaunikBerita = Date.now() + '-' + fileBeritaAcara2.name
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`file/${namaunikBerita}`, fileBeritaAcara2);
+                formData.append('namaunikBerita', namaunikBerita)
+            }
+
+            if (newanggaran=== 'yes') {
+                const fileAnggaran2 = formData.get('fileAnggaran') as File;
+                const namaunikAnggaran = Date.now() + '-' + fileAnggaran2.name
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`file/${namaunikAnggaran}`, fileAnggaran2);
+                formData.append('namaunikAnggaran', namaunikAnggaran)
+            }
 
             const xxx = await axios.patch(`/admin/api/tambahjobdesk/${jobdesk.id}`, formData, {
                 headers: {
@@ -345,7 +384,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Upload Surat Tugas</label>
                                 <input
-                                    
+
                                     type="file"
                                     name="file"
                                     className="form-control"
@@ -359,7 +398,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Upload Berita Acara</label>
                                 <input
-                                    
+
                                     type="file"
                                     name="file"
                                     className="form-control"
@@ -373,7 +412,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Upload Laporan Anggaran</label>
                                 <input
-                                    
+
                                     type="file"
                                     name="file"
                                     className="form-control"

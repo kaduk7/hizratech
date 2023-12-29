@@ -5,7 +5,6 @@ import { getToken } from "next-auth/jwt"
 const prisma = new PrismaClient()
 
 export const GET = async (request: NextRequest) => {
-  try {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET
@@ -23,6 +22,4 @@ export const GET = async (request: NextRequest) => {
       },
     })
     return NextResponse.json(profil, { status: 201 })
-  } finally {
-  }
 }

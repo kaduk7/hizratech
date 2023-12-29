@@ -7,6 +7,8 @@ const prisma = new PrismaClient()
 export const PATCH = async (request: Request, { params }: { params: { id: string } }) => {
     try {
         const formData = await request.formData()
+        const newpass = formData.get('newpass')
+        const newadmin = formData.get('newadmin')
         const cekhp = await prisma.karyawanTb.findMany({
             where: {
                 hp: String(formData.get('hp')),
@@ -33,132 +35,66 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
             return NextResponse.json({ status: 556, pesan: "sudah ada hp" })
         }
 
-        if ((formData.get('namadivisi')) === '' && (formData.get('password')) === '') {
+        await prisma.karyawanTb.update({
+            where: {
+                id: Number(params.id)
+            },
+            data: {
+                nama: String(formData.get('nama')),
+                tempatLahir: String(formData.get('tempatlahir')),
+                tanggalLahir: String(formData.get('tanggallahir')),
+                alamat: String(formData.get('alamat')),
+                hp: String(formData.get('hp')),
+                email: String(formData.get('email')),
+                divisiId: Number(formData.get('divisiId')),
+                UserTb: {
+                    update: {
+                        usernama: String(formData.get('email')),
+                    }
+                },
+                HakAksesTb: {
+                    update: {
+                        datakaryawan: String(formData.get('karyawanCekValue')),
+                        informasi: String(formData.get('informasiCekValue')),
+                        jobdesk: String(formData.get('jobdeskCekValue')),
+                    }
+                }
+            }
+        })
+
+        if (newpass === 'yes') {
             await prisma.karyawanTb.update({
                 where: {
                     id: Number(params.id)
                 },
                 data: {
-                    nama: String(formData.get('nama')),
-                    tempatLahir: String(formData.get('tempatlahir')),
-                    tanggalLahir: String(formData.get('tanggallahir')),
-                    alamat: String(formData.get('alamat')),
-                    hp: String(formData.get('hp')),
-                    email: String(formData.get('email')),
-                    divisiId: Number(formData.get('divisiId')),
                     UserTb: {
                         update: {
-                            usernama: String(formData.get('email')),
+                            password: await bcrypt.hash(String(formData.get('password')), 10),
                         }
                     },
-                    HakAksesTb: {
-                        update: {
-                            datakaryawan: String(formData.get('karyawanCekValue')),
-                            informasi: String(formData.get('informasiCekValue')),
-                            jobdesk: String(formData.get('jobdeskCekValue')),
-                        }
-                    }
                 }
             })
-            return NextResponse.json({ status: 200, pesan: "berhasil" })
         }
-        else
 
-            if ((formData.get('namadivisi')) === '') {
-                await prisma.karyawanTb.update({
-                    where: {
-                        id: Number(params.id)
+        if (newadmin === 'yes') {
+            await prisma.karyawanTb.update({
+                where: {
+                    id: Number(params.id)
+                },
+                data: {
+                    UserTb: {
+                        update: {
+                            status: String(formData.get('namadivisi'))
+                        }
                     },
-                    data: {
-                        nama: String(formData.get('nama')),
-                        tempatLahir: String(formData.get('tempatlahir')),
-                        tanggalLahir: String(formData.get('tanggallahir')),
-                        alamat: String(formData.get('alamat')),
-                        hp: String(formData.get('hp')),
-                        email: String(formData.get('email')),
-                        divisiId: Number(formData.get('divisiId')),
-                        UserTb: {
-                            update: {
-                                usernama: String(formData.get('email')),
-                                password: await bcrypt.hash(String(formData.get('password')), 10),
-                            }
-                        },
-                        HakAksesTb: {
-                            update: {
-                                datakaryawan: String(formData.get('karyawanCekValue')),
-                                informasi: String(formData.get('informasiCekValue')),
-                                jobdesk: String(formData.get('jobdeskCekValue')),
-                            }
-                        }
-                    }
-                })
-                return NextResponse.json({ status: 200, pesan: "berhasil" })
-            }
-            else
-                if ((formData.get('password')) === '') {
-                    await prisma.karyawanTb.update({
-                        where: {
-                            id: Number(params.id)
-                        },
-                        data: {
-                            nama: String(formData.get('nama')),
-                            tempatLahir: String(formData.get('tempatlahir')),
-                            tanggalLahir: String(formData.get('tanggallahir')),
-                            alamat: String(formData.get('alamat')),
-                            hp: String(formData.get('hp')),
-                            email: String(formData.get('email')),
-                            divisiId: Number(formData.get('divisiId')),
-                            UserTb: {
-                                update: {
-                                    usernama: String(formData.get('email')),
-                                    status: String(formData.get('namadivisi'))
-                                }
-                            },
-                            HakAksesTb: {
-                                update: {
-                                    datakaryawan: String(formData.get('karyawanCekValue')),
-                                    informasi: String(formData.get('informasiCekValue')),
-                                    jobdesk: String(formData.get('jobdeskCekValue')),
-                                }
-                            }
-                        }
-                    })
-                    return NextResponse.json({ status: 200, pesan: "berhasil" })
                 }
-                else {
+            })
+        }
 
-                    await prisma.karyawanTb.update({
-                        where: {
-                            id: Number(params.id)
-                        },
-                        data: {
-                            nama: String(formData.get('nama')),
-                            tempatLahir: String(formData.get('tempatlahir')),
-                            tanggalLahir: String(formData.get('tanggallahir')),
-                            alamat: String(formData.get('alamat')),
-                            hp: String(formData.get('hp')),
-                            email: String(formData.get('email')),
-                            divisiId: Number(formData.get('divisiId')),
-                            UserTb: {
-                                update: {
-                                    usernama: String(formData.get('email')),
-                                    password: await bcrypt.hash(String(formData.get('password')), 10),
-                                    status: String(formData.get('namadivisi'))
-                                }
-                            },
-                            HakAksesTb: {
-                                update: {
-                                    datakaryawan: String(formData.get('karyawanCekValue')),
-                                    informasi: String(formData.get('informasiCekValue')),
-                                    jobdesk: String(formData.get('jobdeskCekValue')),
-                                }
-                            }
-                        }
-                    })
-                    return NextResponse.json({ status: 200, pesan: "berhasil" })
-                }
+        return NextResponse.json({ status: 200, pesan: "berhasil" })
+
     } finally {
-        await prisma.$disconnect();
     }
 }
 
@@ -175,7 +111,6 @@ export const GET = async (request: Request, { params }: { params: { id: string }
         });
         return NextResponse.json(karyawan, { status: 200 })
     } finally {
-        await prisma.$disconnect();
     }
 }
 
@@ -188,6 +123,5 @@ export const DELETE = async (request: Request, { params }: { params: { id: strin
         })
         return NextResponse.json(karyawan, { status: 200 })
     } finally {
-        await prisma.$disconnect();
     }
 }

@@ -25,7 +25,7 @@ const Karyawan = () => {
   },[datakaryawan])
 
   async function karyawan() {
-    const response = await axios.get(`/admin/api/karyawan`);
+    const response = await axios.get(`/admin/api/superadmin`);
     const data = response.data;
     setDatakaryawan(data)
   }
@@ -92,8 +92,6 @@ const Karyawan = () => {
 
                 <Column header="No" headerStyle={{ width: '3rem' }} body={(data, options) => options.rowIndex + 1}></Column>
                 <Column field="nama" header="Nama Karyawan" style={{ width: 200 }}></Column>
-                <Column field="alamat" header="Alamat" style={{ width: 200 }}></Column>
-                <Column field="hp" header="No Hp" style={{ width: 100 }}></Column>
                 <Column field="DivisiTb.nama" header="Divisi" style={{ width: 100 }}></Column>
                 <Column body={action} header="Action" style={{ width: 100 }} ></Column>
               </DataTable>

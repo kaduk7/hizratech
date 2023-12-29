@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 import * as bcrypt from "bcrypt"
-import { createClient } from "@supabase/supabase-js"
+import { supabase,supabaseBUCKET } from "@/app/helper"
 
 
 const prisma = new PrismaClient()
-const supabaseUrl = 'https://mxvdfimkvwoeqxlkycai.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dmRmaW1rdndvZXF4bGt5Y2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDM0MzY0MjgsImV4cCI6MjAxOTAxMjQyOH0.MB60Xt9392SDM84HyhW8GQ31ShIirgptQasOYpJ2M-A'
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 export const PATCH = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
+
         const formData = await request.formData()
         const newpassword = formData.get('password')
 
@@ -74,35 +71,19 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
             })
         }
 
-
         if (formData.get('newfoto') === 'yes') {
-
-            const file = formData.get('file') as File;
-            const namaunik = Date.now() + '-' + file.name
-
-            const { data, error } = await supabase.storage
-                .from('uploadfile')
-                .upload(`foto-profil/${namaunik}`, file);
-
-            if (error) {
-                console.error('Gagal mengunggah file ke Supabase Storage', error);
-                return NextResponse.json({ pesan: 'Gagal mengunggah file' }, { status: 500 });
-            }
 
             await prisma.karyawanTb.update({
                 where: {
                     id: Number(params.id)
                 },
                 data: {
-                    foto: namaunik,
+                    foto: String(formData.get('namaunik')),
                 }
             })
         }
 
         return NextResponse.json({ status: 200, pesan: "berhasil" })
-    } finally {
-        await prisma.$disconnect();
-    }
 
 }
 
@@ -124,15 +105,3 @@ export const GET = async (request: Request, { params }: { params: { id: string }
     }
 }
 
-export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
-        const karyawan = await prisma.karyawanTb.delete({
-            where: {
-                id: Number(params.id)
-            }
-        })
-        return NextResponse.json(karyawan, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
-}

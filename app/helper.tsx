@@ -4,6 +4,7 @@ const currentTime= new Date();
 
 export let supabaseUrl = 'https://mxvdfimkvwoeqxlkycai.supabase.co'
 export let supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dmRmaW1rdndvZXF4bGt5Y2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDM0MzY0MjgsImV4cCI6MjAxOTAxMjQyOH0.MB60Xt9392SDM84HyhW8GQ31ShIirgptQasOYpJ2M-A'
+export let supabaseBUCKET = 'uploadfile'
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
 export function kalkulasiWaktu(newsTime: any) {
@@ -37,3 +38,52 @@ export function kalkulasiWaktu(newsTime: any) {
     }
 }
 
+export const StyleSelect = {
+    control: (provided: any, state: any) => ({
+        ...provided,
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        fontSize: 17,
+        boxShadow: state.isFocused ? '0 0 0 2px #007bff' : null,
+    }),
+    option: (provided: any, state: any) => ({
+        ...provided,
+        fontSize: 20,
+        color: "black",
+        fontFamily: "initial",
+    }),
+    menu: (provided: any) => ({
+        ...provided,
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    }),
+    menuList: (provided: any) => ({
+        ...provided,
+        maxHeight: '180px',
+        overflowY: 'auto',
+    }),
+};
+
+export const warnastatus = (status: any) => {
+    switch (status) {
+
+      case 'Proses':
+        return 'info';
+
+      case 'Selesai':
+        return 'success';
+
+      case 'Tolak':
+        return 'danger';
+
+      case 'Verifikasi':
+        return 'warning';
+
+      case 'Dalam Proses':
+        return 'info';
+
+    }
+  };
+
+  export const tglIndo=()=>{
+
+  }

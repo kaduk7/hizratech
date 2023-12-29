@@ -23,9 +23,9 @@ model DivisiTb {
 model KaryawanTb {
   id           Int      @id @default(autoincrement())
   nama         String
-  tempatLahir  String
-  tanggalLahir DateTime
-  alamat       String
+  tempatLahir  String?
+  tanggalLahir DateTime?
+  alamat       String?
   hp           String   @unique
   email        String   @unique
   divisiId     Int

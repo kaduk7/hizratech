@@ -5,6 +5,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import AvatarEditor from 'react-avatar-editor';
 import Modal from 'react-bootstrap/Modal';
+import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
 const Profil = () => {
     const [dataKaryawan, setDatakaryawan] = useState([{}])
@@ -21,8 +22,6 @@ const Profil = () => {
     const [foto, setFoto] = useState("")
     const [preview, setPreview] = useState("")
     const [file, setFile] = useState<File | null>()
-
-    
 
     const [show, setShow] = useState(false);
 
@@ -91,7 +90,6 @@ const Profil = () => {
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
         const newfoto = preview === foto ? 'no' : 'yes'
-
         try {
             const formData = new FormData()
             formData.append('nama', nama)
@@ -103,6 +101,17 @@ const Profil = () => {
             formData.append('password', password)
             formData.append('newfoto', newfoto)
             formData.append('file', file as File)
+
+            if (newfoto==='yes')  {
+                const foto = formData.get('file') as File;
+                const namaunik = Date.now() + '-' + foto.name
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`foto-profil/${namaunik}`, foto);
+
+                formData.append('namaunik', namaunik)
+            }
 
             const xxx = await axios.patch(`/admin/api/profil/${karyawanId}`, formData, {
                 headers: {
@@ -130,6 +139,8 @@ const Profil = () => {
                 })
 
             }
+
+
             if (xxx.data.pesan == 'berhasil') {
                 hapuspass()
                 Swal.fire({
@@ -163,7 +174,7 @@ const Profil = () => {
                             <div className="p-5">
                                 <div className="author-profile">
                                     <div className="author-media">
-                                        {file ? <img src={preview} width={200} className="mb-3 " alt="Responsive image" /> : <img src={`https://mxvdfimkvwoeqxlkycai.supabase.co/storage/v1/object/public/uploadfile/foto-profil/${preview}`} alt={""} className="mb-3 " width={200} height={200} />}
+                                        {file ? <img src={preview} width={200} className="mb-3 " alt="Responsive image" /> : <img src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${preview}`} alt={""} className="mb-3 " width={200} height={200} />}
                                         <div
                                             className="upload-link"
                                             title=""
@@ -298,7 +309,7 @@ const Profil = () => {
                 show={show}
                 onHide={handleClose}
                 backdrop="static"
-                
+
                 keyboard={false}>
 
 

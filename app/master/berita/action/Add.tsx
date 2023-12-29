@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { Editor } from '@tinymce/tinymce-react';
+import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
 function Add() {
     const [karyawanId, setKaryawanId] = useState('')
@@ -33,9 +34,9 @@ function Add() {
     }, [])
 
     const fetchDataprofil = async () => {
-            const response = await fetch(`/admin/api/profil`);
-            const result = await response.json();
-            setKaryawanId(result.id)
+        const response = await fetch(`/admin/api/profil`);
+        const result = await response.json();
+        setKaryawanId(result.id)
     }
 
     useEffect(() => {
@@ -67,6 +68,15 @@ function Add() {
             formData.append('karyawanId', karyawanId)
             formData.append('file', file as File)
 
+            const image = formData.get('file') as File;
+            const namaunik = Date.now() + '-' + image.name
+
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`berita-images/${namaunik}`, image);
+
+            formData.append('namaunik', namaunik)
+            
             const xxx = await axios.post(`/admin/api/berita`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -175,12 +185,12 @@ function Add() {
                                             'alignright alignjustify | bullist numlist outdent indent | ' +
                                             'removeformat | help |image',
                                         content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                        images_upload_url: '/upload', 
-                                        images_upload_base_path: '/images', 
-                                        images_upload_credentials: true, 
-                                        file_picker_types: 'image', 
+                                        images_upload_url: '/upload',
+                                        images_upload_base_path: '/images',
+                                        images_upload_credentials: true,
+                                        file_picker_types: 'image',
                                         file_picker_callback: (cb, value, meta) => {
-                                         
+
                                         },
                                     }}
                                     onEditorChange={handleEditorChange}

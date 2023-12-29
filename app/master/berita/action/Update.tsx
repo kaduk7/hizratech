@@ -9,6 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { Editor } from '@tinymce/tinymce-react';
 import Image from "next/image"
+import { supabase, supabaseBUCKET, supabaseUrl } from "@/app/helper"
 
 function Update({ berita }: { berita: BeritaTb }) {
 
@@ -62,6 +63,17 @@ function Update({ berita }: { berita: BeritaTb }) {
             formData.append('karyawanId', karyawanId)
             formData.append('newfoto', newfoto)
             formData.append('file', file as File)
+
+            if (newfoto==='yes') {
+                const image = formData.get('file') as File;
+                const namaunik = Date.now() + '-' + image.name
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`berita-images/${namaunik}`, image);
+
+                formData.append('namaunik', namaunik)
+            }
 
             const xxx = await axios.patch(`/admin/api/berita/${berita.id}`, formData, {
                 headers: {
@@ -138,7 +150,7 @@ function Update({ berita }: { berita: BeritaTb }) {
                             </div>
 
                             <div className="mb-3 col-md-6">
-                            {file ? <img src={preview2} width={200} className="mb-3 " alt="Responsive image" /> : <Image src={`/upload/${preview}`} alt={""} className="mb-3 " width={200} height={200} />}
+                                {file ? <img src={preview2} width={200} className="mb-3 " alt="Responsive image" /> : <img src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${preview}`} alt={""} className="mb-3 " width={200} height={150} />}
                             </div>
 
 
