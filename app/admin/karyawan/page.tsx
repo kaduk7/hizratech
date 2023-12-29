@@ -113,7 +113,7 @@ const Karyawan = () => {
                           <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>{x.DivisiTb.nama}</td>
                           <td width={100}>
                             <div className="d-flex">
-                              <Update karyawan={x} hakAkses={x.HakAksesTb} caridivisiId={x.DivisiTb} />
+                              <Update karyawan={x} hakAkses={x.HakAksesTb} caridivisi={x.DivisiTb} />
                               <Delete karyawanId={x.id} />
                             </div>
                           </td>

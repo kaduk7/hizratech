@@ -9,7 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { useSession } from "next-auth/react"
 
-function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisiId: DivisiTb }) {
+function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisi: DivisiTb }) {
     const session = useSession()
     const [nama, setNama] = useState(karyawan.nama)
     const [tempatLahir, setTempatlahir] = useState(karyawan?.tempatLahir || "")
@@ -19,7 +19,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState(karyawan.email)
     const [divisiId, setDivisiId] = useState(String(karyawan.divisiId))
-    const [namadivisi, setNamadivisi] = useState(caridivisiId.nama)
+    const [namadivisi, setNamadivisi] = useState(caridivisi.nama)
     const [selectdivisi, setSelectdivisi] = useState([])
 
     const [karyawanCek, setKaryawanCek] = useState(false)
@@ -39,7 +39,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
     const handleShow = () => {
         setShow(true);
-
+        setNamadivisi(caridivisi.nama)
     }
 
     useEffect(() => {
@@ -81,7 +81,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
         setHp(karyawan.hp)
         setEmail(karyawan.email)
         setDivisiId(String(karyawan.divisiId))
-        setNamadivisi(caridivisiId.nama)
+        setNamadivisi(caridivisi.nama)
         setPassword('')
         setKaryawanCek(false)
         setInformasiCek(false)
