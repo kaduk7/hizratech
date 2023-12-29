@@ -39,7 +39,6 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
 
     const handleShow = () => {
         setShow(true);
-        setNamadivisi(caridivisi.nama)
     }
 
     useEffect(() => {
@@ -66,11 +65,10 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     }
 
     const onDivisi = async (e: any) => {
-
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const selectedLabel = selectedOption.getAttribute("label");
         setDivisiId(e.target.value);   
-        const xxx = await axios.get(`/admin/api/divisi/${e.target.value}`)
-        setNamadivisi(xxx.data.nama)
-        console.log(xxx.data.nama)
+        setNamadivisi(selectedLabel)
     }
 
     const refreshform = () => {
