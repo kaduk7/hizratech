@@ -25,9 +25,9 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     const [karyawanCek, setKaryawanCek] = useState(false)
     const [informasiCek, setInformasiCek] = useState(false)
     const [jobdeskCek, setJobdeskCek] = useState(false)
-    const [karyawanCekValue, setKaryawanCekValue] = useState("Tidak")
-    const [informasiCekValue, setInformasiCekValue] = useState("Tidak")
-    const [jobdeskCekValue, setJobdeskCekValue] = useState("Tidak")
+    const [karyawanCekValue, setKaryawanCekValue] = useState(hakAkses.datakaryawan)
+    const [informasiCekValue, setInformasiCekValue] = useState(hakAkses.informasi)
+    const [jobdeskCekValue, setJobdeskCekValue] = useState(hakAkses.jobdesk)
     const [st, setSt] = useState(false);
     const router = useRouter()
     const [show, setShow] = useState(false)
@@ -45,16 +45,13 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
         divisi();
         if (hakAkses.datakaryawan === "Ya") {
             setKaryawanCek(true)
-            setKaryawanCekValue("Ya")
         }
 
         if (hakAkses.informasi === "Ya") {
             setInformasiCek(true)
-            setInformasiCekValue("Ya")
         }
         if (hakAkses.jobdesk === "Ya") {
             setJobdeskCek(true)
-            setJobdeskCekValue("Ya")
         }
     }, [])
 
@@ -81,9 +78,6 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
         setDivisiId(String(karyawan.divisiId))
         setNamadivisi(caridivisi.nama)
         setPassword('')
-        setKaryawanCek(false)
-        setInformasiCek(false)
-        setJobdeskCek(false)
     }
 
     const hapuspass = () => {
@@ -138,9 +132,6 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
             if (xxx.data.pesan == 'berhasil') {
                 setShow(false);
                 hapuspass()
-                setKaryawanCek(false)
-                setInformasiCek(false)
-                setJobdeskCek(false)
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',

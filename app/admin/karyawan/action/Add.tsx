@@ -62,12 +62,11 @@ function Add() {
     }
 
     const onDivisi = async (e: any) => {
-
-        setDivisiId(e.target.value);
-
-        const xxx = await axios.get(`/admin/api/divisi/${e.target.value}`)
-
-        setNamadivisi(xxx.data.nama)
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const selectedLabel = selectedOption.getAttribute("label");
+        setDivisiId(e.target.value);   
+        setNamadivisi(selectedLabel)
+        console.log(selectedLabel)
     }
 
     function clearForm() {
@@ -236,7 +235,7 @@ function Add() {
                                     value={divisiId} onChange={onDivisi}>
                                     <option value={''}> Pilih Divisi</option>
                                     {selectdivisi?.map((item: any, i) => (
-                                        <option key={i} value={item.id} >{item.nama}</option>
+                                        <option key={i} value={item.id} label={item.nama} >{item.nama}</option>
                                     ))}
                                 </select>
                             </div>
