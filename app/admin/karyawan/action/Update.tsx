@@ -96,8 +96,8 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
-        const newpass = password == "" ? 'no' : 'yes'
-        const newadmin = namadivisi == "" ? 'no' : 'yes'
+        const newpass = password === "" ? 'no' : 'yes'
+        const newadmin = namadivisi === "" ? 'no' : 'yes'
         console.log('ttt', newadmin)
         try {
             const formData = new FormData()
