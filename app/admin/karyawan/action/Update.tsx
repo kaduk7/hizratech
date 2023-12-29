@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { useState, SyntheticEvent, useEffect } from "react"
-import { HakAksesTb, KaryawanTb } from "@prisma/client"
+import { DivisiTb, HakAksesTb, KaryawanTb } from "@prisma/client"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
@@ -9,7 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { useSession } from "next-auth/react"
 
-function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisiId: Number }) {
+function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisiId: DivisiTb }) {
     const session = useSession()
     const [nama, setNama] = useState(karyawan.nama)
     const [tempatLahir, setTempatlahir] = useState(karyawan?.tempatLahir || "")
@@ -19,7 +19,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState(karyawan.email)
     const [divisiId, setDivisiId] = useState(String(karyawan.divisiId))
-    const [namadivisi, setNamadivisi] = useState("")
+    const [namadivisi, setNamadivisi] = useState(caridivisiId.nama)
     const [selectdivisi, setSelectdivisi] = useState([])
 
     const [karyawanCek, setKaryawanCek] = useState(false)
@@ -67,11 +67,10 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
 
     const onDivisi = async (e: any) => {
 
-        setDivisiId(e.target.value);
-
+        setDivisiId(e.target.value);   
         const xxx = await axios.get(`/admin/api/divisi/${e.target.value}`)
-
         setNamadivisi(xxx.data.nama)
+        console.log(xxx.data.nama)
     }
 
     const refreshform = () => {
@@ -82,7 +81,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
         setHp(karyawan.hp)
         setEmail(karyawan.email)
         setDivisiId(String(karyawan.divisiId))
-        setNamadivisi('')
+        setNamadivisi(caridivisiId.nama)
         setPassword('')
         setKaryawanCek(false)
         setInformasiCek(false)
@@ -90,15 +89,12 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
     }
 
     const hapuspass = () => {
-        setNamadivisi('')
         setPassword('')
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
         const newpass = password == "" ? 'no' : 'yes'
-        const newadmin = namadivisi === "" ? 'no' : 'yes'
-        console.log('s',newadmin)
         try {
             const formData = new FormData()
             formData.append('nama', nama)
@@ -109,7 +105,6 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
             formData.append('email', email)
             formData.append('password', password)
             formData.append('newpass', newpass)
-            formData.append('newadmin', newadmin)
             formData.append('divisiId', divisiId)
             formData.append('namadivisi', namadivisi)
             formData.append('karyawanCekValue', karyawanCekValue)
@@ -245,7 +240,7 @@ function Update({ karyawan, hakAkses, caridivisiId }: { karyawan: KaryawanTb, ha
                                     value={divisiId} onChange={onDivisi}>
                                     <option value={''}> Pilih Divisi</option>
                                     {selectdivisi?.map((item: any, i) => (
-                                        <option key={i} value={item.id} >{item.nama}</option>
+                                        <option key={i} value={item.id} label={item.nama} >{item.nama}</option>
                                     ))}
                                 </select>
                             </div>

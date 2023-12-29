@@ -8,7 +8,6 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
     try {
         const formData = await request.formData()
         const newpass = formData.get('newpass')
-        const newadmin = formData.get('newadmin')
         const cekhp = await prisma.karyawanTb.findMany({
             where: {
                 hp: String(formData.get('hp')),
@@ -50,6 +49,7 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
                 UserTb: {
                     update: {
                         usernama: String(formData.get('email')),
+                        status: String(formData.get('namadivisi'))
                     }
                 },
                 HakAksesTb: {
@@ -71,21 +71,6 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
                     UserTb: {
                         update: {
                             password: await bcrypt.hash(String(formData.get('password')), 10),
-                        }
-                    },
-                }
-            })
-        }
-
-        if (newadmin === 'yes') {
-            await prisma.karyawanTb.update({
-                where: {
-                    id: Number(params.id)
-                },
-                data: {
-                    UserTb: {
-                        update: {
-                            status: String(formData.get('namadivisi'))
                         }
                     },
                 }
