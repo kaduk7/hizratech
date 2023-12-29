@@ -35,6 +35,7 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     const handleClose = () => {
         setShow(false);
         refreshform()
+        hakAksesceklis()
     }
 
     const handleShow = () => {
@@ -43,6 +44,10 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
 
     useEffect(() => {
         divisi();
+        hakAksesceklis()
+    }, [])
+
+    const hakAksesceklis=()=>{
         if (hakAkses.datakaryawan === "Ya") {
             setKaryawanCek(true)
         }
@@ -53,7 +58,7 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
         if (hakAkses.jobdesk === "Ya") {
             setJobdeskCek(true)
         }
-    }, [])
+    }
 
     async function divisi() {
         const response = await axios.get(`/admin/api/divisi`);
