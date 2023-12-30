@@ -8,30 +8,30 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
     const formData = await request.formData()
     const ket = formData.get('keteranganAkhir')
 
-    const file = formData.get('file') as File;
-    const namaunik = Date.now() + '-' + file.name
-    await supabase.storage
-        .from(supabaseBUCKET)
-        .upload(`file/${namaunik}`, file);
+    // const file = formData.get('file') as File;
+    // const namaunik = Date.now() + '-' + file.name
+    // await supabase.storage
+    //     .from(supabaseBUCKET)
+    //     .upload(`file/${namaunik}`, file);
 
-    const fileSuratTugas = formData.get('fileSurat') as File;
-    const namaunikSurat = Date.now() + '-' + fileSuratTugas.name
-    await supabase.storage
-        .from(supabaseBUCKET)
-        .upload(`file/${namaunikSurat}`, fileSuratTugas);
+    // const fileSuratTugas = formData.get('fileSurat') as File;
+    // const namaunikSurat = Date.now() + '-' + fileSuratTugas.name
+    // await supabase.storage
+    //     .from(supabaseBUCKET)
+    //     .upload(`file/${namaunikSurat}`, fileSuratTugas);
 
 
-    const fileBeritaAcara = formData.get('fileBerita') as File;
-    const namaunikBerita = Date.now() + '-' + fileBeritaAcara.name
-    await supabase.storage
-        .from(supabaseBUCKET)
-        .upload(`file/${namaunikBerita}`, fileBeritaAcara);
+    // const fileBeritaAcara = formData.get('fileBerita') as File;
+    // const namaunikBerita = Date.now() + '-' + fileBeritaAcara.name
+    // await supabase.storage
+    //     .from(supabaseBUCKET)
+    //     .upload(`file/${namaunikBerita}`, fileBeritaAcara);
 
-    const fileAnggaran = formData.get('fileAnggaran') as File;
-    const namaunikAnggaran = Date.now() + '-' + fileAnggaran.name
-    await supabase.storage
-        .from(supabaseBUCKET)
-        .upload(`file/${namaunikAnggaran}`, fileAnggaran);
+    // const fileAnggaran = formData.get('fileAnggaran') as File;
+    // const namaunikAnggaran = Date.now() + '-' + fileAnggaran.name
+    // await supabase.storage
+    //     .from(supabaseBUCKET)
+    //     .upload(`file/${namaunikAnggaran}`, fileAnggaran);
 
     await prisma.jobdeskTb.update({
         where: {
@@ -39,10 +39,10 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
         },
         data: {
             tanggalPelaksanaan: String(formData.get('tanggalkerja')),
-            file: namaunik,
-            suratTugas: namaunikSurat,
-            beritaAcara: namaunikBerita,
-            laporanAnggaran: namaunikAnggaran,
+            file: String(formData.get('namaunik')),
+            suratTugas: String(formData.get('namaunikSurat')),
+            beritaAcara: String(formData.get('namaunikBerita')),
+            laporanAnggaran: String(formData.get('namaunikAnggaran')),
             status: "Selesai"
         }
     })

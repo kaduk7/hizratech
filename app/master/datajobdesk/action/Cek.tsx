@@ -9,7 +9,7 @@ import Swal from "sweetalert2"
 import { Button } from "primereact/button"
 import moment from "moment"
 import { Editor } from '@tinymce/tinymce-react';
-import { supabaseUrl, supabaseBUCKET } from "@/app/helper";
+import { supabase, supabaseUrl, supabaseBUCKET } from "@/app/helper";
 
 function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: KaryawanTb }) {
     const [namaJob, setNamajob] = useState(jobdesk.namaJob)
@@ -24,11 +24,11 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
     const [tanggalkerjaValue, setTanggalkerjaValue] = useState(moment(jobdesk?.tanggalPelaksanaan).format("DD-MM-YYYY"))
     const [fileValue, setFileValue] = useState(jobdesk?.file)
     const [keteranganAkhirValue, setKeteranganAkhirValue] = useState(jobdesk?.keteranganAkhir)
-    
+
     const [fileSuratTugasValue, setFileSuratTugasValue] = useState(jobdesk.suratTugas)
     const [fileBeritaAcaraValue, setFileBeritaAcaraValue] = useState(jobdesk.beritaAcara)
     const [fileAnggaranValue, setFileAnggaranValue] = useState(jobdesk.laporanAnggaran)
-    
+
     const [fileSuratTugas, setFileSuratTugas] = useState<File | null>()
     const [fileBeritaAcara, setFileBeritaAcara] = useState<File | null>()
     const [fileAnggaran, setFileAnggaran] = useState<File | null>()
@@ -40,7 +40,7 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
-    
+
     const handleClose = () => {
         setShow(false);
         setShow2(false);
@@ -96,6 +96,36 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
             formData.append('fileBerita', fileBeritaAcara as File)
             formData.append('fileAnggaran', fileAnggaran as File)
             formData.append('keteranganAkhir', keteranganAkhir)
+
+            const file2 = formData.get('file') as File;
+            const namaunik = Date.now() + '-' + file2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunik}`, file2);
+
+            const fileSuratTugas2 = formData.get('fileSurat') as File;
+            const namaunikSurat = Date.now() + '-' + fileSuratTugas2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunikSurat}`, fileSuratTugas2);
+
+
+            const fileBeritaAcara2 = formData.get('fileBerita') as File;
+            const namaunikBerita = Date.now() + '-' + fileBeritaAcara2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunikBerita}`, fileBeritaAcara2);
+
+            const fileAnggaran2 = formData.get('fileAnggaran') as File;
+            const namaunikAnggaran = Date.now() + '-' + fileAnggaran2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunikAnggaran}`, fileAnggaran2);
+
+            formData.append('namaunik', namaunik)
+            formData.append('namaunikSurat', namaunikSurat)
+            formData.append('namaunikBerita', namaunikBerita)
+            formData.append('namaunikAnggaran', namaunikAnggaran)
 
             const xxx = await axios.patch(`/master/api/selesaijob/${jobdesk.id}`, formData, {
                 headers: {
