@@ -21,7 +21,7 @@ export default function () {
             <script src="/tema/js/plugins-init/pickadate-init.js"></script>
             <script src="/tema/vendor/dropzone/dist/dropzone.js"></script>
 
-            <script src="https://cdn.tiny.cloud/1/0ypyb1jcjoicj8najh9nhoa0prfize4qpntznw7dpmulpl3s/tinymce/5/tinymce.min.js" referrerPolicy="origin"></script>
+            <script src="https://cdn.tiny.cloud/1/emtec8gglx2xmnghkihdvfmqlvnn6z3frnbpx5vb44dcknfp/tinymce/5/tinymce.min.js" referrerPolicy="origin"></script>
 
 
         </>
