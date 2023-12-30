@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export const PATCH = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const formData = await request.formData()
 
         if (formData.get('konfirm') === 'terima') {
@@ -33,14 +32,12 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
 
             return NextResponse.json({ status: 200, pesan: "berhasil" })
         }
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 
 export const GET = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
+
         const requestjobdesk = await prisma.jobdeskTb.findMany({
             where: {
                 OR: [
@@ -63,7 +60,5 @@ export const GET = async (request: Request, { params }: { params: { id: string }
             }
         });
         return NextResponse.json(requestjobdesk, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }

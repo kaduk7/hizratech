@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "KaryawanTb" ALTER COLUMN "tempatLahir" DROP NOT NULL,
-ALTER COLUMN "tanggalLahir" DROP NOT NULL,
-ALTER COLUMN "alamat" DROP NOT NULL;

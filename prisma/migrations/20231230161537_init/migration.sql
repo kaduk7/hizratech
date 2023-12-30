@@ -12,9 +12,9 @@ CREATE TABLE "DivisiTb" (
 CREATE TABLE "KaryawanTb" (
     "id" SERIAL NOT NULL,
     "nama" TEXT NOT NULL,
-    "tempatLahir" TEXT NOT NULL,
-    "tanggalLahir" TIMESTAMP(3) NOT NULL,
-    "alamat" TEXT NOT NULL,
+    "tempatLahir" TEXT,
+    "tanggalLahir" TIMESTAMP(3),
+    "alamat" TEXT,
     "hp" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "divisiId" INTEGER NOT NULL,

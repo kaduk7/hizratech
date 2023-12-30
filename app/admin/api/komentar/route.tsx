@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 import { join } from "path"
-import { promises as fsPromises } from "fs"
-import { getToken } from "next-auth/jwt"
+
 
 const prisma = new PrismaClient()
 
 export const POST = async (request: Request) => {
-    try {
+
         const formData = await request.formData()
 
         await prisma.komentarTb.create({
@@ -19,8 +18,7 @@ export const POST = async (request: Request) => {
             },
         })
         return NextResponse.json({ pesan: 'berhasil' })
-    } finally {
-    }
+
 }
 
 

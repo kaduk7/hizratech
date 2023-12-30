@@ -5,7 +5,6 @@ const prisma = new PrismaClient()
 
 
 export const GET = async () => {
-    try {
         const jobdesk = await prisma.requestJobdeskTb.findMany({
             where: {
                 OR: [
@@ -25,9 +24,7 @@ export const GET = async () => {
             }
         });
         return NextResponse.json(jobdesk, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 

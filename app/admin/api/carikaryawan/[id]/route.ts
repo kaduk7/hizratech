@@ -5,7 +5,7 @@ import * as bcrypt from "bcrypt"
 const prisma = new PrismaClient()
 
 export const PATCH = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
+
         const formData = await request.formData()
         const cekhp = await prisma.karyawanTb.findMany({
             where: {
@@ -54,34 +54,28 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
             }
         })
         return NextResponse.json({ status: 200, pesan: "berhasil" })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 
 export const GET = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
+
         const karyawan = await prisma.karyawanTb.findUnique({
             where: {
                 id: Number(params.id)
             }
         });
         return NextResponse.json(karyawan, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
-try{
+
     const karyawan = await prisma.karyawanTb.delete({
         where: {
             id: Number(params.id)
         }
     })
     return NextResponse.json(karyawan, { status: 200 })
-} finally {
-    await prisma.$disconnect();
-}
+
 }

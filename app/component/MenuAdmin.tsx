@@ -117,7 +117,7 @@ export default function MenuAdmin() {
                         </Link>
                     </li>
 
-                    <li className="menu-title">Laporan</li>
+                    {/* <li className="menu-title">Laporan</li>
                     <li>
                         <a href="#laporan" className="has-arrow " aria-expanded="false">
                             <div className="menu-icon">
@@ -138,7 +138,7 @@ export default function MenuAdmin() {
                                 <Link href="/admin/labapenjualan">Laporan Laba Penjualan</Link>
                             </li>
                         </ul>
-                    </li>
+                    </li> */}
 
                 </ul>
                 <div className="switch-btn">

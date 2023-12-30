@@ -5,7 +5,6 @@ import { JobdeskTb } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export const PATCH = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const formData = await request.formData()
         const jobdesk = await prisma.jobdeskTb.update({
             where: {
@@ -20,27 +19,20 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
             }
         })
         return NextResponse.json({ status: 200, pesan: "berhasil" })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
-
 export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const jobdesk = await prisma.jobdeskTb.delete({
             where: {
                 id: Number(params.id)
             }
         })
         return NextResponse.json(jobdesk, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 export const GET = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const requestjobdesk = await prisma.jobdeskTb.findMany({
             where: {
                 OR: [
@@ -66,7 +58,5 @@ export const GET = async (request: Request, { params }: { params: { id: string }
             }
         });
         return NextResponse.json(requestjobdesk, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }

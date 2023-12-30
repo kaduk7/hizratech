@@ -59,7 +59,7 @@ export const POST = async (request: Request) => {
 }
 
 export const GET = async () => {
-    try {
+
         const karyawan = await prisma.karyawanTb.findMany({
             include: {
                 DivisiTb: true,
@@ -70,7 +70,4 @@ export const GET = async () => {
             }
         });
         return NextResponse.json(karyawan, { status: 200 })
-    } finally {
-       
-    }
 }

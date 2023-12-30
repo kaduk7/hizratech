@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 
 
 export const GET = async (request: NextRequest) => {
-    try {
+
         const berita = await prisma.beritaTb.findMany({
 
             include: {
@@ -19,8 +19,5 @@ export const GET = async (request: NextRequest) => {
         });
         return NextResponse.json(berita, { status: 200 })
 
-    } finally {
-        await prisma.$disconnect();
-    }
 }
 

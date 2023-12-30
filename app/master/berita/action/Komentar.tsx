@@ -5,46 +5,30 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import { BeritaTb, KaryawanTb } from "@prisma/client";
-import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
+import { supabase, supabaseUrl, supabaseBUCKET, kalkulasiWaktu } from '@/app/helper'
 
-function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb }) {
-    const [beritaId, setBeritaId] = useState(berita.id)
+function Komentar({ berita, karyawan, idkaryawan, kirimfoto }: { berita: BeritaTb, karyawan: KaryawanTb, idkaryawan: Number, kirimfoto: String }) {
     const [karyawanId, setKaryawanId] = useState('')
-    const [divisiadmin, setDivisiAdmin] = useState('')
-    const [dataKaryawan, setDataKaryawan] = useState([])
-    const [dataKomentarBerita, setDataKomentarBerita] = useState([])
-    const [previewAvatar, setPreviewAvatar] = useState(karyawan?.foto)
-    const [previewAvatarUser, setPreviewAvatarUser] = useState('')
+    const [previewAvatarUser, setPreviewAvatarUser] = useState(kirimfoto||'')
+
+    const [beritaId, setBeritaId] = useState(berita.id)
+    const [judul, setJudul] = useState(berita.judul)
     const [preview, setPreview] = useState(berita?.foto)
+    const [isi, setIsi] = useState(berita.isi)
+    const [previewAvatar, setPreviewAvatar] = useState(karyawan?.foto)
     const [namaKaryawan, setNamaKaryawan] = useState(karyawan.nama)
     const [tanggaldibuat, setTanggaldibuat] = useState(berita.createdAt)
-    const [judul, setJudul] = useState(berita.judul)
-    const [isi, setIsi] = useState(berita.isi)
+
+    const [dataKomentarBerita, setDataKomentarBerita] = useState([])
     const [komentar, setKomentar] = useState('');
 
-    const [currentTime, setCurrentTime] = useState(new Date());
-
-    const router = useRouter()
     const [show, setShow] = useState(false);
-    const ref = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        fetchDataTOKEN()
         fetchDataKomentarberita()
+        setKaryawanId(String(idkaryawan))
+        setPreviewAvatarUser(kirimfoto)
     }, [dataKomentarBerita])
-
-    const fetchDataTOKEN = async () => {
-        try {
-            const response = await axios.get(`/admin/api/tokenkaryawan`);
-            const result = await response.data;
-            setDataKaryawan(result)
-            setKaryawanId(result.id)
-            setDivisiAdmin(result.DivisiTb.nama)
-            setPreviewAvatarUser(result?.foto)
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
 
     const fetchDataKomentarberita = async () => {
         try {
@@ -62,7 +46,6 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
 
     const calculateRows = () => {
         const lineBreaks = (komentar.match(/\n/g) || []).length;
-        // Set minimal rows to 1
         return Math.max(lineBreaks + 1, 1);
     };
 
@@ -97,40 +80,6 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
             console.error('Error:', error);
         }
     }
-
-    const KalkulasiWaktu = (newsTime: any) => {
-        const timeDifference = currentTime.getTime() - new Date(newsTime).getTime();
-        const Hari = Math.floor(timeDifference / (24 * 1000 * 60 * 60));
-        const Jam = Math.floor(timeDifference / (1000 * 60 * 60));
-        const Menit = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        const Detik = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-        if (Hari <= 0 && Jam <= 0 && Menit <= 0) {
-            return ` Baru saja`;
-        }
-        if (Hari <= 0 && Jam <= 0) {
-            return ` ${Menit} menit yang lalu`;
-        }
-        if (Hari <= 0 && Jam > 0) {
-            return ` ${Jam} jam yang lalu`;
-        }
-        if (Hari > 0 && Hari <= 30) {
-            return `${Hari} hari yang lalu`;
-        }
-
-        if (Hari > 30 && Hari <= 360) {
-            const bulan = Math.floor(timeDifference / (24 * 1000 * 60 * 60) / 30);
-            return `${bulan} bulan yang lalu`;
-        }
-
-        if (Hari > 360) {
-            const tahun = Math.floor(timeDifference / (24 * 1000 * 60 * 60) / 360);
-            return `${tahun} tahun yang lalu`;
-        }
-    };
-
-
-
 
     return (
         <div>
@@ -167,7 +116,7 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                                         <u> {namaKaryawan}</u>
                                                     </a>
                                                 </h5>
-                                                <span>{KalkulasiWaktu(tanggaldibuat)}</span>
+                                                <span>{kalkulasiWaktu(tanggaldibuat)}</span>
                                             </div>
                                         </div>
 
@@ -251,10 +200,7 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                                 </label>{" "}
                                             </li>
                                         </ul>
-
                                     </div>
-
-
                                 </div>
 
                                 {dataKomentarBerita.map((x: any, index) => (
@@ -265,15 +211,12 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                                                 <span className="badge badge-secondary light border-0 badge-sm">{x.KaryawanTb.nama}</span>
                                                 <h4 dangerouslySetInnerHTML={{ __html: x.isi }}></h4>
                                                 <div>
-                                                    <span>{KalkulasiWaktu(x.createdAt)}</span>
+                                                    <span>{kalkulasiWaktu(x.createdAt)}</span>
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 ))}
-
                             </div>
                         </div>
                     </Modal.Body>
@@ -311,8 +254,6 @@ function Komentar({ berita, karyawan }: { berita: BeritaTb, karyawan: KaryawanTb
                 </form>
             </Modal>
         </div>
-
-
     )
 }
 

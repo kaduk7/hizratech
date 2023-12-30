@@ -6,16 +6,10 @@ import Update from './action/Update'
 import Delete from './action/Delete'
 import Link from 'next/link'
 import Komentar from './action/Komentar'
-import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
+import { supabaseUrl, supabaseBUCKET,kalkulasiWaktu } from '@/app/helper'
 
 const Berita = () => {
     const [dataBerita, setDataBerita] = useState([])
-    const [dataBeritaTerbaru, setDataBeritaTerbaru] = useState([])
-    const [dataBeritaTop, setDataBeritaTop] = useState([])
-    const [idTop, setIdTop] = useState('')
-    const [judulTop, setJudulTop] = useState('')
-    const [isiTop, setIsiTop] = useState('')
-    const [fotoTop, setFotoTop] = useState('')
     const [karyawanId, setKaryawanId] = useState('')
     const [namaAvatar, setNamaAvatar] = useState('')
     const [nama, setNama] = useState('')
@@ -23,26 +17,11 @@ const Berita = () => {
     const [namaDivisi, setNamadivisi] = useState("")
     const [foto, setFoto] = useState("")
     const [preview, setPreview] = useState("")
-    const [file, setFile] = useState<File | null>()
-    const [currentTime, setCurrentTime] = useState(new Date());
-
-    useEffect(() => {
-        if (!file) {
-            setPreview('')
-            return
-        }
-        const objectUrl = URL.createObjectURL(file)
-        setPreview(objectUrl)
-
-        return () => URL.revokeObjectURL(objectUrl)
-    }, [file])
 
     useEffect(() => {
         fetchDataberita()
-        fetchDataberitaterbaru()
-        fetchDataberitop()
         fetchDataprofil()
-    }, [dataBerita, dataBeritaTerbaru, dataBeritaTop])
+    }, [dataBerita])
 
     const fetchDataprofil = async () => {
         try {
@@ -71,138 +50,9 @@ const Berita = () => {
         }
     };
 
-    const fetchDataberitaterbaru = async () => {
-        try {
-            const response = await fetch(`/admin/api/beritaterbaru`);
-            const result = await response.json();
-            setDataBeritaTerbaru(result)
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    const fetchDataberitop = async () => {
-        try {
-            const response = await fetch(`/admin/api/beritatop`);
-            const result = await response.json();
-            setDataBeritaTop(result)
-            setIdTop(result.id)
-            setJudulTop(result.judul)
-            setIsiTop(result.isi)
-            setFotoTop(result?.foto)
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    const KalkulasiWaktu = (newsTime: any) => {
-        const timeDifference = currentTime.getTime() - new Date(newsTime).getTime();
-        const Hari = Math.floor(timeDifference / (24 * 1000 * 60 * 60));
-        const Jam = Math.floor(timeDifference / (1000 * 60 * 60));
-        const Menit = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        const Detik = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-        if (Hari <= 0 && Jam <= 0 && Menit <= 0) {
-            return ` Baru saja`;
-        }
-        if (Hari <= 0 && Jam <= 0) {
-            return ` ${Menit} menit yang lalu`;
-        }
-        if (Hari <= 0 && Jam > 0) {
-            return ` ${Jam} jam yang lalu`;
-        }
-        if (Hari > 0 && Hari <= 30) {
-            return `${Hari} hari yang lalu`;
-        }
-
-        if (Hari > 30 && Hari <= 360) {
-            const bulan = Math.floor(timeDifference / (24 * 1000 * 60 * 60) / 30);
-            return `${bulan} bulan yang lalu`;
-        }
-
-        if (Hari > 360) {
-            const tahun = Math.floor(timeDifference / (24 * 1000 * 60 * 60) / 360);
-            return `${tahun} tahun yang lalu`;
-        }
-    };
 
     return (
         <div>
-            <div className="row">
-                <div className="col-lg-12">
-                    <div className="profile card card-body px-3 pt-3 pb-0">
-                        <div className="profile-head">
-                            <div className="photo-content">
-                                <div className="cover-photo rounded" />
-                            </div>
-                            <div className="profile-info">
-                                <div className="profile-photo">
-                                    <img
-                                        src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${preview}`}
-                                        className="img-fluid rounded-circle"
-                                        alt=""
-                                    />
-                                </div>
-                                <div className="profile-details">
-                                    <div className="profile-name px-3 pt-2">
-                                        <h4 className="text-primary mb-0">{namaAvatar}</h4>
-                                        <p>{namaDivisi}</p>
-                                    </div>
-                                    <div className="profile-email px-2 pt-2">
-                                        <h4 className="text-muted mb-0">{email}</h4>
-                                        <p>Email</p>
-                                    </div>
-                                    <div className="dropdown ms-auto">
-                                        <a
-                                            href="#"
-                                            className="btn btn-primary light light light sharp"
-                                            data-bs-toggle="dropdown"
-                                            aria-expanded="true"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                xmlnsXlink="http://www.w3.org/1999/xlink"
-                                                width="15px"
-                                                height="15px"
-                                                viewBox="0 0 24 24"
-                                                version="1.1"
-                                            >
-                                                <g
-                                                    stroke="none"
-                                                    strokeWidth={1}
-                                                    fill="none"
-                                                    fillRule="evenodd"
-                                                >
-                                                    <rect x={0} y={0} width={24} height={24} />
-                                                    <circle fill="#000000" cx={5} cy={12} r={2} />
-                                                    <circle fill="#000000" cx={12} cy={12} r={2} />
-                                                    <circle fill="#000000" cx={19} cy={12} r={2} />
-                                                </g>
-                                            </svg>
-                                        </a>
-                                        <ul className="dropdown-menu dropdown-menu-end">
-                                            <li className="dropdown-item">
-                                                <i className="fa fa-user-circle text-primary me-2" /> View
-                                                profile
-                                            </li>
-                                            <li className="dropdown-item">
-                                                <i className="fa fa-users text-primary me-2" /> Add to close
-                                                friends
-                                            </li>
-                                            <li className="dropdown-item">
-                                                <i className="fa fa-plus text-primary me-2" /> Add to group
-                                            </li>
-                                            <li className="dropdown-item">
-                                                <i className="fa fa-ban text-primary me-2" /> Block
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div className="row">
                 <div className="col-xl-4">
                     <div className="row">
@@ -246,34 +96,14 @@ const Berita = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-xl-12">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="profile-blog">
-                                        <h5 className="text-primary d-inline">Today Highlights</h5>
-                                        <img
-                                            src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${fotoTop}`}
-                                            alt=""
-                                            className="img-fluid mt-4 mb-4 w-100 rounded"
-                                        />
-                                        <h4>
-                                            <Link href={`/master/detailberita/${idTop}`} className="text-black">
-                                                {judulTop}
-                                            </Link>
-                                        </h4>
-                                        <p className="mb-0 two-line-paragraph" dangerouslySetInnerHTML={{ __html: isiTop }}>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div className="col-xl-12">
                             <div className="card">
                                 <div className="card-body">
                                     <div className="profile-interest">
                                         <h5 className="text-primary d-inline">Gallery</h5>
 
-                                        <div className="row mt-4 sp4" id="lightgallery">
+                                        <div className="row mt-4 sp4" >
                                             {dataBerita.map((x: any, index) => (
 
                                                 <a
@@ -297,39 +127,7 @@ const Berita = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-xl-12">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="profile-news">
-                                        <h5 className="text-primary card-title d-inline">
-                                            Berita Terbaru
-                                        </h5>
-                                        {dataBeritaTerbaru.map((x: any, index) => (
-
-                                            <div className="media pt-3 pb-3" key={x.id}>
-                                                <img
-                                                    src={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/berita-images/${x.foto}`}
-                                                    alt="image"
-                                                    className="me-3 rounded"
-                                                    width={75}
-                                                />
-                                                <div className="media-body">
-                                                    <h5 className="m-b-5">
-                                                        <Link href={`/master/detailberita/${x.id}`} className="text-black">
-                                                            {x.judul}
-                                                        </Link>
-                                                    </h5>
-                                                    <p className="mb-0">
-                                                        <div className='two-line-paragraph' dangerouslySetInnerHTML={{ __html: x.isi }}></div>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
                 <div className="col-xl-8">
@@ -347,25 +145,11 @@ const Berita = () => {
                                                 Posts
                                             </a>
                                         </li>
-                                        {/* <li className="nav-item">
-                                            <a href="#about-me" data-bs-toggle="tab" className="nav-link">
-                                                About Me
-                                            </a>
-                                        </li>
-                                        <li className="nav-item">
-                                            <a
-                                                href="#profile-settings"
-                                                data-bs-toggle="tab"
-                                                className="nav-link"
-                                            >
-                                                Setting
-                                            </a>
-                                        </li> */}
                                     </ul>
                                     <div className="tab-content">
                                         <div id="my-posts" className="tab-pane fade active show">
                                             <>
-                                                <Add />
+                                                <Add idkaryawan={Number(karyawanId)} />
                                                 {dataBerita.map((x: any, index) => (
                                                     <div className="col-xl-12" key={x.id}>
                                                         <div className="card">
@@ -383,7 +167,7 @@ const Berita = () => {
                                                                                 <u> {x.KaryawanTb.nama}</u>
                                                                             </a>
                                                                         </h5>
-                                                                        <span>{KalkulasiWaktu(x.createdAt)}</span>
+                                                                        <span>{kalkulasiWaktu(x.createdAt)}</span>
                                                                     </div>
                                                                 </div>
                                                                 {String(x.karyawanId) === String(karyawanId) ?
@@ -474,35 +258,12 @@ const Berita = () => {
                                                                     />
                                                                 </div>
                                                                 <div className="post-see d-flex align-items-center mt-3">
-                                                                    <div className="avatar-list avatar-list-stacked">
-                                                                        {/* <img
-                                                                            src="images/contacts/pic1.jpg"
-                                                                            className="avatar rounded-circle"
-                                                                            alt=""
-                                                                        />
-                                                                        <img
-                                                                            src="images/contacts/pic777.jpg"
-                                                                            className="avatar rounded-circle"
-                                                                            alt=""
-                                                                        />
-                                                                        <img
-                                                                            src="images/contacts/pic666.jpg"
-                                                                            className="avatar rounded-circle"
-                                                                            alt=""
-                                                                        /> */}
-                                                                    </div>
                                                                     <Link href={`/master/detailberita/${x.id}`} className="mb-0 ms-3"><h2>{x.judul}</h2></Link>
                                                                 </div>
                                                                 <div className="mt-3 ms-3">
                                                                     <div className='col'>
                                                                         <a>
                                                                             <span style={{ fontSize: 15 }} className={'two-line-paragraph'} dangerouslySetInnerHTML={{ __html: x.isi }} />
-
-                                                                            {/* {!st && x.id ?
-                                                                                <a type='button' className='mt-1' style={{ fontWeight: 'bold' }} onClick={() => setSt(!st && x.id)} > Lihat selengkapnya</a>
-                                                                                :
-                                                                                null} */}
-
                                                                         </a>
                                                                     </div>
 
@@ -517,7 +278,7 @@ const Berita = () => {
                                                                         </label>
                                                                     </li>
                                                                     <li>
-                                                                        <Komentar berita={x} karyawan={x.KaryawanTb} />
+                                                                        <Komentar berita={x} karyawan={x.KaryawanTb} idkaryawan={Number(karyawanId)} kirimfoto={foto}/>
                                                                     </li>
                                                                     <li>
                                                                         <label className="me-3">

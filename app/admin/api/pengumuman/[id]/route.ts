@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export const PATCH = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const formData = await request.formData()
         const newdivisi = formData.get('newdivisi')
         const divisiId = formData.getAll('divisiId').map(Number);
@@ -45,27 +44,21 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
         }
 
         return NextResponse.json({ status: 200, pesan: "berhasil" })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 
 export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const pengumuman = await prisma.pengumumanTb.delete({
             where: {
                 id: Number(params.id)
             }
         })
         return NextResponse.json(pengumuman, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 export const GET = async (request: Request, { params }: { params: { id: string } }) => {
-    try {
         const xxx = await prisma.pengumumanDivisiTb.findMany({
             where: {
                 pengumumanId: Number(params.id)
@@ -78,7 +71,5 @@ export const GET = async (request: Request, { params }: { params: { id: string }
             }
         });
         return NextResponse.json(xxx, { status: 200 })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }

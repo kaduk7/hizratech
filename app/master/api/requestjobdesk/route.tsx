@@ -5,7 +5,7 @@ import { getToken } from "next-auth/jwt"
 const prisma = new PrismaClient()
 
 export const POST = async (request: Request) => {
-    try {
+
         const formData = await request.formData()
         const team = formData.getAll('team').map(String);
         await prisma.requestJobdeskTb.create({
@@ -22,13 +22,11 @@ export const POST = async (request: Request) => {
             },
         })
         return NextResponse.json({ pesan: 'berhasil' })
-    } finally {
-        await prisma.$disconnect();
-    }
+
 }
 
 export const GET = async (request: NextRequest) => {
-    try {
+ 
         const token = await getToken({
             req: request,
             secret: process.env.NEXTAUTH_SECRET
@@ -47,7 +45,6 @@ export const GET = async (request: NextRequest) => {
             }
         })
         return NextResponse.json(sekolah, { status: 201 })
-    } finally {
-    }
+
 }
 

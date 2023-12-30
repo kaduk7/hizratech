@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { supabase } from "@/app/helper"
 
 const prisma = new PrismaClient()
 
@@ -28,13 +27,6 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
     })
 
     if (newsurat === 'yes') {
-        // const fileSuratTugas = formData.get('fileSuratTugas') as File;
-        // const namaunikSurat = Date.now() + '-' + fileSuratTugas.name
-
-        // await supabase.storage
-        //     .from('uploadfile')
-        //     .upload(`file/${namaunikSurat}`, fileSuratTugas);
-
         await prisma.jobdeskTb.update({
             where: {
                 id: Number(params.id)
@@ -46,12 +38,6 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
     }
 
     if (newberita === 'yes') {
-        // const fileBeritaAcara = formData.get('fileBeritaAcara') as File;
-        // const namaunikBerita = Date.now() + '-' + fileBeritaAcara.name
-
-        // await supabase.storage
-        //     .from('uploadfile')
-        //     .upload(`file/${namaunikBerita}`, fileBeritaAcara);
 
         await prisma.jobdeskTb.update({
             where: {
@@ -64,12 +50,6 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
     }
 
     if (newanggaran === 'yes') {
-        // const fileAnggaran = formData.get('fileAnggaran') as File;
-        // const namaunikAnggaran = Date.now() + '-' + fileAnggaran.name
-
-        // await supabase.storage
-        //     .from('uploadfile')
-        //     .upload(`file/${namaunikAnggaran}`, fileAnggaran);
 
         await prisma.jobdeskTb.update({
             where: {
