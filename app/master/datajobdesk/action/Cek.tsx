@@ -19,24 +19,28 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
     const [status, setStatus] = useState(jobdesk.status)
     const [karyawanId, setKaryawanId] = useState(String(jobdesk.karyawanId))
     const [namakaryawan, setNamakaryawan] = useState(findkaryawan.nama)
-    const [tanggalkerja, setTanggalkerja] = useState('')
-    const [file, setFile] = useState<File | null>()
-    const [fileSuratTugas, setFileSuratTugas] = useState<File | null>()
-    const [fileBeritaAcara, setFileBeritaAcara] = useState<File | null>()
-    const [fileAnggaran, setFileAnggaran] = useState<File | null>()
+    const [namateam, setNamateam] = useState('');
+
     const [tanggalkerjaValue, setTanggalkerjaValue] = useState(moment(jobdesk?.tanggalPelaksanaan).format("DD-MM-YYYY"))
     const [fileValue, setFileValue] = useState(jobdesk?.file)
+    const [keteranganAkhirValue, setKeteranganAkhirValue] = useState(jobdesk?.keteranganAkhir)
+    
     const [fileSuratTugasValue, setFileSuratTugasValue] = useState(jobdesk.suratTugas)
     const [fileBeritaAcaraValue, setFileBeritaAcaraValue] = useState(jobdesk.beritaAcara)
     const [fileAnggaranValue, setFileAnggaranValue] = useState(jobdesk.laporanAnggaran)
+    
+    const [fileSuratTugas, setFileSuratTugas] = useState<File | null>()
+    const [fileBeritaAcara, setFileBeritaAcara] = useState<File | null>()
+    const [fileAnggaran, setFileAnggaran] = useState<File | null>()
+
+    const [file, setFile] = useState<File | null>()
+    const [tanggalkerja, setTanggalkerja] = useState('')
     const [keteranganAkhir, setKeteranganAkhir] = useState("")
-    const [keteranganAkhirValue, setKeteranganAkhirValue] = useState(jobdesk?.keteranganAkhir)
-    const [namateam, setNamateam] = useState('');
+
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
-    const ref = useRef<HTMLInputElement>(null);
-
+    
     const handleClose = () => {
         setShow(false);
         setShow2(false);

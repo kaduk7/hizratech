@@ -8,7 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 import moment from "moment"
 import Select from 'react-select';
-import { supabase,supabaseBUCKET,supabaseUrl } from "@/app/helper"
+import { supabase,supabaseBUCKET,supabaseUrl,StyleSelect } from "@/app/helper"
 
 function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanTb }) {
 
@@ -66,10 +66,27 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
         setNamaterpilih(namaTeam)
     }, [])
 
-    useEffect(() => {
-        const selectedData = dataKaryawan.filter((option: any) => team.includes(option.value));
-        setSelectedOptions(selectedData);
-    }, [team, dataKaryawan]);
+    async function divisi() {
+        const response = await axios.get(`/admin/api/divisi`);
+        const data = response.data;
+        setSelectdivisi(data)
+    }
+
+    async function carikaryawan() {
+        const xxx = await axios.get(`/admin/api/karyawan/${karyawan.divisiId}`)
+        setSelectkaryawan(xxx.data)
+        setKaryawanId(String(jobdesk.karyawanId))
+    }
+
+    async function daftarkaryawan() {
+        const response = await axios.get(`/admin/api/notkaryawan/${jobdesk.karyawanId}`);
+        const data = response.data;
+        const options = data.map((item: any) => ({
+            value: item.id,
+            label: item.nama,
+        }));
+        setDataKaryawan(options)
+    }
 
     useEffect(() => {
         if (!fileSuratTugas) {
@@ -104,34 +121,16 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
         return () => URL.revokeObjectURL(objectUrlAnggaran)
     }, [fileAnggaran])
 
-    async function carikaryawan() {
-        const xxx = await axios.get(`/admin/api/karyawan/${karyawan.divisiId}`)
-        setSelectkaryawan(xxx.data)
-        setKaryawanId(String(jobdesk.karyawanId))
-    }
+    useEffect(() => {
+        const selectedData = dataKaryawan.filter((option: any) => team.includes(option.value));
+        setSelectedOptions(selectedData);
+    }, [team, dataKaryawan]);
 
     const handleSelectChange = (selectedOptions: any) => {
         setTeam(selectedOptions.map((option: any) => option.value));
         const terpilih = JSON.stringify(selectedOptions)
         setNamaterpilih(terpilih)
     };
-
-
-    async function daftarkaryawan() {
-        const response = await axios.get(`/admin/api/notkaryawan/${jobdesk.karyawanId}`);
-        const data = response.data;
-        const options = data.map((item: any) => ({
-            value: item.id,
-            label: item.nama,
-        }));
-        setDataKaryawan(options)
-    }
-
-    async function divisi() {
-        const response = await axios.get(`/admin/api/divisi`);
-        const data = response.data;
-        setSelectdivisi(data)
-    }
 
     const onDivisi = async (e: any) => {
         setDivisiId(e.target.value)
@@ -235,22 +234,6 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
         }
     }
 
-
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            boxShadow: state.isFocused ? '0 0 0 2px #007bff' : null,
-        }),
-        option: (provided: any, state: any) => ({
-            ...provided,
-            fontSize: 20,
-            color: "black",
-            fontFamily: "initial",
-        }),
-    };
-
     return (
         <>
             <span onClick={handleShow} className="btn btn-success shadow btn-xl sharp mx-1"><i className="fa fa-edit"></i></span>
@@ -308,7 +291,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                                         options={dataKaryawan}
                                         value={selectedOptions}
                                         onChange={handleSelectChange}
-                                        styles={customStyles}
+                                        styles={StyleSelect}
                                     />
                                 </div>
                             </div> :

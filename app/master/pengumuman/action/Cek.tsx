@@ -13,11 +13,8 @@ function Cek({ pengumuman }: { pengumuman: PengumumanTb }) {
     const [judul, setJudul] = useState(pengumuman.judul)
     const [tanggalPengumuman, setTanggalPengumuman] = useState(moment(pengumuman.tanggalPengumuman).format("DD-MM-YYYY"))
     const [isi, setIsi] = useState(pengumuman.isi)
-    const [file, setFile] = useState<File | null>()
 
-    const router = useRouter()
     const [show, setShow] = useState(false);
-    const ref = useRef<HTMLInputElement>(null);
 
     const handleClose = () => {
         setShow(false);

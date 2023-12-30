@@ -6,7 +6,6 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
-import { Button } from "primereact/button"
 import moment from "moment"
 
 function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
@@ -17,11 +16,9 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
     const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("YYYY-MM-DD"))
     const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
     const [alasan, setAlasan] = useState("")
-    const [karyawanId, setKaryawanId] = useState(String(jobdesk.karyawanId))
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
-    const ref = useRef<HTMLInputElement>(null);
 
 
     const handleClose = () => {
@@ -115,15 +112,11 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
         }
     }
 
-    useEffect(() => {
-
-    }, [])
-
     const refreshform = () => {
         setNamajob(jobdesk.namaJob)
         setKeterangan(jobdesk.keterangan)
         setDeadline(moment(jobdesk.deadline).format("YYYY-MM-DD"))
-        setKaryawanId(String(jobdesk.karyawanId))
+        setTanggalMulai(moment(jobdesk.tanggalMulai).format("YYYY-MM-DD"))
     }
 
 
@@ -158,13 +151,6 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
                             </div>
                         </div>
 
-                        <div className="mb-3 row">
-                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Deskripsi </div>
-                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
-                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
-                                {keterangan}
-                            </div>
-                        </div>
 
                         <div className="mb-3 row">
                             <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Tanggal Mulai </div>
@@ -182,6 +168,13 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
                             </div>
                         </div>
 
+                        <div className="mb-3 row">
+                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Deskripsi </div>
+                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                {keterangan}
+                            </div>
+                        </div>
 
                     </Modal.Body>
                     <Modal.Footer>

@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import Select from 'react-select';
+import { StyleSelect } from "@/app/helper";
 
 function Add() {
     const session = useSession()
@@ -42,7 +43,7 @@ function Add() {
     }, [])
 
     const cariKaryawan = async () => {
-        const response = await axios.get(`/admin/api/notkaryawan/${session.data?.id}`);
+        const response = await axios.get(`/admin/api/notkaryawan/${session.data?.karyawanId}`);
         const data = response.data;
         const options = data.map((item: any) => ({
             value: item.id,
@@ -96,21 +97,7 @@ function Add() {
             console.error('Error:', error);
         }
     }
-
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            boxShadow: state.isFocused ? '0 0 0 2px #007bff' : null,
-        }),
-        option: (provided: any, state: any) => ({
-            ...provided,
-            fontSize: 20,
-            color: "black",
-            fontFamily: "initial",
-        }),
-    };
+    
 
     return (
         <div>
@@ -150,7 +137,7 @@ function Add() {
                                     options={dataKaryawan}
                                     value={dataKaryawan.filter((option: any) => team.includes(option.value))}
                                     onChange={handleSelectChange}
-                                    styles={customStyles}
+                                    styles={StyleSelect}
                                 />
                             </div>
                         </div>

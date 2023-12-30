@@ -14,7 +14,6 @@ function Add() {
     const [judul, setJudul] = useState("")
     const [tanggalPengumuman, setTanggalPengumuman] = useState("")
     const [isi, setIsi] = useState("")
-    const [pengumumanId, setPengumumanId] = useState("")
 
     const [divisiId, setDivisiId] = useState<string[]>([]);
     const [selectdivisiId, setSelectDivisiId] = useState<string[]>([]);
@@ -90,7 +89,6 @@ function Add() {
             clearForm();
             router.refresh()
         }, 1500);
-
     }
 
 

@@ -9,6 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { useSession } from "next-auth/react";
 import Select from 'react-select';
+import { StyleSelect } from "@/app/helper"
 
 function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
     const session = useSession()
@@ -45,7 +46,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
     }, [team, dataKaryawan]);
 
     const cariKaryawan=async ()=>{
-        const response = await axios.get(`/admin/api/notkaryawan/${session.data?.id}`);
+        const response = await axios.get(`/admin/api/notkaryawan/${session.data?.karyawanId}`);
         const data = response.data;
         const options = data.map((item: any) => ({
             value: item.id,
@@ -118,20 +119,6 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
         }
     }
 
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            boxShadow: state.isFocused ? '0 0 0 2px #007bff' : null,
-        }),
-        option: (provided: any, state: any) => ({
-            ...provided,
-            fontSize: 20,
-            color: "black",
-            fontFamily: "initial",
-        }),
-    };
 
     return (
         <>
@@ -157,7 +144,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                                         options={dataKaryawan}
                                         value={selectedOptions}
                                         onChange={handleSelectChange}
-                                        styles={customStyles}
+                                        styles={StyleSelect}
                                     />
                                 </div>
                             </div>

@@ -4,16 +4,16 @@ import { useState, SyntheticEvent, useEffect, useRef } from "react"
 import { JobdeskTb, KaryawanTb } from "@prisma/client"
 import Modal from 'react-bootstrap/Modal';
 import moment from "moment"
-import { supabaseUrl,supabaseBUCKET } from "@/app/helper";
+import { supabaseUrl, supabaseBUCKET } from "@/app/helper";
 
 function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: KaryawanTb }) {
 
+    const [namakaryawan, setNamakaryawan] = useState(findkaryawan.nama)
     const [namaJob, setNamajob] = useState(jobdesk.namaJob)
     const [tanggalMulai, setTanggalMulai] = useState(moment(jobdesk.tanggalMulai).format("DD-MM-YYYY"))
     const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("DD-MM-YYYY"))
     const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
     const [status, setStatus] = useState(jobdesk.status)
-    const [namakaryawan, setNamakaryawan] = useState(findkaryawan.nama)
     const [alasan, setAlasan] = useState(jobdesk?.alasan)
     const [tanggalkerjaValue, setTanggalkerjaValue] = useState(moment(jobdesk?.tanggalPelaksanaan).format("DD-MM-YYYY"))
     const [fileValue, setFileValue] = useState(jobdesk?.file)
@@ -131,23 +131,23 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                                     </div>
                                     :
                                     status === "Dalam Proses" ?
-                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "blue" }}>
-                                        {status}
-                                    </div>
-                                    :
-                                    status === "Selesai" ?
-                                        <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "green" }}>
+                                        <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "blue" }}>
                                             {status}
                                         </div>
                                         :
-                                        status === "Dalam Proses" ?
-                                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "purple" }}>
+                                        status === "Selesai" ?
+                                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "green" }}>
                                                 {status}
                                             </div>
                                             :
-                                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "yellow" }}>
-                                                {status}
-                                            </div>
+                                            status === "Dalam Proses" ?
+                                                <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "purple" }}>
+                                                    {status}
+                                                </div>
+                                                :
+                                                <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "yellow" }}>
+                                                    {status}
+                                                </div>
                             }
                         </div>
 

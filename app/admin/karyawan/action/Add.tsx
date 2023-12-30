@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
-import moment from "moment";
 
 function Add() {
     const session = useSession()
@@ -17,9 +16,10 @@ function Add() {
     const [hp, setHp] = useState("")
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
+    
+    const [selectdivisi, setSelectdivisi] = useState([])
     const [divisiId, setDivisiId] = useState("")
     const [namadivisi, setNamadivisi] = useState("")
-    const [selectdivisi, setSelectdivisi] = useState([])
 
     const [karyawanCek, setKaryawanCek] = useState(false)
     const [informasiCek, setInformasiCek] = useState(false)
@@ -314,10 +314,6 @@ function Add() {
                                 />
                             </div>
                         </div>
-
-
-
-
 
                         {session?.data?.status === 'Admin' ?
                             <div className="row">

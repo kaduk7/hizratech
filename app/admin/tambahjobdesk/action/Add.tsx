@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import Select from 'react-select';
-import { supabase, supabaseBUCKET, supabaseUrl } from "@/app/helper";
+import { supabase, supabaseBUCKET, supabaseUrl,StyleSelect } from "@/app/helper";
 
 function Add() {
     const [namaJob, setNamajob] = useState("")
@@ -93,7 +93,6 @@ function Add() {
             formData.append('tanggalMulai', new Date(tanggalMulai).toISOString())
             formData.append('deadline', new Date(deadline).toISOString())
             formData.append('karyawanId', karyawanId)
-            formData.append('divisiId', divisiId)
             formData.append('team', String(team))
             formData.append('namaterpilih', namaterpilih)
             formData.append('fileSuratTugas', fileSuratTugas as File)
@@ -148,20 +147,6 @@ function Add() {
         }
     }
 
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            boxShadow: state.isFocused ? '0 0 0 2px #007bff' : null,
-        }),
-        option: (provided: any, state: any) => ({
-            ...provided,
-            fontSize: 20,
-            color: "black",
-            fontFamily: "initial",
-        }),
-    };
 
     return (
         <div>
@@ -219,7 +204,7 @@ function Add() {
                                         options={dataKaryawan}
                                         value={dataKaryawan.filter((option: any) => team.includes(option.value))}
                                         onChange={handleSelectChange}
-                                        styles={customStyles}
+                                        styles={StyleSelect}
                                     />
                                 </div>
                             </div> :
