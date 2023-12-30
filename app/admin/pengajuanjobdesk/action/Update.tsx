@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 import moment from "moment"
+import { supabase, supabaseBUCKET, supabaseUrl } from "@/app/helper";
 
 function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:DivisiTb}) {
 
@@ -107,6 +108,28 @@ function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:D
             formData.append('fileAnggaran', fileAnggaran as File)
             formData.append('team', String(team))
             formData.append('namaterpilih', namaterpilih)
+
+            const fileSuratTugas2 = formData.get('fileSuratTugas') as File;
+            const namaunikSurat = Date.now() + '-' + fileSuratTugas2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunikSurat}`, fileSuratTugas2);
+
+            const fileBeritaAcara2 = formData.get('fileBeritaAcara') as File;
+            const namaunikBerita = Date.now() + '-' + fileBeritaAcara2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunikBerita}`, fileBeritaAcara2);
+
+            const fileAnggaran2 = formData.get('fileAnggaran') as File;
+            const namaunikAnggaran = Date.now() + '-' + fileAnggaran2.name
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .upload(`file/${namaunikAnggaran}`, fileAnggaran2);
+
+            formData.append('namaunikSurat', namaunikSurat)
+            formData.append('namaunikBerita', namaunikBerita)
+            formData.append('namaunikAnggaran', namaunikAnggaran)
             
             
             const xxx = await axios.patch(`/admin/api/verifikasi/${jobdesk.id}`, formData, {

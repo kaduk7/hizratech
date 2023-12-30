@@ -22,28 +22,28 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
         })
         const team = formData.getAll('team').map(String);
 
-        const fileSuratTugas = formData.get('fileSuratTugas') as File;
-        const namaunikSurat = Date.now() + '-' + fileSuratTugas.name
+        // const fileSuratTugas = formData.get('fileSuratTugas') as File;
+        // const namaunikSurat = Date.now() + '-' + fileSuratTugas.name
 
-        await supabase.storage
-            .from('uploadfile')
-            .upload(`file/${namaunikSurat}`, fileSuratTugas);
-
-
-        const fileBeritaAcara = formData.get('fileBeritaAcara') as File;
-        const namaunikBerita = Date.now() + '-' + fileBeritaAcara.name
-
-        await supabase.storage
-            .from('uploadfile')
-            .upload(`file/${namaunikBerita}`, fileBeritaAcara);
+        // await supabase.storage
+        //     .from('uploadfile')
+        //     .upload(`file/${namaunikSurat}`, fileSuratTugas);
 
 
-        const fileAnggaran = formData.get('fileAnggaran') as File;
-        const namaunikAnggaran = Date.now() + '-' + fileAnggaran.name
+        // const fileBeritaAcara = formData.get('fileBeritaAcara') as File;
+        // const namaunikBerita = Date.now() + '-' + fileBeritaAcara.name
 
-        await supabase.storage
-            .from('uploadfile')
-            .upload(`file/${namaunikAnggaran}`, fileAnggaran);
+        // await supabase.storage
+        //     .from('uploadfile')
+        //     .upload(`file/${namaunikBerita}`, fileBeritaAcara);
+
+
+        // const fileAnggaran = formData.get('fileAnggaran') as File;
+        // const namaunikAnggaran = Date.now() + '-' + fileAnggaran.name
+
+        // await supabase.storage
+        //     .from('uploadfile')
+        //     .upload(`file/${namaunikAnggaran}`, fileAnggaran);
 
         await prisma.jobdeskTb.create({
             data: {
@@ -55,9 +55,9 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
                 team: team.join(', '),
                 namaTeam: String(formData.get('namaterpilih')),
                 status: "Dalam Proses",
-                suratTugas: namaunikSurat,
-                beritaAcara: namaunikBerita,
-                laporanAnggaran: namaunikAnggaran,
+                suratTugas: String(formData.get('namaunikSurat')),
+                beritaAcara: String(formData.get('namaunikBerita')),
+                laporanAnggaran: String(formData.get('namaunikAnggaran')),
 
             },
         })
