@@ -115,7 +115,7 @@ const PengajuanJobdesk = () => {
                           </Badge></td>
                           <td width={100}>
                             <div className="d-flex">
-                              <Update jobdesk={x} jobdeskdivisi={x.KaryawanTb.DivisiTb} />
+                              <Update reqjobdesk={x} karyawanTB={x.KaryawanTb} />
                               <Delete jobdeskId={x.id} />
                             </div>
                           </td>

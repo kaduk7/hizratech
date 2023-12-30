@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { useState, SyntheticEvent, useEffect, useRef } from "react"
-import { DivisiTb, JobdeskTb } from "@prisma/client"
+import { DivisiTb, JobdeskTb, KaryawanTb, RequestJobdeskTb } from "@prisma/client"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
@@ -9,19 +9,21 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { supabase, supabaseBUCKET, supabaseUrl } from "@/app/helper";
 
-function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:DivisiTb}) {
+function Update({ reqjobdesk,karyawanTB }: { reqjobdesk: RequestJobdeskTb ,karyawanTB:KaryawanTb}) {
 
-    const [namaJob, setNamajob] = useState(jobdesk.namaJob)
-    const [tanggalMulai, setTanggalMulai] = useState(moment(jobdesk.tanggalMulai).format("YYYY-MM-DD"))
-    const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("YYYY-MM-DD"))
-    const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
+    const [karyawanId, setKaryawanId] = useState(String(reqjobdesk.karyawanId))
+    const [namaJob, setNamajob] = useState(reqjobdesk.namaJob)
+    const [tanggalMulai, setTanggalMulai] = useState(moment(reqjobdesk.tanggalMulai).format("YYYY-MM-DD"))
+    const [deadline, setDeadline] = useState(moment(reqjobdesk.deadline).format("YYYY-MM-DD"))
+    const [keterangan, setKeterangan] = useState(reqjobdesk.keterangan)
+
     const [alasan, setAlasan] = useState("")
-    const [karyawanId, setKaryawanId] = useState(String(jobdesk.karyawanId))
-    const [divisiId, setDivisiId] = useState(String(jobdeskdivisi.id))
-    const [namakaryawan, setNamakaryawan] = useState('')
+    const [namakaryawan, setNamakaryawan] = useState(karyawanTB.nama)
+    
     const [fileSuratTugas, setFileSurattugas] = useState<File | null>()
     const [fileBeritaAcara, setFileBeritaacara] = useState<File | null>()
     const [fileAnggaran, setFileAnggaran] = useState<File | null>()
+
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
@@ -67,7 +69,7 @@ function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:D
             const formData = new FormData()
             formData.append('alasan', alasan)
             formData.append('konfirm', konfirm)
-            const xxx = await axios.patch(`/admin/api/verifikasi/${jobdesk.id}`, formData, {
+            const xxx = await axios.patch(`/admin/api/verifikasi/${reqjobdesk.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -101,7 +103,6 @@ function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:D
             formData.append('deadline', new Date(deadline).toISOString())
             formData.append('tanggalMulai', new Date(tanggalMulai).toISOString())
             formData.append('karyawanId', karyawanId)
-            formData.append('divisiId', divisiId)
             formData.append('konfirm', konfirm)
             formData.append('fileSuratTugas', fileSuratTugas as File)
             formData.append('fileBeritaAcara', fileBeritaAcara as File)
@@ -132,7 +133,7 @@ function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:D
             formData.append('namaunikAnggaran', namaunikAnggaran)
             
             
-            const xxx = await axios.patch(`/admin/api/verifikasi/${jobdesk.id}`, formData, {
+            const xxx = await axios.patch(`/admin/api/verifikasi/${reqjobdesk.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -157,8 +158,7 @@ function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:D
     }
 
     useEffect(() => {
-        karyawan();
-        const namaTeam = jobdesk.namaTeam
+        const namaTeam = reqjobdesk.namaTeam
         const dataNamaTeam = JSON.parse(namaTeam);
         const labelArray = dataNamaTeam.map((item: any) => item.label);
         const valuesArray = dataNamaTeam.map((item: any) => item.value);
@@ -167,17 +167,10 @@ function Update({ jobdesk,jobdeskdivisi }: { jobdesk: JobdeskTb ,jobdeskdivisi:D
         setNamaterpilih(namaTeam)
     }, [])
 
-    async function karyawan() {
-        const response = await axios.get(`/admin/api/carikaryawan/${jobdesk.karyawanId}`);
-        const data = response.data;
-        setNamakaryawan(data.nama)
-    }
-
-
     const refreshform = () => {
-        setNamajob(jobdesk.namaJob)
-        setKeterangan(jobdesk.keterangan)
-        setDeadline(moment(jobdesk.deadline).format("YYYY-MM-DD"))
+        setNamajob(reqjobdesk.namaJob)
+        setKeterangan(reqjobdesk.keterangan)
+        setDeadline(moment(reqjobdesk.deadline).format("YYYY-MM-DD"))
     }
 
     return (

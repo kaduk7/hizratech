@@ -12,7 +12,7 @@ export const GET = async (request: NextRequest) => {
     })
     const Id = Number(token!.karyawanId);
 
-    const sekolah = await prisma.jobdeskTb.findMany({
+    const xxx = await prisma.jobdeskTb.findMany({
       where: {
         OR: [
           {
@@ -33,7 +33,7 @@ export const GET = async (request: NextRequest) => {
         id: "asc"
       }
     })
-    return NextResponse.json(sekolah, { status: 201 })
+    return NextResponse.json(xxx, { status: 201 })
 
 }
 
