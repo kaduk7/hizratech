@@ -118,7 +118,7 @@ const TambahJobdesk = () => {
                           <td width={100}>
                             <div className="d-flex">
                               <Update jobdesk={x} karyawan={x.KaryawanTb} />
-                              <Delete jobdeskId={x.id} />
+                              <Delete jobdeskId={x.id} jobdesk={x} />
                               <Cek jobdesk={x} findkaryawan={x.KaryawanTb} />
                             </div>
                           </td>

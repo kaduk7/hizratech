@@ -14,7 +14,7 @@ function Delete({ jobdeskId }: { jobdeskId: Number }) {
 
     const handleDelete = async (jobdeskId: number) => {
         handleClose()
-        await axios.delete(`/api/requestjobdesk/${jobdeskId}`)
+        await axios.delete(`/admin/api/verifikasi/${jobdeskId}`)
         Swal.fire({
             position: 'top-end',
             icon: 'success',

@@ -97,6 +97,18 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
             formData.append('fileAnggaran', fileAnggaran as File)
             formData.append('keteranganAkhir', keteranganAkhir)
 
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`file/${jobdesk.suratTugas}`]);
+
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`file/${jobdesk.beritaAcara}`]);
+
+            await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`file/${jobdesk.laporanAnggaran}`]);
+
             const file2 = formData.get('file') as File;
             const namaunik = Date.now() + '-' + file2.name
             await supabase.storage

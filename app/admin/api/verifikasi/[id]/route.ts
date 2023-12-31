@@ -76,3 +76,12 @@ export const GET = async (request: Request, { params }: { params: { id: string }
     return NextResponse.json(requestjobdesk, { status: 200 })
 
 }
+
+export const DELETE = async (request: Request, { params }: { params: { id: string } }) => {
+    const requestjobdesk = await prisma.requestJobdeskTb.delete({
+        where: {
+            id: Number(params.id)
+        }
+    })
+    return NextResponse.json(requestjobdesk, { status: 200 })
+}

@@ -185,6 +185,10 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
             formData.append('fileAnggaran', fileAnggaran as File)
 
             if (newsurat === 'yes') {
+                await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`file/${jobdesk.suratTugas}`]);
+
                 const fileSuratTugas2 = formData.get('fileSuratTugas') as File;
                 const namaunikSurat = Date.now() + '-' + fileSuratTugas2.name
                 await supabase.storage
@@ -194,6 +198,10 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
             }
 
             if (newberita=== 'yes') {
+                await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`file/${jobdesk.beritaAcara}`]);
+
                 const fileBeritaAcara2 = formData.get('fileBeritaAcara') as File;
                 const namaunikBerita = Date.now() + '-' + fileBeritaAcara2.name
                 await supabase.storage
@@ -203,6 +211,10 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
             }
 
             if (newanggaran=== 'yes') {
+                await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`file/${jobdesk.laporanAnggaran}`]);
+
                 const fileAnggaran2 = formData.get('fileAnggaran') as File;
                 const namaunikAnggaran = Date.now() + '-' + fileAnggaran2.name
                 await supabase.storage

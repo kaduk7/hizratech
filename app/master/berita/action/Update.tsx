@@ -19,6 +19,7 @@ function Update({ berita }: { berita: BeritaTb }) {
     const [tanggalBerita, setTanggalberita] = useState(moment(berita.tanggalBerita).format("YYYY-MM-DD"))
     const [file, setFile] = useState<File | null>()
     const [preview, setPreview] = useState(berita?.foto)
+    const [fotolama, setFotolama] = useState(berita?.foto)
     const [preview2, setPreview2] = useState('')
 
     const router = useRouter()
@@ -50,11 +51,12 @@ function Update({ berita }: { berita: BeritaTb }) {
         setIsi(berita.isi)
         setTanggalberita(moment(berita.tanggalBerita).format("YYYY-MM-DD"))
         setPreview(berita?.foto)
+        setFotolama(berita?.foto)
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
-        const newfoto = preview === berita?.foto ? 'no' : 'yes'
+        const newfoto = preview === fotolama ? 'no' : 'yes'
         try {
             const formData = new FormData()
             formData.append('judul', judul)
@@ -65,6 +67,11 @@ function Update({ berita }: { berita: BeritaTb }) {
             formData.append('file', file as File)
 
             if (newfoto==='yes') {
+
+                await supabase.storage
+                .from(supabaseBUCKET)
+                .remove([`berita-images/${berita.foto}`]);
+
                 const image = formData.get('file') as File;
                 const namaunik = Date.now() + '-' + image.name
 
@@ -146,7 +153,7 @@ function Update({ berita }: { berita: BeritaTb }) {
                         <div className="row">
                             <div className="mb-3 col-md-6">
                                 <label className="form-label mx-1" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Upload Foto</label>
-                                <input type="file" className="form-control" onChange={(e) => setFile(e.target.files?.[0])} />
+                                <input type="file" className="form-control" accept="image/png, image/jpeg" onChange={(e) => setFile(e.target.files?.[0])} />
                             </div>
 
                             <div className="mb-3 col-md-6">

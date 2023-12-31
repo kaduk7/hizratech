@@ -19,7 +19,7 @@ const Profil = () => {
     const [password, setPassword] = useState("")
     const [hp, setHp] = useState("")
     const [namaDivisi, setNamadivisi] = useState("")
-    const [foto, setFoto] = useState("")
+    const [fotolama, setFotoLama] = useState("")
     const [preview, setPreview] = useState("")
     const [file, setFile] = useState<File | null>()
 
@@ -79,7 +79,7 @@ const Profil = () => {
             setHp(result.hp);
             setEmail(result.email);
             setNamadivisi(result.DivisiTb.nama)
-            setFoto(result?.foto)
+            setFotoLama(result?.foto)
             setPreview(result?.foto)
             setDatakaryawan(result)
         } catch (error) {
@@ -89,7 +89,7 @@ const Profil = () => {
 
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
-        const newfoto = preview === foto ? 'no' : 'yes'
+        const newfoto = preview === fotolama ? 'no' : 'yes'
         try {
             const formData = new FormData()
             formData.append('nama', nama)
@@ -102,15 +102,21 @@ const Profil = () => {
             formData.append('newfoto', newfoto)
             formData.append('file', file as File)
 
-            if (newfoto==='yes')  {
+            if (newfoto === 'yes') {
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .remove([`foto-profil/${fotolama}`]);
+
                 const foto = formData.get('file') as File;
-                const namaunik = Date.now() + '-' + foto.name
+                const namaunik = nama + '-' + Date.now() + '-' + foto.name
 
                 await supabase.storage
                     .from(supabaseBUCKET)
                     .upload(`foto-profil/${namaunik}`, foto);
 
                 formData.append('namaunik', namaunik)
+                setFotoLama(namaunik)
             }
 
             const xxx = await axios.patch(`/admin/api/profil/${karyawanId}`, formData, {
@@ -140,7 +146,6 @@ const Profil = () => {
 
             }
 
-
             if (xxx.data.pesan == 'berhasil') {
                 hapuspass()
                 Swal.fire({
@@ -159,11 +164,6 @@ const Profil = () => {
     const hapuspass = () => {
         setPassword('')
     }
-
-    const handlereset = () => {
-        setFile(null)
-    }
-
 
     return (
         <div className="row">

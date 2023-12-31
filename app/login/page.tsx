@@ -1,17 +1,13 @@
 "use client"
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
+import { SyntheticEvent, useState } from "react";
 import Swal from "sweetalert2";
 import CryptoJS from 'crypto-js';
 
 const Login = () => {
   const [usernama, setUsernama] = useState("");
   const [passwordText, setPasswordText] = useState("");
-  const [password, setPassword] = useState("");
   const [st, setSt] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
   const kunci1 = 'Bismillahirrahmanirrahim Allahuakbar ZikriAini2628'; 
   const kunci2 = 'Iikagennishiro Omaee Omaedakega Tsurainanteomounayo Zenin Kimochiwa Onajinanda'; 
 

@@ -6,7 +6,7 @@ import Update from './action/Update'
 import Delete from './action/Delete'
 import Link from 'next/link'
 import Komentar from './action/Komentar'
-import { supabaseUrl, supabaseBUCKET,kalkulasiWaktu } from '@/app/helper'
+import { supabaseUrl, supabaseBUCKET, kalkulasiWaktu } from '@/app/helper'
 
 const Berita = () => {
     const [dataBerita, setDataBerita] = useState([])
@@ -96,7 +96,7 @@ const Berita = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="col-xl-12">
                             <div className="card">
                                 <div className="card-body">
@@ -127,7 +127,7 @@ const Berita = () => {
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
                 </div>
                 <div className="col-xl-8">
@@ -203,7 +203,7 @@ const Berita = () => {
                                                                                 <Update berita={x} />
                                                                             </a>
                                                                             <a>
-                                                                                <Delete beritaId={x.id} />
+                                                                                <Delete beritaId={x.id} beritafoto={x.foto}/>
                                                                             </a>
                                                                             <a className="dropdown-item" >
                                                                                 Option 3
@@ -240,7 +240,7 @@ const Berita = () => {
                                                                             </div>
                                                                             <div className="dropdown-menu dropdown-menu-end">
                                                                                 <a>
-                                                                                    <Delete beritaId={x.id} />
+                                                                                    <Delete beritaId={x.id} beritafoto={x.foto}/>
                                                                                 </a>
                                                                                 <a className="dropdown-item" >
                                                                                     Option 3
@@ -278,7 +278,7 @@ const Berita = () => {
                                                                         </label>
                                                                     </li>
                                                                     <li>
-                                                                        <Komentar berita={x} karyawan={x.KaryawanTb} idkaryawan={Number(karyawanId)} kirimfoto={foto}/>
+                                                                        <Komentar berita={x} karyawan={x.KaryawanTb} idkaryawan={Number(karyawanId)} kirimfoto={foto} />
                                                                     </li>
                                                                     <li>
                                                                         <label className="me-3">
