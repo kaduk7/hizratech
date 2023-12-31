@@ -31,7 +31,6 @@ const Login = () => {
   const handleSubmit = async (e: SyntheticEvent) => {
     const enkripPertama = CryptoJS.AES.encrypt(passwordText, kunci1).toString();
     const password = CryptoJS.AES.encrypt(enkripPertama, kunci2).toString();
-    console.log(password)
     e.preventDefault();
     const login = await signIn('credentials', {
       usernama,

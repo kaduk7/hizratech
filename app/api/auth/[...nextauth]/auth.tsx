@@ -50,12 +50,10 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        console.log('sss', credentials.password)
 
         const passwordDecrypt = CryptoJS.AES.decrypt(credentials.password, kunci2).toString(CryptoJS.enc.Utf8);
 
         const password = CryptoJS.AES.decrypt(passwordDecrypt, kunci1).toString(CryptoJS.enc.Utf8);
-        console.log(password)
         const isPasswordValid = await bcrypt.compare(password, user.password)
 
         if (!isPasswordValid) {
