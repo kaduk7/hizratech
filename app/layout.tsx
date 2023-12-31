@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import Template from './component/Template'
 import Provider from './component/Provider'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function RootLayout({
   children,
@@ -14,6 +15,7 @@ export default function RootLayout({
       <body>
         <Provider>
           {pathname == "/login" ? <>{children}</> : <Template>{children}</Template>}
+          <SpeedInsights />
         </Provider>
       </body>
     </html>
