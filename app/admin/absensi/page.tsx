@@ -12,18 +12,24 @@ const Absensi = () => {
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
-    fetchDataDivisi()
+    fetchDivisi()
   }, [datadivisi])
 
-  const fetchDataDivisi = async () => {
-    try {
-      const response = await fetch(`/admin/api/divisi`);
-      const result = await response.json();
-      setDatadivisi(result);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+  // const fetchDataDivisi = async () => {
+
+  //     const response = await fetch(`/admin/api/divisi`);
+  //     const result = await response.json();
+  //     setDatadivisi(result);
+
+  // };
+
+  async function fetchDivisi ()  {
+
+    const response = await fetch(`/admin/api/divisi`);
+    const result = await response.json();
+    setDatadivisi(result);
+
+};
 
   const filteredData = datadivisi.filter((item: any) =>
     item.nama.toLowerCase().includes(searchTerm.toLowerCase())
