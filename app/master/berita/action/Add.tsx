@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { Editor } from '@tinymce/tinymce-react';
 import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
-function Add({idkaryawan}:{idkaryawan:Number}) {
+function Add({idkaryawan }: {idkaryawan: Number}) {
     const [karyawanId, setKaryawanId] = useState('')
     const [judul, setJudul] = useState("")
     const [isi, setIsi] = useState("")
@@ -30,7 +30,7 @@ function Add({idkaryawan}:{idkaryawan:Number}) {
     useEffect(() => {
         ref.current?.focus();
         setKaryawanId(String(idkaryawan))
-    }, [])
+    }, [idkaryawan, karyawanId])
 
     useEffect(() => {
         if (!file) {
@@ -41,6 +41,7 @@ function Add({idkaryawan}:{idkaryawan:Number}) {
         setPreview(objectUrl)
 
         return () => URL.revokeObjectURL(objectUrl)
+
     }, [file])
 
     function clearForm() {

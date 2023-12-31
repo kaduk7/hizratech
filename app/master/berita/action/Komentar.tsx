@@ -24,6 +24,8 @@ function Komentar({ berita, karyawan, idkaryawan, kirimfoto }: { berita: BeritaT
 
     const [show, setShow] = useState(false);
 
+    const ref = useRef<HTMLTextAreaElement>(null);
+
     useEffect(() => {
         fetchDataKomentarberita()
         setKaryawanId(String(idkaryawan))
@@ -75,6 +77,7 @@ function Komentar({ berita, karyawan, idkaryawan, kirimfoto }: { berita: BeritaT
 
             if (xxx.data.pesan == 'berhasil') {
                 clearform()
+                ref.current?.focus();
             }
         } catch (error) {
             console.error('Error:', error);
@@ -233,6 +236,7 @@ function Komentar({ berita, karyawan, idkaryawan, kirimfoto }: { berita: BeritaT
                                     </span>
                                     <textarea
                                         autoFocus
+                                        ref={ref}
                                         value={komentar}
                                         onChange={handleChange}
                                         className="form-control"
