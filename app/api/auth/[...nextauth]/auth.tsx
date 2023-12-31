@@ -1,11 +1,14 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import * as bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
-import { NextAuthOptions} from "next-auth";
+import { NextAuthOptions } from "next-auth";
+import CryptoJS from 'crypto-js';
 
- const prisma = new PrismaClient();
+const prisma = new PrismaClient();
+const kunci1 = 'Bismillahirrahmanirrahim Allahuakbar ZikriAini2628';
+const kunci2 = 'Iikagennishiro Omaee Omaedakega Tsurainanteomounayo Zenin Kimochiwa Onajinanda';
 
- export const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
 
   providers: [
     CredentialsProvider({
@@ -34,12 +37,12 @@ import { NextAuthOptions} from "next-auth";
           },
           include: {
             KaryawanTb: {
-              include:{
-                DivisiTb:true,
-                HakAksesTb:true,
+              include: {
+                DivisiTb: true,
+                HakAksesTb: true,
               }
             },
-            
+
           }
         })
 
@@ -47,7 +50,13 @@ import { NextAuthOptions} from "next-auth";
           return null
         }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+        console.log('sss', credentials.password)
+
+        const passwordDecrypt = CryptoJS.AES.decrypt(credentials.password, kunci2).toString(CryptoJS.enc.Utf8);
+
+        const password = CryptoJS.AES.decrypt(passwordDecrypt, kunci1).toString(CryptoJS.enc.Utf8);
+        console.log(password)
+        const isPasswordValid = await bcrypt.compare(password, user.password)
 
         if (!isPasswordValid) {
           return null
@@ -57,11 +66,11 @@ import { NextAuthOptions} from "next-auth";
           id: user.id + '',
           usernama: user.usernama,
           nama: user.KaryawanTb.nama,
-          karyawanId:user.karyawanId,
+          karyawanId: user.karyawanId,
           status: user.status,
           hp: user.KaryawanTb.hp,
-          divisiId:user.KaryawanTb.divisiId,
-          namaDivisi:user.KaryawanTb.DivisiTb.nama,
+          divisiId: user.KaryawanTb.divisiId,
+          namaDivisi: user.KaryawanTb.DivisiTb.nama,
           hakAksesDatakaryawan: user.KaryawanTb?.HakAksesTb?.datakaryawan,
           hakAksesInformasi: user.KaryawanTb?.HakAksesTb?.informasi,
           hakAksesJobdesk: user.KaryawanTb?.HakAksesTb?.jobdesk,
@@ -91,5 +100,5 @@ import { NextAuthOptions} from "next-auth";
     maxAge: 60 * 20,
     updateAge: 60 * 20,
   },
-  
+
 }

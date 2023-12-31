@@ -3,14 +3,17 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
+import CryptoJS from 'crypto-js';
 
 const Login = () => {
   const [usernama, setUsernama] = useState("");
+  const [passwordText, setPasswordText] = useState("");
   const [password, setPassword] = useState("");
   const [st, setSt] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const kunci1 = 'Bismillahirrahmanirrahim Allahuakbar ZikriAini2628'; 
+  const kunci2 = 'Iikagennishiro Omaee Omaedakega Tsurainanteomounayo Zenin Kimochiwa Onajinanda'; 
 
   const Toast = Swal.mixin({
     toast: true,
@@ -25,8 +28,10 @@ const Login = () => {
   })
 
 
-
   const handleSubmit = async (e: SyntheticEvent) => {
+    const enkripPertama = CryptoJS.AES.encrypt(passwordText, kunci1).toString();
+    const password = CryptoJS.AES.encrypt(enkripPertama, kunci2).toString();
+    console.log(password)
     e.preventDefault();
     const login = await signIn('credentials', {
       usernama,
@@ -46,8 +51,6 @@ const Login = () => {
         title: 'Login Berhasil'
       })
       setTimeout(function () {
-        // router.push('/')
-        // window.location.reload()
         window.location.href='/'
       }, 1500);
     }
@@ -79,9 +82,10 @@ const Login = () => {
                   <label className="mb-1 text-dark">Password</label>
                   <input
                     required
+                    value={passwordText}
                     type={st ? "text" : "password"}
                     className="form-control form-control"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPasswordText(e.target.value)}
                     placeholder="Password"
 
                   />
