@@ -15,7 +15,7 @@ const Karyawan = () => {
     fetchDataKaryawan()
   }, [datakaryawan])
 
-  const fetchDataKaryawan = async () => {
+  async function fetchDataKaryawan (){
     try {
       const response = await fetch(`/admin/api/karyawan`);
       const result = await response.json();

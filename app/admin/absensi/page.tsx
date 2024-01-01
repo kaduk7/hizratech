@@ -15,21 +15,14 @@ const Absensi = () => {
     fetchDivisi()
   }, [datadivisi])
 
-  // const fetchDataDivisi = async () => {
 
-  //     const response = await fetch(`/admin/api/divisi`);
-  //     const result = await response.json();
-  //     setDatadivisi(result);
-
-  // };
-
-  async function fetchDivisi ()  {
+  async function fetchDivisi() {
 
     const response = await fetch(`/admin/api/divisi`);
     const result = await response.json();
     setDatadivisi(result);
 
-};
+  };
 
   const filteredData = datadivisi.filter((item: any) =>
     item.nama.toLowerCase().includes(searchTerm.toLowerCase())
@@ -69,7 +62,7 @@ const Absensi = () => {
         <div className="col-md-12 grid-margin stretch-card">
           <div className="card">
             <div className="card-header">
-              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 25 }}>Data Divisi</h1>
+              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 25 }}>Data Absen</h1>
             </div>
             <div className="card-body">
               <div className="row mb-3">
@@ -109,7 +102,7 @@ const Absensi = () => {
                     </tbody>
                     :
                     <tbody>
-                      {datadivisi.map((x: any, index) => (
+                      {currentItems.map((x: any, index) => (
                         <tr className="hover" key={x.id}>
                           <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }} width={100}>{globalIndex(index)}</td>
                           <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>{x.nama}</td>
