@@ -1,60 +1,36 @@
 "use client"
-import Add from "./action/Add"
-import Update from "./action/Update"
-import Delete from "./action/Delete"
-import React, { useState, useEffect } from 'react';
-import { Pagination } from 'react-bootstrap';
+import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 
-const Absensi = () => {
-  const [datadivisi, setDatadivisi] = useState([])
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+const Karyawan = () => {
+  const [excelData, setExcelData] = useState<string[]>([]);
+  const [files, setFiles] = useState(true)
 
-  useEffect(() => {
-    fetchDivisi()
-  }, [datadivisi])
+  const handleFileUpload = (e: any) => {
+    const file = e.target.files[0];
 
-
-  async function fetchDivisi() {
-
-    const response = await fetch(`/admin/api/divisi`);
-    const result = await response.json();
-    setDatadivisi(result);
-
-  };
-
-  const filteredData = datadivisi.filter((item: any) =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-
-  const globalIndex = (index: any) => indexOfFirstItem + index + 1;
-  const paginate = (pageNumber: any) => setCurrentPage(pageNumber);
-
-  const handleItemsPerPageChange = (e: any) => {
-    setItemsPerPage(parseInt(e.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
-  const pageNumbers = [];
-  if (totalPages <= 3) {
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(i);
+    if (!file) {
+      return;
     }
-  } else {
-    const startPage = Math.max(1, currentPage - 1);
-    const endPage = Math.min(startPage + 2, totalPages);
 
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-  }
+    const reader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      // Konversi lembar kerja Excel menjadi array objek
+      const importedData = XLSX.utils.sheet_to_json(worksheet);
+
+      // Gunakan importedData sesuai kebutuhan
+      console.log(importedData);
+      setExcelData(importedData as string[])
+    };
+    setFiles(false)
+    reader.readAsArrayBuffer(file);
+  };
 
   return (
     <div>
@@ -62,139 +38,56 @@ const Absensi = () => {
         <div className="col-md-12 grid-margin stretch-card">
           <div className="card">
             <div className="card-header">
-              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 25 }}>Data Absen</h1>
+              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 25 }}>Coba Coba</h1>
             </div>
             <div className="card-body">
               <div className="row mb-3">
-                <div className="col-md-9">
-                  <Add />
-                </div>
-                <div className="col-md-3">
-                  <div className="input-group mb-3  input-success">
-                    <span className="input-group-text border-0"><i className="mdi mdi-magnify"></i></span>
-                    <input
-                      className="form-control"
-                      value={searchTerm}
-                      type="text"
-                      onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                        setCurrentPage(1);
-                      }}
-                      placeholder="Search..."
-                    />
+                {files ?
+                  <div>
+                    <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
                   </div>
-                </div>
+                  :
+                  null
+                }
               </div>
-              <div className="table-responsive">
-                <table className="table primary-table-bordered">
-                  <thead className="thead-success">
-                    <tr>
-                      <th style={{ fontSize: 17, color: "black" }}>No</th>
-                      <th style={{ fontSize: 17, color: "black" }}>Nama Divisi</th>
-                      <th style={{ fontSize: 17, color: "black" }}>Action</th>
-                    </tr>
-                  </thead>
-                  {datadivisi.length === 0 ?
-                    <tbody>
-                      <tr >
-                        <td className="text-center">No data available</td>
+              {excelData.length > 0 && (
+                <div className="table-responsive">
+                  <table className="table primary-table-bordered">
+                    <thead className="thead-success">
+                      <tr>
+                        <th style={{ fontSize: 17, color: "black" }}>NISN</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Nama </th>
+                        <th style={{ fontSize: 17, color: "black" }}>Password</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Jenis Kelamin</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Tempat Lahir</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Tanggal Lahir</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Alamat</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Agama</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Kelas</th>
+                        <th style={{ fontSize: 17, color: "black" }}>Jurusan</th>
                       </tr>
-                    </tbody>
-                    :
+                    </thead>
                     <tbody>
-                      {currentItems.map((x: any, index) => (
-                        <tr className="hover" key={x.id}>
-                          <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }} width={100}>{globalIndex(index)}</td>
-                          <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>{x.nama}</td>
-                          <td width={100}>
-                            <div className="d-flex">
-                              <Update divisi={x} />
-                              <Delete divisiId={x.id} />
-                            </div>
-                          </td>
+                      {/* Tampilkan setiap baris data */}
+                      {excelData.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                          {Object.values(row).map((cell: any, cellIndex) => (
+                            <td key={cellIndex}>{cell}</td>
+                          ))}
                         </tr>
                       ))}
                     </tbody>
-                  }
-                </table>
-              </div>
-
-              {datadivisi.length > 0 ?
-                <div className="row mb-3">
-                  <div className="col-md-12 d-flex justify-content-end">
-                    <Pagination>
-                      <li>
-                        <label className="col-sm-12 col-form-label mx-2" style={{ fontWeight: "bold" }} >Row per page</label>
-                      </li>
-
-                      <li>
-                        <div className="col-sm-12 mt-2 mx-2">
-                          <select
-                            style={{ backgroundColor: 'white', color: "black", borderColor: "grey" }}
-                            value={itemsPerPage}
-                            onChange={handleItemsPerPageChange}
-                          >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                          </select>
-                        </div>
-                      </li>
-
-                      <li className="page-item page-indicator ">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage(1)}
-                          style={{ pointerEvents: currentPage === 1 ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-double-left"></i></a>
-                      </li>
-
-                      <li className="page-item page-indicator ">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                          style={{ pointerEvents: currentPage === 1 ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-left"></i></a>
-                      </li>
-
-                      {pageNumbers.map((number) => (
-                        <Pagination.Item
-                          key={number}
-                          active={number === currentPage}
-                          onClick={() => paginate(number)}
-                        >
-                          {number}
-                        </Pagination.Item>
-                      ))}
-
-                      <li className="page-item page-indicator">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage((next) => Math.min(next + 1, Math.ceil(filteredData.length / itemsPerPage)))}
-                          style={{ pointerEvents: currentPage === Math.ceil(filteredData.length / itemsPerPage) ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-right"></i></a>
-                      </li>
-
-                      <li className="page-item page-indicator">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage(Math.ceil(filteredData.length / itemsPerPage))}
-                          style={{ pointerEvents: currentPage === Math.ceil(filteredData.length / itemsPerPage) ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-double-right"></i></a>
-                      </li>
-
-                    </Pagination>
-                  </div>
+                  </table>
                 </div>
-                :
-                null
-              }
+              )}
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </div >
-  )
-}
 
-export default Absensi
+
+  )
+};
+
+export default Karyawan;

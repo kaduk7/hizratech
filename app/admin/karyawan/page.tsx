@@ -4,6 +4,7 @@ import Update from "./action/Update"
 import Delete from "./action/Delete"
 import React, { useState, useEffect } from 'react';
 import { Pagination } from 'react-bootstrap';
+import * as XLSX from 'xlsx';
 
 const Karyawan = () => {
   const [datakaryawan, setDatakaryawan] = useState([])
@@ -15,7 +16,7 @@ const Karyawan = () => {
     fetchDataKaryawan()
   }, [datakaryawan])
 
-  async function fetchDataKaryawan (){
+  async function fetchDataKaryawan() {
     try {
       const response = await fetch(`/admin/api/karyawan`);
       const result = await response.json();
@@ -56,6 +57,13 @@ const Karyawan = () => {
       pageNumbers.push(i);
     }
   }
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'DataKaryawan');
+    XLSX.writeFile(workbook, 'Data Karyawan.xlsx');
+  };
 
   return (
     <div>
@@ -126,7 +134,13 @@ const Karyawan = () => {
 
               {datakaryawan.length > 0 ?
                 <div className="row mb-3">
-                  <div className="col-md-12 d-flex justify-content-end">
+                  <div className="col-md-3">
+                    <button onClick={exportToExcel} className="btn btn-success btn-icon-text">
+                      Ekspor ke Excel
+                    </button>
+                  </div>
+
+                  <div className="col-md-9 d-flex justify-content-end">
                     <Pagination>
                       <li>
                         <label className="col-sm-12 col-form-label mx-2" style={{ fontWeight: "bold" }} >Row per page</label>

@@ -6,6 +6,7 @@ import Cek from "./action/Cek";
 import React, { useState, useEffect } from 'react';
 import { Pagination, Badge } from 'react-bootstrap';
 import { warnastatus } from "@/app/helper";
+import * as XLSX from 'xlsx';
 
 const TambahJobdesk = () => {
   const [datajobdesk, setDatajobdesk] = useState([])
@@ -58,6 +59,13 @@ const TambahJobdesk = () => {
       pageNumbers.push(i);
     }
   }
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'DataTugas');
+    XLSX.writeFile(workbook, 'Data Tugas.xlsx');
+  };
 
   return (
     <div>
@@ -131,7 +139,14 @@ const TambahJobdesk = () => {
 
               {datajobdesk.length > 0 ?
                 <div className="row mb-3">
-                  <div className="col-md-12 d-flex justify-content-end">
+
+                  <div className="col-md-3">
+                    <button onClick={exportToExcel} className="btn btn-success btn-icon-text">
+                      Ekspor ke Excel
+                    </button>
+                  </div>
+
+                  <div className="col-md-9 d-flex justify-content-end">
                     <Pagination>
                       <li>
                         <label className="col-sm-12 col-form-label mx-2" style={{ fontWeight: "bold" }} >Row per page</label>
