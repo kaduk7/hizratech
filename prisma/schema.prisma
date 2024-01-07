@@ -11,8 +11,8 @@ generator client {
 // }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
@@ -27,17 +27,20 @@ model DivisiTb {
 }
 
 model KaryawanTb {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   nama         String
   tempatLahir  String?
   tanggalLahir DateTime?
   alamat       String?
-  hp           String   @unique
-  email        String   @unique
+  hp           String    @unique
+  email        String    @unique
   divisiId     Int
   foto         String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  ktp          String?
+  CV           String?
+  ijazah       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   DivisiTb         DivisiTb           @relation(fields: [divisiId], references: [id], onDelete: Cascade)
   JobdeskTb        JobdeskTb[]

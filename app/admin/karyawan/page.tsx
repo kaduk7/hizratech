@@ -5,6 +5,7 @@ import Delete from "./action/Delete"
 import React, { useState, useEffect } from 'react';
 import { Pagination } from 'react-bootstrap';
 import * as XLSX from 'xlsx';
+import Cek from "./action/Cek";
 
 const Karyawan = () => {
   const [datakaryawan, setDatakaryawan] = useState([])
@@ -123,6 +124,7 @@ const Karyawan = () => {
                             <div className="d-flex">
                               <Update karyawan={x} hakAkses={x.HakAksesTb} caridivisi={x.DivisiTb} />
                               <Delete karyawanId={x.id} />
+                              <Cek karyawan={x} hakAkses={x.HakAksesTb} caridivisi={x.DivisiTb}/>
                             </div>
                           </td>
                         </tr>

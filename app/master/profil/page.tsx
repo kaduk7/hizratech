@@ -21,7 +21,21 @@ const Profil = () => {
     const [namaDivisi, setNamadivisi] = useState("")
     const [fotolama, setFotoLama] = useState("")
     const [preview, setPreview] = useState("")
+    const [ktplama, setKtpLama] = useState("")
+    const [previewktp, setPreviewktp] = useState("")
+    const [cvlama, setCvLama] = useState("")
+    const [previewcv, setPreviewcv] = useState("")
+    const [ijazahlama, setIjazahLama] = useState("")
+    const [previewijazah, setPreviewijazah] = useState("")
+
     const [file, setFile] = useState<File | null>()
+    const [ktp, setKtp] = useState<File | null>()
+    const [Cv, setCV] = useState<File | null>()
+    const [ijazah, setIjazah] = useState<File | null>()
+
+    const [previewktp2, setPreviewktp2] = useState("")
+    const [previewcv2, setPreviewcv2] = useState("")
+    const [previewijazah2, setPreviewijazah2] = useState("")
 
     const [show, setShow] = useState(false);
 
@@ -62,6 +76,30 @@ const Profil = () => {
         handleShow()
     };
 
+    const handleKTP = (e: any) => {
+        const selectedktp = e.target.files[0];
+        setKtp(selectedktp);
+        const objectUrl = URL.createObjectURL(selectedktp)
+        setPreviewktp(objectUrl)
+        setPreviewktp2(selectedktp.name)
+    }
+
+    const handleCV = (e: any) => {
+        const selectedcv = e.target.files[0];
+        setCV(selectedcv);
+        const objectUrl = URL.createObjectURL(selectedcv)
+        setPreviewcv(objectUrl)
+        setPreviewcv2(selectedcv.name)
+    };
+
+    const handleIjazah = (e: any) => {
+        const selectedijazah = e.target.files[0];
+        setIjazah(selectedijazah);
+        const objectUrl = URL.createObjectURL(selectedijazah)
+        setPreviewijazah(objectUrl)
+        setPreviewijazah2(selectedijazah.name)
+    };
+
     useEffect(() => {
         fetchDataprofil()
     }, [])
@@ -81,6 +119,12 @@ const Profil = () => {
             setNamadivisi(result.DivisiTb.nama)
             setFotoLama(result?.foto)
             setPreview(result?.foto)
+            setKtpLama(result?.ktp)
+            setPreviewktp(result?.ktp)
+            setCvLama(result?.CV)
+            setPreviewcv(result?.CV)
+            setIjazahLama(result?.ijazah)
+            setPreviewijazah(result?.ijazah)
             setDatakaryawan(result)
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -90,6 +134,9 @@ const Profil = () => {
     const handleUpdate = async (e: SyntheticEvent) => {
         e.preventDefault()
         const newfoto = preview === fotolama ? 'no' : 'yes'
+        const newktp = previewktp === ktplama ? 'no' : 'yes'
+        const newcv = previewcv === cvlama ? 'no' : 'yes'
+        const newijazah = previewijazah === ijazahlama ? 'no' : 'yes'
         try {
             const formData = new FormData()
             formData.append('nama', nama)
@@ -100,7 +147,13 @@ const Profil = () => {
             formData.append('email', email)
             formData.append('password', password)
             formData.append('newfoto', newfoto)
+            formData.append('newktp', newktp)
+            formData.append('newcv', newcv)
+            formData.append('newijazah', newijazah)
             formData.append('file', file as File)
+            formData.append('ktp', ktp as File)
+            formData.append('CV', Cv as File)
+            formData.append('ijazah', ijazah as File)
 
             if (newfoto === 'yes') {
 
@@ -117,6 +170,57 @@ const Profil = () => {
 
                 formData.append('namaunik', namaunik)
                 setFotoLama(namaunik)
+            }
+
+            if (newktp === 'yes') {
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .remove([`foto-profil/${ktplama}`]);
+
+                const ktpbaru = formData.get('ktp') as File;
+                const namaunikktp = nama + '-' + Date.now() + '-' + ktpbaru.name
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`foto-profil/${namaunikktp}`, ktpbaru);
+
+                formData.append('namaunikktp', namaunikktp)
+                setKtpLama(namaunikktp)
+            }
+
+            if (newcv === 'yes') {
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .remove([`foto-profil/${cvlama}`]);
+
+                const cvbaru = formData.get('CV') as File;
+                const namaunikcv = nama + '-' + Date.now() + '-' + cvbaru.name
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`foto-profil/${namaunikcv}`, cvbaru);
+
+                formData.append('namaunikcv', namaunikcv)
+                setCvLama(namaunikcv)
+            }
+
+            if (newijazah === 'yes') {
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .remove([`foto-profil/${ijazahlama}`]);
+
+                const ijazahbaru = formData.get('ijazah') as File;
+                const namaunikijazah = nama + '-' + Date.now() + '-' + ijazahbaru.name
+
+                await supabase.storage
+                    .from(supabaseBUCKET)
+                    .upload(`foto-profil/${namaunikijazah}`, ijazahbaru);
+
+                formData.append('namaunikijazah', namaunikijazah)
+                setIjazahLama(namaunikijazah)
             }
 
             const xxx = await axios.patch(`/admin/api/profil/${karyawanId}`, formData, {
@@ -197,18 +301,70 @@ const Profil = () => {
 
                             <div className="info-list">
                                 <ul>
-                                    <li>
-                                        <a href="app-profile-2.html">Models</a>
-                                        <span>36</span>
+                                    <li >
+                                        <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${ktplama}`} target="_blank" >Scan KTP</a>
+                                        <div className='col-30'>
+                                            <label htmlFor="ktp" className="btn btn-primary">
+                                                <span>
+                                                    <input
+                                                        type="file"
+                                                        id="ktp"
+                                                        hidden
+                                                        onChange={handleKTP}
+                                                    />
+                                                </span>
+                                                Upload
+                                            </label>
+                                            {/* {previewktp2 !== '' ?
+                                                <div >{previewktp2}</div>
+                                                :
+                                                null
+                                            } */}
+                                        </div>
                                     </li>
                                     <li>
-                                        <a href="uc-lightgallery.html">Gallery</a>
-                                        <span>3</span>
+                                        <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${cvlama}`} target="_blank" >Resume CV</a>
+                                        <div className='col-30'>
+                                            <label htmlFor="cv" className="btn btn-primary">
+                                                <span>
+                                                    <input
+                                                        type="file"
+                                                        id="cv"
+                                                        hidden
+                                                        onChange={handleCV}
+                                                    />
+                                                </span>
+                                                Upload
+                                            </label>
+                                            {/* {previewcv2 !== '' ?
+                                                <div >{previewcv2}</div>
+                                                :
+                                                null
+                                            } */}
+                                        </div>
                                     </li>
                                     <li>
-                                        <a href="app-profile-1.html">Lessons</a>
-                                        <span>1</span>
+                                        <a href={`${supabaseUrl}/storage/v1/object/public/${supabaseBUCKET}/foto-profil/${ijazahlama}`} target="_blank" >Scan Ijazah</a>
+                                        <div className='col-30'>
+                                            <label htmlFor="ijazah" className="btn btn-primary">
+                                                <span>
+                                                    <input
+                                                        type="file"
+                                                        id="ijazah"
+                                                        hidden
+                                                        onChange={handleIjazah}
+                                                    />
+                                                </span>
+                                                Upload
+                                            </label>
+                                            {/* {previewijazah2 !== '' ?
+                                                <div >{previewijazah2}</div>
+                                                :
+                                                null
+                                            } */}
+                                        </div>
                                     </li>
+
                                 </ul>
                             </div>
                         </div>
@@ -218,7 +374,7 @@ const Profil = () => {
                                     Portfolio
                                 </div>
                             </div> */}
-
+                            <button type='button' className="btn btn-primary light light" onClick={handleUpdate}>UPDATE DATA</button>
                         </div>
                     </div>
                 </div>
@@ -296,9 +452,9 @@ const Profil = () => {
 
 
                             </div>
-                            <div className="card-footer">
+                            {/* <div className="card-footer">
                                 <button type='submit' className="btn btn-primary light light">UPDATE</button>
-                            </div>
+                            </div> */}
                         </div>
                     </form>
                 </div>

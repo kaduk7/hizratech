@@ -134,48 +134,50 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
                         <Modal.Title style={{ fontFamily: "initial", fontSize: 30, color: "black" }}>Verifikasi Data Jobdesk</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <div className="card profile-card card-bx m-b30">
+                            <div className="card-body">
+                                <div className="mb-3 row">
+                                    <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Nama Tugas </div>
+                                    <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                        {namaJob}
+                                    </div>
+                                </div>
 
-                        <div className="mb-3 row">
-                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Nama Tugas </div>
-                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
-                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
-                                {namaJob}
+                                <div className="mb-3 row">
+                                    <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Team </div>
+                                    <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                        {namateam}
+                                    </div>
+                                </div>
+
+
+                                <div className="mb-3 row">
+                                    <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Tanggal Mulai </div>
+                                    <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                        {tanggalMulai}
+                                    </div>
+                                </div>
+
+                                <div className="mb-3 row">
+                                    <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Deadline </div>
+                                    <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                        {deadline}
+                                    </div>
+                                </div>
+
+                                <div className="mb-3 row">
+                                    <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Deskripsi </div>
+                                    <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                        {keterangan}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div className="mb-3 row">
-                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Team </div>
-                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
-                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
-                                {namateam}
-                            </div>
-                        </div>
-
-
-                        <div className="mb-3 row">
-                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Tanggal Mulai </div>
-                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
-                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
-                                {tanggalMulai}
-                            </div>
-                        </div>
-
-                        <div className="mb-3 row">
-                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Deadline </div>
-                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
-                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
-                                {deadline}
-                            </div>
-                        </div>
-
-                        <div className="mb-3 row">
-                            <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Deskripsi </div>
-                            <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
-                            <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
-                                {keterangan}
-                            </div>
-                        </div>
-
                     </Modal.Body>
                     <Modal.Footer>
                         <button type="button" className="btn btn-danger light" onClick={klikTolak}>Tolak</button>

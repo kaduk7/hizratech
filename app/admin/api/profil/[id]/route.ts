@@ -11,6 +11,7 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
         const formData = await request.formData()
         const newpassword = formData.get('password')
 
+
         const cekhp = await prisma.karyawanTb.findMany({
             where: {
                 hp: String(formData.get('hp')),
@@ -79,6 +80,42 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
                 },
                 data: {
                     foto: String(formData.get('namaunik')),
+                }
+            })
+        }
+
+        if (formData.get('newktp') === 'yes') {
+
+            await prisma.karyawanTb.update({
+                where: {
+                    id: Number(params.id)
+                },
+                data: {
+                    ktp: String(formData.get('namaunikktp')),
+                }
+            })
+        }
+
+        if (formData.get('newcv') === 'yes') {
+
+            await prisma.karyawanTb.update({
+                where: {
+                    id: Number(params.id)
+                },
+                data: {
+                    CV: String(formData.get('namaunikcv')),
+                }
+            })
+        }
+
+        if (formData.get('newijazah') === 'yes') {
+
+            await prisma.karyawanTb.update({
+                where: {
+                    id: Number(params.id)
+                },
+                data: {
+                    ijazah: String(formData.get('namaunikijazah')),
                 }
             })
         }

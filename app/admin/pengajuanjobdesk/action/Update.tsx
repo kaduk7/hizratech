@@ -9,7 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { supabase, supabaseBUCKET, supabaseUrl } from "@/app/helper";
 
-function Update({ reqjobdesk,karyawanTB }: { reqjobdesk: RequestJobdeskTb ,karyawanTB:KaryawanTb}) {
+function Update({ reqjobdesk, karyawanTB }: { reqjobdesk: RequestJobdeskTb, karyawanTB: KaryawanTb }) {
 
     const [karyawanId, setKaryawanId] = useState(String(reqjobdesk.karyawanId))
     const [namaJob, setNamajob] = useState(reqjobdesk.namaJob)
@@ -19,7 +19,7 @@ function Update({ reqjobdesk,karyawanTB }: { reqjobdesk: RequestJobdeskTb ,karya
 
     const [alasan, setAlasan] = useState("")
     const [namakaryawan, setNamakaryawan] = useState(karyawanTB.nama)
-    
+
     const [fileSuratTugas, setFileSurattugas] = useState<File | null>()
     const [fileBeritaAcara, setFileBeritaacara] = useState<File | null>()
     const [fileAnggaran, setFileAnggaran] = useState<File | null>()
@@ -131,8 +131,8 @@ function Update({ reqjobdesk,karyawanTB }: { reqjobdesk: RequestJobdeskTb ,karya
             formData.append('namaunikSurat', namaunikSurat)
             formData.append('namaunikBerita', namaunikBerita)
             formData.append('namaunikAnggaran', namaunikAnggaran)
-            
-            
+
+
             const xxx = await axios.patch(`/admin/api/verifikasi/${reqjobdesk.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -187,88 +187,91 @@ function Update({ reqjobdesk,karyawanTB }: { reqjobdesk: RequestJobdeskTb ,karya
                         <Modal.Title style={{ fontFamily: "initial", fontSize: 30, color: "black" }}>Verifikasi Pengajuan Tugas</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Nama Karyawan</label>
-                                <input
-                                    required
-                                    disabled
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={namakaryawan}
-                                />
+                        <div className="card profile-card card-bx m-b30">
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="mb-3 col-md-12">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Nama Karyawan</label>
+                                        <input
+                                            required
+                                            disabled
+                                            type="text"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={namakaryawan}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="mb-3 col-md-12">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Team</label>
+                                        <input
+                                            required
+                                            disabled
+                                            type="text"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={namateam}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="mb-3 col-md-12">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Nama Jobdesk</label>
+                                        <input
+                                            disabled
+                                            required
+                                            type="text"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={namaJob}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="mb-3 col-md-12">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Keterangan</label>
+                                        <input
+                                            required
+                                            disabled
+                                            type="text"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={keterangan}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Tanggal Mulai</label>
+                                        <input
+                                            required
+                                            disabled
+                                            type="date"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={tanggalMulai}
+                                        />
+                                    </div>
+
+                                    <div className="mb-3 col-md-6">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Deadline</label>
+                                        <input
+                                            required
+                                            disabled
+                                            type="date"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={deadline}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Team</label>
-                                <input
-                                    required
-                                    disabled
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={namateam}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Nama Jobdesk</label>
-                                <input
-                                    disabled
-                                    required
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={namaJob}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-12">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Keterangan</label>
-                                <input
-                                    required
-                                    disabled
-                                    type="text"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={keterangan}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Tanggal Mulai</label>
-                                <input
-                                    required
-                                    disabled
-                                    type="date"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={tanggalMulai}
-                                />
-                            </div>
-
-                            <div className="mb-3 col-md-6">
-                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Deadline</label>
-                                <input
-                                    required
-                                    disabled
-                                    type="date"
-                                    className="form-control"
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    value={deadline}
-                                />
-                            </div>
-                        </div>
-
                     </Modal.Body>
                     <Modal.Footer>
                         <button type="button" className="btn btn-danger light" onClick={klikTolak}>Tolak</button>

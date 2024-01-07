@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 
+import html2pdf from 'html2pdf.js';
+
 const Karyawan = () => {
   const [excelData, setExcelData] = useState<string[]>([]);
   const [files, setFiles] = useState(true)
 
-  const handleFileUpload = (e: any) => {
+   const handleFileUpload = (e: any) => {
     const file = e.target.files[0];
 
     if (!file) {
@@ -32,6 +34,22 @@ const Karyawan = () => {
     reader.readAsArrayBuffer(file);
   };
 
+
+
+  // const handlePrintPDF = () => {
+  //   const content = document.getElementById('pdf-content');
+  //   const pdfOptions = {
+  //     margin: 10,
+  //     filename: 'hasil.pdf',
+  //     image: { type: 'jpeg', quality: 0.98 },
+  //     html2canvas: { scale: 2 },
+  //     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+  //   };
+
+  //   html2pdf(content, pdfOptions);
+  // };
+
+ 
   return (
     <div>
       <div className="row">
@@ -81,6 +99,8 @@ const Karyawan = () => {
                 </div>
               )}
             </div>
+
+         
           </div>
         </div>
       </div >
