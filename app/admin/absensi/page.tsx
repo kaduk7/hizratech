@@ -8,7 +8,7 @@ const Karyawan = () => {
   const [excelData, setExcelData] = useState<string[]>([]);
   const [files, setFiles] = useState(true)
 
-   const handleFileUpload = (e: any) => {
+  const handleFileUpload = (e: any) => {
     const file = e.target.files[0];
 
     if (!file) {
@@ -36,20 +36,20 @@ const Karyawan = () => {
 
 
 
-  // const handlePrintPDF = () => {
-  //   const content = document.getElementById('pdf-content');
-  //   const pdfOptions = {
-  //     margin: 10,
-  //     filename: 'hasil.pdf',
-  //     image: { type: 'jpeg', quality: 0.98 },
-  //     html2canvas: { scale: 2 },
-  //     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-  //   };
+  const handleGeneratePdf = () => {
+    const content = document.getElementById('pdf-content');
+    const pdfOptions = {
+      margin: 10,
+      filename: 'hasil.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
 
-  //   html2pdf(content, pdfOptions);
-  // };
+    html2pdf(content, pdfOptions);
+  };
 
- 
+
   return (
     <div>
       <div className="row">
@@ -68,7 +68,7 @@ const Karyawan = () => {
                   null
                 }
               </div>
-              {excelData.length > 0 && (
+              {/* {excelData.length > 0 && (
                 <div className="table-responsive">
                   <table className="table primary-table-bordered">
                     <thead className="thead-success">
@@ -86,7 +86,6 @@ const Karyawan = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* Tampilkan setiap baris data */}
                       {excelData.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                           {Object.values(row).map((cell: any, cellIndex) => (
@@ -97,10 +96,46 @@ const Karyawan = () => {
                     </tbody>
                   </table>
                 </div>
-              )}
+              )} */}
+
+              <h1>Generasi PDF dengan Next.js</h1>
+              <div id="pdf-content">
+                {excelData.length > 0 && (
+                  <div className="table-responsive">
+                    <table className="table primary-table-bordered">
+                      <thead className="thead-success">
+                        <tr>
+                          <th style={{ fontSize: 17, color: "black" }}>NISN</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Nama </th>
+                          <th style={{ fontSize: 17, color: "black" }}>Password</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Jenis Kelamin</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Tempat Lahir</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Tanggal Lahir</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Alamat</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Agama</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Kelas</th>
+                          <th style={{ fontSize: 17, color: "black" }}>Jurusan</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* Tampilkan setiap baris data */}
+                        {excelData.map((row, rowIndex) => (
+                          <tr key={rowIndex}>
+                            {Object.values(row).map((cell: any, cellIndex) => (
+                              <td key={cellIndex}>{cell}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+              <button onClick={handleGeneratePdf}>Buat PDF</button>
+
             </div>
 
-         
+
           </div>
         </div>
       </div >

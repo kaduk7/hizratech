@@ -5,6 +5,7 @@ import { JobdeskTb, KaryawanTb } from "@prisma/client"
 import Modal from 'react-bootstrap/Modal';
 import moment from "moment"
 import { supabaseUrl, supabaseBUCKET } from "@/app/helper";
+import Print from "./Print";
 
 function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: KaryawanTb }) {
 
@@ -233,6 +234,11 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
+                        {jobdesk.status === "Selesai" ?
+                            <Print jobdesk={jobdesk} findkaryawan={findkaryawan} />
+                            // <button type="button" className="btn btn-info"><i className="fa-solid fa-print me-2"></i>Print</button>
+                            :
+                            null}
                         <button type="button" className="btn btn-danger light" onClick={handleClose}>Close</button>
                     </Modal.Footer>
                 </form>
