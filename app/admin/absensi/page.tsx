@@ -3,10 +3,30 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 
 import html2pdf from 'html2pdf.js';
+import { useReactToPrint } from 'react-to-print';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const Karyawan = () => {
   const [excelData, setExcelData] = useState<string[]>([]);
   const [files, setFiles] = useState(true)
+  const componentRef = React.useRef(null);
+
+  const contentRef = React.useRef(null);
+
+  const handlePrint2 = () => {
+    if (contentRef.current) {
+      html2canvas(contentRef.current).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save('file.pdf');
+      });
+    }
+  };
 
   const handleFileUpload = (e: any) => {
     const file = e.target.files[0];
@@ -34,21 +54,9 @@ const Karyawan = () => {
     reader.readAsArrayBuffer(file);
   };
 
-
-
-  const handleGeneratePdf = () => {
-    const content = document.getElementById('pdf-content');
-    const pdfOptions = {
-      margin: 10,
-      filename: 'hasil.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-
-    html2pdf(content, pdfOptions);
-  };
-
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   return (
     <div>
@@ -99,7 +107,7 @@ const Karyawan = () => {
               )} */}
 
               <h1>Generasi PDF dengan Next.js</h1>
-              <div id="pdf-content">
+              <div ref={contentRef}>
                 {excelData.length > 0 && (
                   <div className="table-responsive">
                     <table className="table primary-table-bordered">
@@ -131,7 +139,7 @@ const Karyawan = () => {
                   </div>
                 )}
               </div>
-              <button onClick={handleGeneratePdf}>Buat PDF</button>
+              <button onClick={handlePrint2}>Buat PDF</button>
 
             </div>
 
