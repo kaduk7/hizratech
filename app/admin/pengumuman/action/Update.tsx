@@ -11,7 +11,7 @@ import Select from 'react-select';
 import { Editor } from '@tinymce/tinymce-react';
 import { StyleSelect } from "@/app/helper"
 
-function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
+function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
     const [judul, setJudul] = useState(pengumuman.judul)
     const [tanggalPengumuman, setTanggalPengumuman] = useState(moment(pengumuman.tanggalPengumuman).format("YYYY-MM-DD"))
     const [isi, setIsi] = useState(pengumuman.isi)
@@ -84,6 +84,20 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         const newdivisi = selectdivisiId === patokan ? 'no' : 'yes'
         const formData = new FormData()
@@ -99,19 +113,22 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb}) {
                 'Content-Type': 'multipart/form-data',
             },
         })
-        mencaridivisi()
-        setShow(false);
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: 'Berhasil Simpan',
-            showConfirmButton: false,
-            timer: 1500
-        })
+
         setTimeout(function () {
+            mencaridivisi()
+            setShow(false);
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Berhasil Simpan',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            setTimeout(function () {
 
-            router.refresh()
+                router.refresh()
 
+            }, 1500);
         }, 1500);
     }
 

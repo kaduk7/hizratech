@@ -16,7 +16,7 @@ function Add() {
     const [hp, setHp] = useState("")
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
-    
+
     const [selectdivisi, setSelectdivisi] = useState([])
     const [divisiId, setDivisiId] = useState("")
     const [namadivisi, setNamadivisi] = useState("")
@@ -64,7 +64,7 @@ function Add() {
     const onDivisi = async (e: any) => {
         const selectedOption = e.target.options[e.target.selectedIndex];
         const selectedLabel = selectedOption.getAttribute("label");
-        setDivisiId(e.target.value);   
+        setDivisiId(e.target.value);
         setNamadivisi(selectedLabel)
         console.log(selectedLabel)
     }
@@ -85,6 +85,20 @@ function Add() {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -106,46 +120,48 @@ function Add() {
                     'Content-Type': 'multipart/form-data',
                 },
             })
+            setTimeout(function () {
+                if (xxx.data.pesan == 'Email sudah ada') {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Email sudah terdaftar',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        setfokusemail()
+                    }, 1500);
+                }
+                if (xxx.data.pesan == 'No Hp sudah ada') {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'No Hp sudah terdaftar',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        setfokushp()
+                    }, 1600);
+                }
 
-            if (xxx.data.pesan == 'Email sudah ada') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'Email sudah terdaftar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    setfokusemail()
-                }, 1500);
-            }
-            if (xxx.data.pesan == 'No Hp sudah ada') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'No Hp sudah terdaftar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    setfokushp()
-                }, 1600);
-            }
+                if (xxx.data.pesan == 'berhasil') {
+                    handleClose();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil Simpan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        clearForm();
+                        router.refresh()
+                    }, 1500);
+                }
 
-            if (xxx.data.pesan == 'berhasil') {
-                handleClose();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil Simpan',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    clearForm();
-                    router.refresh()
-                }, 1500);
-            }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

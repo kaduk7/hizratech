@@ -132,6 +132,20 @@ const Profil = () => {
     };
 
     const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         const newfoto = preview === fotolama ? 'no' : 'yes'
         const newktp = previewktp === ktplama ? 'no' : 'yes'
@@ -229,6 +243,8 @@ const Profil = () => {
                 },
             })
 
+            setTimeout(function () {
+
             if (xxx.data.pesan == 'sudah ada email') {
                 Swal.fire({
                     position: 'top-end',
@@ -260,6 +276,7 @@ const Profil = () => {
                     timer: 1500
                 })
             }
+        }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

@@ -162,6 +162,20 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         const newsurat = previewSurat === cekpreviewSurat ? 'no' : 'yes'
         const newberita = previewBerita === cekpreviewBerita ? 'no' : 'yes'
@@ -228,6 +242,8 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                     'Content-Type': 'multipart/form-data',
                 },
             })
+
+            setTimeout(function () {
             if (xxx.data.pesan == 'berhasil') {
                 setShow(false);
                 Swal.fire({
@@ -241,6 +257,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                     router.refresh()
                 }, 1500);
             }
+        }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

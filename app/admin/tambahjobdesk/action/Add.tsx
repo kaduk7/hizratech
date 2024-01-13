@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import Select from 'react-select';
-import { supabase, supabaseBUCKET, supabaseUrl,StyleSelect } from "@/app/helper";
+import { supabase, supabaseBUCKET, supabaseUrl, StyleSelect } from "@/app/helper";
 
 function Add() {
     const [namaJob, setNamajob] = useState("")
@@ -84,6 +84,20 @@ function Add() {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -121,27 +135,28 @@ function Add() {
             formData.append('namaunikBerita', namaunikBerita)
             formData.append('namaunikAnggaran', namaunikAnggaran)
 
-
             const xxx = await axios.post(`/admin/api/tambahjobdesk`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
+            setTimeout(function () {
 
-            if (xxx.data.pesan == 'berhasil') {
-                handleClose();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil Simpan',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    clearForm();
-                    router.refresh()
-                }, 1500);
-            }
+                if (xxx.data.pesan == 'berhasil') {
+                    handleClose();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil Simpan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        clearForm();
+                        router.refresh()
+                    }, 1500);
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

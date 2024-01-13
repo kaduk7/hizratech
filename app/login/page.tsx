@@ -8,8 +8,8 @@ const Login = () => {
   const [usernama, setUsernama] = useState("");
   const [passwordText, setPasswordText] = useState("");
   const [st, setSt] = useState(false);
-  const kunci1 = 'Bismillahirrahmanirrahim Allahuakbar ZikriAini2628'; 
-  const kunci2 = 'Iikagennishiro Omaee Omaedakega Tsurainanteomounayo Zenin Kimochiwa Onajinanda'; 
+  const kunci1 = 'Bismillahirrahmanirrahim Allahuakbar ZikriAini2628';
+  const kunci2 = 'Iikagennishiro Omaee Omaedakega Tsurainanteomounayo Zenin Kimochiwa Onajinanda';
 
   const Toast = Swal.mixin({
     toast: true,
@@ -25,6 +25,21 @@ const Login = () => {
 
 
   const handleSubmit = async (e: SyntheticEvent) => {
+
+    Swal.fire({
+      title: "Mohon tunggu!",
+      html: "Sedang validasi data",
+      timer: 2000,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.timer) {
+      }
+    });
+
     const enkripPertama = CryptoJS.AES.encrypt(passwordText, kunci1).toString();
     const password = CryptoJS.AES.encrypt(enkripPertama, kunci2).toString();
     e.preventDefault();
@@ -34,19 +49,19 @@ const Login = () => {
       redirect: false
     })
     if (login?.error) {
-      Toast.fire({
-        icon: 'warning',
-        title: 'Username atau password salah'
-      })
-      return
+      setTimeout(function () {
+        Toast.fire({
+          icon: 'warning',
+          title: 'Username atau password salah'
+        })
+
+        return
+      }, 1700);
     }
     else {
-      Toast.fire({
-        icon: 'success',
-        title: 'Login Berhasil'
-      })
+
       setTimeout(function () {
-        window.location.href='/'
+        window.location.href = '/'
       }, 1500);
     }
   };

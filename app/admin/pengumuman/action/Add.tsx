@@ -63,6 +63,20 @@ function Add() {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
 
         const formData = new FormData()
@@ -76,18 +90,19 @@ function Add() {
                 'Content-Type': 'multipart/form-data',
             },
         })
-
-        handleClose();
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: 'Berhasil Simpan',
-            showConfirmButton: false,
-            timer: 1500
-        })
         setTimeout(function () {
-            clearForm();
-            router.refresh()
+            handleClose();
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Berhasil Simpan',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            setTimeout(function () {
+                clearForm();
+                router.refresh()
+            }, 1500);
         }, 1500);
     }
 

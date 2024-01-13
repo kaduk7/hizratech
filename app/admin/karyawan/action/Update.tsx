@@ -90,6 +90,20 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         const newpass = password == "" ? 'no' : 'yes'
         try {
@@ -114,6 +128,7 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
                 },
             })
 
+            setTimeout(function () {
             if (xxx.data.pesan == 'sudah ada email') {
                 Swal.fire({
                     position: 'top-end',
@@ -148,6 +163,7 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
                     router.refresh()
                 }, 1500);
             }
+        }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
