@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { useState, SyntheticEvent, useEffect, useRef } from "react"
-import { DivisiTb, JobdeskTb, KaryawanTb, RequestJobdeskTb } from "@prisma/client"
+import {  KaryawanTb, RequestJobdeskTb } from "@prisma/client"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 import moment from "moment"
-import { supabase, supabaseBUCKET, supabaseUrl } from "@/app/helper";
+import { supabase, supabaseBUCKET } from "@/app/helper";
 
-function Update({ reqjobdesk, karyawanTB }: { reqjobdesk: RequestJobdeskTb, karyawanTB: KaryawanTb }) {
+function Update({ reqjobdesk, karyawanTB, reload }: { reqjobdesk: RequestJobdeskTb, karyawanTB: KaryawanTb, reload: Function }) {
 
     const [karyawanId, setKaryawanId] = useState(String(reqjobdesk.karyawanId))
     const [namaJob, setNamajob] = useState(reqjobdesk.namaJob)
@@ -24,14 +24,24 @@ function Update({ reqjobdesk, karyawanTB }: { reqjobdesk: RequestJobdeskTb, kary
     const [fileBeritaAcara, setFileBeritaacara] = useState<File | null>()
     const [fileAnggaran, setFileAnggaran] = useState<File | null>()
 
-    const router = useRouter()
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
     const [show3, setShow3] = useState(false);
-    const ref = useRef<HTMLInputElement>(null);
     const [team, setTeam] = useState<string[]>([]);
     const [namaterpilih, setNamaterpilih] = useState('');
     const [namateam, setNamateam] = useState('');
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleShow = () => setShow(true);
     const handleShow2 = () => setShow2(true);
@@ -60,9 +70,8 @@ function Update({ reqjobdesk, karyawanTB }: { reqjobdesk: RequestJobdeskTb, kary
         handleShow3()
     }
 
-
-
     const handleTolak = async (e: SyntheticEvent) => {
+        setIsLoading(true)
         e.preventDefault()
         const konfirm = 'tolak'
         try {
@@ -74,26 +83,29 @@ function Update({ reqjobdesk, karyawanTB }: { reqjobdesk: RequestJobdeskTb, kary
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                setShow2(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
+
+            setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    setShow2(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setIsLoading(false)
+                    reload()
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
     const handleTerima = async (e: SyntheticEvent) => {
+        setIsLoading(true)
         e.preventDefault()
         const konfirm = 'terima'
         try {
@@ -138,20 +150,21 @@ function Update({ reqjobdesk, karyawanTB }: { reqjobdesk: RequestJobdeskTb, kary
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                setShow3(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
+            setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    setShow3(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setIsLoading(false)
+                    reload()
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

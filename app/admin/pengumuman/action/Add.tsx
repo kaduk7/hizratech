@@ -10,18 +10,29 @@ import Select from 'react-select';
 import { StyleSelect } from "@/app/helper";
 
 
-function Add() {
+function Add({ reload, daftardivisi }: { reload: Function, daftardivisi: Array<any> }) {
     const [judul, setJudul] = useState("")
     const [tanggalPengumuman, setTanggalPengumuman] = useState("")
     const [isi, setIsi] = useState("")
 
     const [divisiId, setDivisiId] = useState<string[]>([]);
     const [selectdivisiId, setSelectDivisiId] = useState<string[]>([]);
-    const [datadivisi, setDataDivisi] = useState([])
+    // const [datadivisi, setDataDivisi] = useState([])
 
-    const router = useRouter()
     const [show, setShow] = useState(false);
     const ref = useRef<HTMLInputElement>(null);
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleClose = () => {
         setShow(false);
@@ -32,18 +43,8 @@ function Add() {
 
     useEffect(() => {
         ref.current?.focus();
-        divisi()
-    }, [])
 
-    async function divisi() {
-        const response = await axios.get(`/admin/api/divisi`);
-        const data = response.data;
-        const options = data.map((item: any) => ({
-            value: item.id,
-            label: item.nama,
-        }));
-        setDataDivisi(options)
-    }
+    }, [])
 
     const handleSelectChange = (selectedOptions: any) => {
         setDivisiId(selectedOptions.map((option: any) => option.value));
@@ -63,19 +64,7 @@ function Add() {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+        setIsLoading(true)
 
         e.preventDefault()
 
@@ -99,10 +88,9 @@ function Add() {
                 showConfirmButton: false,
                 timer: 1500
             })
-            setTimeout(function () {
-                clearForm();
-                router.refresh()
-            }, 1500);
+            clearForm();
+            setIsLoading(false)
+            reload()
         }, 1500);
     }
 
@@ -129,8 +117,8 @@ function Add() {
                                 <Select
                                     required
                                     isMulti
-                                    options={datadivisi}
-                                    value={datadivisi.filter((option: any) => divisiId.includes(option.value))}
+                                    options={daftardivisi}
+                                    value={daftardivisi.filter((option: any) => divisiId.includes(option.value))}
                                     onChange={handleSelectChange}
                                     styles={StyleSelect}
                                 />

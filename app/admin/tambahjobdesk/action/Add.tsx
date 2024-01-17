@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import Select from 'react-select';
 import { supabase, supabaseBUCKET, supabaseUrl, StyleSelect } from "@/app/helper";
 
-function Add() {
+function Add({reload}:{reload:Function}) {
     const [namaJob, setNamajob] = useState("")
     const [tanggalMulai, setTanggalMulai] = useState("")
     const [deadline, setDeadline] = useState("")
@@ -154,6 +154,7 @@ function Add() {
                     setTimeout(function () {
                         clearForm();
                         router.refresh()
+                        reload()
                     }, 1500);
                 }
             }, 1500);
@@ -254,7 +255,7 @@ function Add() {
                         </div>
 
                         <div className="row">
-                            <div className="mb-3 col-md-4">
+                            <div className="mb-3 col-md-3">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Mulai</label>
                                 <input
                                     required
@@ -265,7 +266,7 @@ function Add() {
                                 />
                             </div>
 
-                            <div className="mb-3 col-md-4">
+                            <div className="mb-3 col-md-3">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Deadline</label>
                                 <input
                                     required
@@ -276,8 +277,22 @@ function Add() {
                                 />
                             </div>
 
-                            <div className="mb-3 col-md-4">
+                            <div className="mb-3 col-md-3">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Status</label>
+                                <select
+                                    required
+                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                    className="form-control"
+                                    value={status} onChange={(e) => setStatus(e.target.value)}>
+                                    <option value={''}></option>
+                                    <option value={'Proses'}>Proses</option>
+                                    <option value={'Verifikasi'}>Verifikasi</option>
+
+                                </select>
+                            </div>
+
+                            <div className="mb-3 col-md-3">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Jenis</label>
                                 <select
                                     required
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}

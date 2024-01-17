@@ -8,7 +8,6 @@ import Modal from 'react-bootstrap/Modal';
 import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
 const Profil = () => {
-    const [dataKaryawan, setDatakaryawan] = useState([{}])
     const [karyawanId, setKaryawanId] = useState('')
     const [namaAvatar, setNamaAvatar] = useState('')
     const [nama, setNama] = useState('')
@@ -36,6 +35,19 @@ const Profil = () => {
     const [previewktp2, setPreviewktp2] = useState("")
     const [previewcv2, setPreviewcv2] = useState("")
     const [previewijazah2, setPreviewijazah2] = useState("")
+
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const [show, setShow] = useState(false);
 
@@ -125,26 +137,13 @@ const Profil = () => {
             setPreviewcv(result?.CV)
             setIjazahLama(result?.ijazah)
             setPreviewijazah(result?.ijazah)
-            setDatakaryawan(result)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
     const handleUpdate = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+       setIsLoading(true)
 
         e.preventDefault()
         const newfoto = preview === fotolama ? 'no' : 'yes'
@@ -246,6 +245,7 @@ const Profil = () => {
             setTimeout(function () {
 
             if (xxx.data.pesan == 'sudah ada email') {
+                setIsLoading(false)
                 Swal.fire({
                     position: 'top-end',
                     icon: 'warning',
@@ -256,6 +256,7 @@ const Profil = () => {
             }
 
             if (xxx.data.pesan == 'sudah ada hp') {
+                setIsLoading(false)
                 Swal.fire({
                     position: 'top-end',
                     icon: 'warning',
@@ -268,6 +269,7 @@ const Profil = () => {
 
             if (xxx.data.pesan == 'berhasil') {
                 hapuspass()
+                setIsLoading(false)
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',

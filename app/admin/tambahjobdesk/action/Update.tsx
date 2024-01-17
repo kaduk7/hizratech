@@ -10,7 +10,7 @@ import moment from "moment"
 import Select from 'react-select';
 import { supabase,supabaseBUCKET,supabaseUrl,StyleSelect } from "@/app/helper"
 
-function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanTb }) {
+function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: KaryawanTb,reload:Function }) {
 
     const [namaJob, setNamajob] = useState(jobdesk.namaJob)
     const [tanggalMulai, setTanggalMulai] = useState(moment(jobdesk.tanggalMulai).format("YYYY-MM-DD"))
@@ -255,6 +255,7 @@ function Update({ jobdesk, karyawan }: { jobdesk: JobdeskTb, karyawan: KaryawanT
                 })
                 setTimeout(function () {
                     router.refresh()
+                    reload()
                 }, 1500);
             }
         }, 1500);

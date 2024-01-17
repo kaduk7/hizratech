@@ -21,7 +21,7 @@ const Berita = () => {
     useEffect(() => {
         fetchDataberita()
         fetchDataprofil()
-    }, [dataBerita])
+    }, [])
 
     const fetchDataprofil = async () => {
         try {
@@ -84,9 +84,7 @@ const Berita = () => {
                                                 </a>
                                                 <a
                                                     href=""
-                                                    className="btn btn-primary light light mb-1"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#sendMessageModal"
+                                                    className="btn btn-primary light light mb-1 me-1"
                                                 >
                                                     Send Message
                                                 </a>
@@ -149,7 +147,7 @@ const Berita = () => {
                                     <div className="tab-content">
                                         <div id="my-posts" className="tab-pane fade active show">
                                             <>
-                                                <Add idkaryawan={Number(karyawanId)} />
+                                                <Add idkaryawan={Number(karyawanId)} reload={fetchDataberita} />
                                                 {dataBerita.map((x: any, index) => (
                                                     <div className="col-xl-12" key={x.id}>
                                                         <div className="card">

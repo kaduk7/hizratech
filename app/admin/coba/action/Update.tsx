@@ -1,109 +1,111 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
-import { useState, SyntheticEvent, useRef, useEffect } from "react"
+import { useState, SyntheticEvent, useEffect } from "react"
+import { DivisiTb, HakAksesTb, KaryawanTb } from "@prisma/client"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
-import Swal from "sweetalert2";
-import { useSession } from "next-auth/react";
-import { DivisiTb } from "@prisma/client";
+import Swal from "sweetalert2"
+import moment from "moment"
+import { useSession } from "next-auth/react"
 
-function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any>}) {
+function Update({ karyawan, hakAkses, caridivisi,reload }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisi: DivisiTb,reload:Function }) {
     const session = useSession()
-    const [nama, setNama] = useState("")
-    const [tempatLahir, setTempatlahir] = useState("")
-    const [tanggalLahir, setTanggallahir] = useState('2000-01-01')
-    const [alamat, setAlamat] = useState("")
-    const [hp, setHp] = useState("")
+    const [nama, setNama] = useState(karyawan.nama)
+    const [tempatLahir, setTempatlahir] = useState(karyawan?.tempatLahir || "")
+    const [tanggalLahir, setTanggallahir] = useState(moment(karyawan?.tanggalLahir).format("YYYY-MM-DD"))
+    const [alamat, setAlamat] = useState(karyawan?.alamat || "")
+    const [hp, setHp] = useState(karyawan.hp)
     const [password, setPassword] = useState("")
-    const [email, setEmail] = useState("")
-
-    const [divisiId, setDivisiId] = useState("")
-    const [namadivisi, setNamadivisi] = useState("")
+    const [email, setEmail] = useState(karyawan.email)
+    const [divisiId, setDivisiId] = useState(String(karyawan.divisiId))
+    const [namadivisi, setNamadivisi] = useState(caridivisi.nama)
+    const [selectdivisi, setSelectdivisi] = useState([])
 
     const [karyawanCek, setKaryawanCek] = useState(false)
     const [informasiCek, setInformasiCek] = useState(false)
     const [jobdeskCek, setJobdeskCek] = useState(false)
-    const [karyawanCekValue, setKaryawanCekValue] = useState("Tidak")
-    const [informasiCekValue, setInformasiCekValue] = useState("Tidak")
-    const [jobdeskCekValue, setJobdeskCekValue] = useState("Tidak")
-
-    const [show, setShow] = useState(false);
-    const ref = useRef<HTMLInputElement>(null);
-    const refemail = useRef<HTMLInputElement>(null);
-    const refhp = useRef<HTMLInputElement>(null);
+    const [karyawanCekValue, setKaryawanCekValue] = useState(hakAkses.datakaryawan)
+    const [informasiCekValue, setInformasiCekValue] = useState(hakAkses.informasi)
+    const [jobdeskCekValue, setJobdeskCekValue] = useState(hakAkses.jobdesk)
     const [st, setSt] = useState(false);
     const router = useRouter()
-
-    const setfokusemail = () => {
-        refemail.current?.focus();
-    }
-
-    const setfokushp = () => {
-        refhp.current?.focus();
-    }
+    const [show, setShow] = useState(false)
 
     const handleClose = () => {
         setShow(false);
-        clearForm();
+        refreshform()
+        hakAksesceklis()
     }
 
-    const handleShow = () => setShow(true);
-    const [isLoading, setIsLoading] = useState(false)
-
-    if (isLoading) {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang mengirim data ke server",
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        })
+    const handleShow = () => {
+        setShow(true);
     }
 
     useEffect(() => {
-        ref.current?.focus();
-        // daftardivisi();
+        divisi();
+        hakAksesceklis()
     }, [])
 
-    // async function divisi() {
-    //     try {
-    //         const response = await fetch(`/admin/api/divisi`);
-    //         const result = await response.json();
-    //         setSelectdivisi(result)
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // }
+    const hakAksesceklis=()=>{
+        if (hakAkses.datakaryawan === "Ya") {
+            setKaryawanCek(true)
+        }
+
+        if (hakAkses.informasi === "Ya") {
+            setInformasiCek(true)
+        }
+        if (hakAkses.jobdesk === "Ya") {
+            setJobdeskCek(true)
+        }
+    }
+
+    async function divisi() {
+        const response = await axios.get(`/admin/api/divisi`);
+        const data = response.data;
+        setSelectdivisi(data)
+    }
 
     const onDivisi = async (e: any) => {
         const selectedOption = e.target.options[e.target.selectedIndex];
         const selectedLabel = selectedOption.getAttribute("label");
-        setDivisiId(e.target.value);
+        setDivisiId(e.target.value);   
         setNamadivisi(selectedLabel)
-        console.log(selectedLabel)
     }
 
-    function clearForm() {
-        setNama('')
-        setTempatlahir('')
-        setTanggallahir('2000-01-01')
-        setAlamat('')
-        setHp('')
+    const refreshform = () => {
+        setNama(karyawan.nama)
+        setTempatlahir(karyawan?.tempatLahir || '')
+        setTanggallahir(moment(karyawan?.tanggalLahir).format("YYYY-MM-DD"))
+        setAlamat(karyawan?.alamat || '')
+        setHp(karyawan.hp)
+        setEmail(karyawan.email)
+        setDivisiId(String(karyawan.divisiId))
+        setNamadivisi(caridivisi.nama)
         setPassword('')
-        setEmail('')
-        setDivisiId('')
-        setSt(false)
-        setKaryawanCek(false)
-        setInformasiCek(false)
-        setJobdeskCek(false)
     }
 
-    const handleSubmit = async (e: SyntheticEvent) => {
+    const hapuspass = () => {
+        setPassword('')
+    }
 
-        setIsLoading(true)
+    const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
+        const newpass = password == "" ? 'no' : 'yes'
         try {
             const formData = new FormData()
             formData.append('nama', nama)
@@ -113,64 +115,56 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
             formData.append('hp', hp)
             formData.append('email', email)
             formData.append('password', password)
+            formData.append('newpass', newpass)
             formData.append('divisiId', divisiId)
             formData.append('namadivisi', namadivisi)
             formData.append('karyawanCekValue', karyawanCekValue)
             formData.append('informasiCekValue', informasiCekValue)
             formData.append('jobdeskCekValue', jobdeskCekValue)
 
-            const xxx = await axios.post(`/admin/api/karyawan`, formData, {
+            const xxx = await axios.patch(`/admin/api/karyawan/${karyawan.id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
+
             setTimeout(function () {
+            if (xxx.data.pesan == 'sudah ada email') {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'Email ini sudah terdaftar',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
 
-                if (xxx.data.pesan == 'Email sudah ada') {
-                    setIsLoading(false)
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'warning',
-                        title: 'Email sudah terdaftar',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(function () {
-                        setfokusemail()
-                    }, 1500);
-                }
-                if (xxx.data.pesan == 'No Hp sudah ada') {
-                    setIsLoading(false)
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'warning',
-                        title: 'No Hp sudah terdaftar',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    setTimeout(function () {
-                        setfokushp()
-                    }, 1600);
-                }
+            if (xxx.data.pesan == 'sudah ada hp') {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'No Hp ini sudah terdaftar',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
 
-                if (xxx.data.pesan == 'berhasil') {
-                    handleClose();
-                    setIsLoading(false)
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Berhasil Simpan',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    clearForm();
+            }
+            if (xxx.data.pesan == 'berhasil') {
+                setShow(false);
+                hapuspass()
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Berhasil diubah',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(function () {
+                    router.refresh()
                     reload()
-                    setTimeout(function () {
-                        router.refresh()
-                    }, 1500);
-                }
-            }, 1500);
-
+                }, 1500);
+            }
+        }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -206,20 +200,18 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
         }
     };
 
-
     return (
-        <div>
-            <button onClick={handleShow} type="button" className="btn btn-success btn-icon-text">
-                <i className=""></i>Tambah Karyawan</button>
+        <>
+            <span onClick={handleShow} className="btn btn-success shadow btn-xl sharp mx-1"><i className="fa fa-edit"></i></span>
             <Modal
                 dialogClassName="modal-lg"
                 show={show}
                 onHide={handleClose}
                 backdrop="static"
                 keyboard={false}>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleUpdate}>
                     <Modal.Header closeButton>
-                        <Modal.Title style={{ fontFamily: "initial", fontSize: 30, color: "black" }}>Tambah Data Karyawan</Modal.Title>
+                        <Modal.Title style={{ fontFamily: "initial", fontSize: 30, color: "black" }}>Edit Data Karyawan</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
 
@@ -243,7 +235,6 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>No Hp</label>
                                 <input
                                     required
-                                    ref={refhp}
                                     type="number"
                                     className="form-control"
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
@@ -259,7 +250,7 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                     className="form-control"
                                     value={divisiId} onChange={onDivisi}>
                                     <option value={''}> Pilih Divisi</option>
-                                    {daftardivisi?.map((item: any, i) => (
+                                    {selectdivisi?.map((item: any, i) => (
                                         <option key={i} value={item.id} label={item.nama} >{item.nama}</option>
                                     ))}
                                 </select>
@@ -271,7 +262,6 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Email</label>
                                 <input
                                     required
-                                    ref={refemail}
                                     type="email"
                                     className="form-control"
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
@@ -283,7 +273,7 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Password</label>
                                 <div className="input-group input-success">
                                     <input
-                                        required
+
                                         type={st ? "text" : "password"}
                                         className="form-control"
                                         aria-label="Recipient's username"
@@ -302,7 +292,6 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                     }
                                 </div>
                             </div>
-
                         </div>
 
                         <div className="row">
@@ -339,6 +328,10 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                 />
                             </div>
                         </div>
+
+
+
+
 
                         {session?.data?.status === 'Admin' ?
                             <div className="row">
@@ -413,8 +406,8 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                     </Modal.Footer>
                 </form>
             </Modal>
-        </div>
+        </>
     )
 }
 
-export default Add
+export default Update

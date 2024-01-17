@@ -11,6 +11,18 @@ const Login = () => {
   const kunci1 = 'Bismillahirrahmanirrahim Allahuakbar ZikriAini2628';
   const kunci2 = 'Iikagennishiro Omaee Omaedakega Tsurainanteomounayo Zenin Kimochiwa Onajinanda';
 
+  const [isLoading, setIsLoading] = useState(false)
+  if (isLoading) {
+    Swal.fire({
+      title: "Mohon tunggu!",
+      html: "Sedang validasi data",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    })
+  }
+
   const Toast = Swal.mixin({
     toast: true,
     position: 'top',
@@ -26,19 +38,7 @@ const Login = () => {
 
   const handleSubmit = async (e: SyntheticEvent) => {
 
-    Swal.fire({
-      title: "Mohon tunggu!",
-      html: "Sedang validasi data",
-      timer: 2000,
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-
-    }).then((result) => {
-      if (result.dismiss === Swal.DismissReason.timer) {
-      }
-    });
+    setIsLoading(true)
 
     const enkripPertama = CryptoJS.AES.encrypt(passwordText, kunci1).toString();
     const password = CryptoJS.AES.encrypt(enkripPertama, kunci2).toString();
@@ -48,22 +48,23 @@ const Login = () => {
       password,
       redirect: false
     })
-    if (login?.error) {
-      setTimeout(function () {
+
+    setTimeout(function () {
+      if (login?.error) {
+        setIsLoading(false)
         Toast.fire({
           icon: 'warning',
           title: 'Username atau password salah'
         })
 
         return
-      }, 1700);
-    }
-    else {
+      }
+      else {
 
-      setTimeout(function () {
+        setIsLoading(false)
         window.location.href = '/'
-      }, 1500);
-    }
+      }
+    }, 2000);
   };
 
   return (

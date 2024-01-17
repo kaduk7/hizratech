@@ -11,7 +11,7 @@ import Select from 'react-select';
 import { Editor } from '@tinymce/tinymce-react';
 import { StyleSelect } from "@/app/helper"
 
-function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
+function Update({ pengumuman, reload, daftardivisi }: { pengumuman: PengumumanTb, reload: Function, daftardivisi: Array<never> }) {
     const [judul, setJudul] = useState(pengumuman.judul)
     const [tanggalPengumuman, setTanggalPengumuman] = useState(moment(pengumuman.tanggalPengumuman).format("YYYY-MM-DD"))
     const [isi, setIsi] = useState(pengumuman.isi)
@@ -20,8 +20,19 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
     const [divisiId, setDivisiId] = useState<string[]>([]);
     const [selectdivisiId, setSelectDivisiId] = useState<string[]>([]);
     const [patokan, setPatokan] = useState<string[]>([]);
-    const [datadivisi, setDataDivisi] = useState([])
     const [selectedOptions, setSelectedOptions] = useState([]);
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const router = useRouter()
     const [show, setShow] = useState(false)
@@ -34,29 +45,14 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
     const handleShow = () => setShow(true);
 
     useEffect(() => {
-        divisi();
         mencaridivisi();
     }, [])
 
     useEffect(() => {
-        const selectedData = datadivisi.filter((option: any) => divisiId.includes(option.value));
+        const selectedData = daftardivisi.filter((option: any) => divisiId.includes(option.value));
         setSelectedOptions(selectedData);
-    }, [divisiId, datadivisi]);
+    }, [divisiId, daftardivisi]);
 
-    async function divisi() {
-        const response = await axios.get(`/admin/api/divisi`);
-        const data = response.data;
-        const options = data.map((item: any) => ({
-            value: item.id,
-            label: item.nama,
-        }));
-        setDataDivisi(options)
-    }
-
-    const handleSelectChange = (selectedOptions: any) => {
-        setDivisiId(selectedOptions.map((option: any) => option.value));
-        setSelectDivisiId(selectedOptions)
-    };
 
     async function mencaridivisi() {
         const response = await axios.get(`/admin/api/pengumuman/${pengumuman.id}`);
@@ -72,6 +68,11 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
         setPatokan(options)
     }
 
+    const handleSelectChange = (selectedOptions: any) => {
+        setDivisiId(selectedOptions.map((option: any) => option.value));
+        setSelectDivisiId(selectedOptions)
+    };
+
     const refreshform = async () => {
         setJudul(pengumuman.judul)
         setTanggalPengumuman(moment(pengumuman.tanggalPengumuman).format("YYYY-MM-DD"))
@@ -84,19 +85,7 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+        setIsLoading(true)
 
         e.preventDefault()
         const newdivisi = selectdivisiId === patokan ? 'no' : 'yes'
@@ -124,11 +113,9 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
                 showConfirmButton: false,
                 timer: 1500
             })
-            setTimeout(function () {
+            reload()
+            setIsLoading(false)
 
-                router.refresh()
-
-            }, 1500);
         }, 1500);
     }
 
@@ -154,7 +141,7 @@ function Update({ pengumuman }: { pengumuman: PengumumanTb }) {
                                 <Select
                                     required
                                     isMulti
-                                    options={datadivisi}
+                                    options={daftardivisi}
                                     value={selectedOptions}
                                     onChange={handleSelectChange}
                                     styles={StyleSelect}

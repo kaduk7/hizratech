@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { Editor } from '@tinymce/tinymce-react';
 import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
-function Add({idkaryawan }: {idkaryawan: Number}) {
+function Add({ idkaryawan, reload }: { idkaryawan: Number, reload: Function }) {
     const [karyawanId, setKaryawanId] = useState('')
     const [judul, setJudul] = useState("")
     const [isi, setIsi] = useState("")
@@ -16,9 +16,20 @@ function Add({idkaryawan }: {idkaryawan: Number}) {
     const [file, setFile] = useState<File | null>()
     const [preview, setPreview] = useState("")
 
-    const router = useRouter()
     const [show, setShow] = useState(false);
     const ref = useRef<HTMLInputElement>(null);
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleShow = () => setShow(true);
 
@@ -53,6 +64,8 @@ function Add({idkaryawan }: {idkaryawan: Number}) {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        setIsLoading(true)
+
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -70,27 +83,28 @@ function Add({idkaryawan }: {idkaryawan: Number}) {
                 .upload(`berita-images/${namaunik}`, image);
 
             formData.append('namaunik', namaunik)
-            
+
             const xxx = await axios.post(`/admin/api/berita`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
+            setTimeout(function () {
 
-            if (xxx.data.pesan == 'berhasil') {
-                handleClose();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil Simpan',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    handleClose();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil Simpan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     clearForm();
-                    // router.refresh()
-                }, 1500);
-            }
+                    setIsLoading(false)
+                    reload()
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

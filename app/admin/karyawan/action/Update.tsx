@@ -9,7 +9,7 @@ import Swal from "sweetalert2"
 import moment from "moment"
 import { useSession } from "next-auth/react"
 
-function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisi: DivisiTb }) {
+function Update({ karyawan, hakAkses, caridivisi, reload,daftardivisi }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisi: DivisiTb, reload: Function,daftardivisi:Array<any> }) {
     const session = useSession()
     const [nama, setNama] = useState(karyawan.nama)
     const [tempatLahir, setTempatlahir] = useState(karyawan?.tempatLahir || "")
@@ -20,7 +20,6 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     const [email, setEmail] = useState(karyawan.email)
     const [divisiId, setDivisiId] = useState(String(karyawan.divisiId))
     const [namadivisi, setNamadivisi] = useState(caridivisi.nama)
-    const [selectdivisi, setSelectdivisi] = useState([])
 
     const [karyawanCek, setKaryawanCek] = useState(false)
     const [informasiCek, setInformasiCek] = useState(false)
@@ -29,8 +28,8 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     const [informasiCekValue, setInformasiCekValue] = useState(hakAkses.informasi)
     const [jobdeskCekValue, setJobdeskCekValue] = useState(hakAkses.jobdesk)
     const [st, setSt] = useState(false);
-    const router = useRouter()
     const [show, setShow] = useState(false)
+    const router = useRouter()
 
     const handleClose = () => {
         setShow(false);
@@ -42,12 +41,23 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
         setShow(true);
     }
 
+    const [isLoading, setIsLoading] = useState(false)
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
+
     useEffect(() => {
-        divisi();
         hakAksesceklis()
     }, [])
 
-    const hakAksesceklis=()=>{
+    const hakAksesceklis = () => {
         if (hakAkses.datakaryawan === "Ya") {
             setKaryawanCek(true)
         }
@@ -60,16 +70,10 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
         }
     }
 
-    async function divisi() {
-        const response = await axios.get(`/admin/api/divisi`);
-        const data = response.data;
-        setSelectdivisi(data)
-    }
-
     const onDivisi = async (e: any) => {
         const selectedOption = e.target.options[e.target.selectedIndex];
         const selectedLabel = selectedOption.getAttribute("label");
-        setDivisiId(e.target.value);   
+        setDivisiId(e.target.value);
         setNamadivisi(selectedLabel)
     }
 
@@ -90,19 +94,7 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+        setIsLoading(true)
 
         e.preventDefault()
         const newpass = password == "" ? 'no' : 'yes'
@@ -129,41 +121,46 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
             })
 
             setTimeout(function () {
-            if (xxx.data.pesan == 'sudah ada email') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'Email ini sudah terdaftar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
 
-            if (xxx.data.pesan == 'sudah ada hp') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'No Hp ini sudah terdaftar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                if (xxx.data.pesan == 'sudah ada email') {
+                    setIsLoading(false)
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Email ini sudah terdaftar',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
 
-            }
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                hapuspass()
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
-        }, 1500);
+                if (xxx.data.pesan == 'sudah ada hp') {
+                    setIsLoading(false)
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'No Hp ini sudah terdaftar',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+
+                }
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    setIsLoading(false)
+                    hapuspass()
+                    reload()
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        router.refresh()
+                    }, 1500);
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -249,7 +246,7 @@ function Update({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakA
                                     className="form-control"
                                     value={divisiId} onChange={onDivisi}>
                                     <option value={''}> Pilih Divisi</option>
-                                    {selectdivisi?.map((item: any, i) => (
+                                    {daftardivisi?.map((item: any, i) => (
                                         <option key={i} value={item.id} label={item.nama} >{item.nama}</option>
                                     ))}
                                 </select>

@@ -87,6 +87,20 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -144,21 +158,23 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                setShow2(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
-            refreshform();
+            setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    setShow2(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        router.refresh()
+                    }, 1500);
+                }
+                refreshform();
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

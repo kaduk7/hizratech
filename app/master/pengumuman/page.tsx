@@ -12,7 +12,8 @@ const PengumumanDivisi = () => {
 
   useEffect(() => {
     fetchDataPengumuman()
-  },[datapengumuman])
+  },[])
+  
 
   const fetchDataPengumuman = async () => {
     try {

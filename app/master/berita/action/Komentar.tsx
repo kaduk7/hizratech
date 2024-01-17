@@ -30,7 +30,7 @@ function Komentar({ berita, karyawan, idkaryawan, kirimfoto }: { berita: BeritaT
         fetchDataKomentarberita()
         setKaryawanId(String(idkaryawan))
         setPreviewAvatarUser(kirimfoto)
-    }, [dataKomentarBerita])
+    }, [])
 
     const fetchDataKomentarberita = async () => {
         try {

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { useState, SyntheticEvent, useEffect, useRef } from "react"
-import {  RequestJobdeskTb } from "@prisma/client"
+import { RequestJobdeskTb } from "@prisma/client"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
@@ -45,7 +45,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
         setSelectedOptions(selectedData);
     }, [team, dataKaryawan]);
 
-    const cariKaryawan=async ()=>{
+    const cariKaryawan = async () => {
         const response = await axios.get(`/admin/api/notkaryawan/${session.data?.karyawanId}`);
         const data = response.data;
         const options = data.map((item: any) => ({
@@ -71,6 +71,21 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
+
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
 
         try {
@@ -87,33 +102,35 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'tidak bisa diedit') {
-               
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'Data yang sudah di Acc Tidak bisa diedit',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    handleClose()
-                }, 1500);
-                
-            }
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
+            setTimeout(function () {
+                if (xxx.data.pesan == 'tidak bisa diedit') {
+
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Data yang sudah di Acc Tidak bisa diedit',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        handleClose()
+                    }, 1500);
+
+                }
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        router.refresh()
+                    }, 1500);
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -135,22 +152,22 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                     </Modal.Header>
                     <Modal.Body>
 
-                    <div className="row">
-                                <div className="mb-3 col-md-12">
-                                    <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Team</label>
-                                    <Select
-                                        required
-                                        isMulti
-                                        options={dataKaryawan}
-                                        value={selectedOptions}
-                                        onChange={handleSelectChange}
-                                        styles={StyleSelect}
-                                    />
-                                </div>
+                        <div className="row">
+                            <div className="mb-3 col-md-12">
+                                <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Team</label>
+                                <Select
+                                    required
+                                    isMulti
+                                    options={dataKaryawan}
+                                    value={selectedOptions}
+                                    onChange={handleSelectChange}
+                                    styles={StyleSelect}
+                                />
                             </div>
+                        </div>
 
-                    <div className="col-md-12 col-xl-12 col-xxl-12 mb-3">
-                            <label className="form-label"  style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Nama Job</label>
+                        <div className="col-md-12 col-xl-12 col-xxl-12 mb-3">
+                            <label className="form-label" style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Nama Job</label>
                             <div className="input-group">
                                 <input
                                     autoFocus
@@ -188,7 +205,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                         </div>
 
                         <div className="col-md-12 col-xl-12 col-xxl-12 mb-3">
-                            <label className="form-label"  style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Keterangan</label>
+                            <label className="form-label" style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Keterangan</label>
                             <div className="input-group">
                                 <textarea
                                     required

@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
-import { DivisiTb } from "@prisma/client";
 
-function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any>}) {
+function Add({reload}:{reload:Function}) {
     const session = useSession()
     const [nama, setNama] = useState("")
     const [tempatLahir, setTempatlahir] = useState("")
@@ -18,6 +17,7 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
 
+    const [selectdivisi, setSelectdivisi] = useState([])
     const [divisiId, setDivisiId] = useState("")
     const [namadivisi, setNamadivisi] = useState("")
 
@@ -28,12 +28,12 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
     const [informasiCekValue, setInformasiCekValue] = useState("Tidak")
     const [jobdeskCekValue, setJobdeskCekValue] = useState("Tidak")
 
+    const router = useRouter()
     const [show, setShow] = useState(false);
     const ref = useRef<HTMLInputElement>(null);
     const refemail = useRef<HTMLInputElement>(null);
     const refhp = useRef<HTMLInputElement>(null);
     const [st, setSt] = useState(false);
-    const router = useRouter()
 
     const setfokusemail = () => {
         refemail.current?.focus();
@@ -49,33 +49,17 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
     }
 
     const handleShow = () => setShow(true);
-    const [isLoading, setIsLoading] = useState(false)
-
-    if (isLoading) {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang mengirim data ke server",
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        })
-    }
 
     useEffect(() => {
         ref.current?.focus();
-        // daftardivisi();
+        divisi();
     }, [])
 
-    // async function divisi() {
-    //     try {
-    //         const response = await fetch(`/admin/api/divisi`);
-    //         const result = await response.json();
-    //         setSelectdivisi(result)
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // }
+    async function divisi() {
+        const response = await axios.get(`/admin/api/divisi`);
+        const data = response.data;
+        setSelectdivisi(data)
+    }
 
     const onDivisi = async (e: any) => {
         const selectedOption = e.target.options[e.target.selectedIndex];
@@ -101,8 +85,20 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
 
-        setIsLoading(true)
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -125,9 +121,7 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                 },
             })
             setTimeout(function () {
-
                 if (xxx.data.pesan == 'Email sudah ada') {
-                    setIsLoading(false)
                     Swal.fire({
                         position: 'top-end',
                         icon: 'warning',
@@ -140,7 +134,6 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                     }, 1500);
                 }
                 if (xxx.data.pesan == 'No Hp sudah ada') {
-                    setIsLoading(false)
                     Swal.fire({
                         position: 'top-end',
                         icon: 'warning',
@@ -155,7 +148,6 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
 
                 if (xxx.data.pesan == 'berhasil') {
                     handleClose();
-                    setIsLoading(false)
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
@@ -163,14 +155,14 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    clearForm();
-                    reload()
                     setTimeout(function () {
+                        clearForm();
+                        reload()
                         router.refresh()
                     }, 1500);
                 }
-            }, 1500);
 
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -259,7 +251,7 @@ function Add({ reload,daftardivisi }: { reload: Function ,daftardivisi:Array<any
                                     className="form-control"
                                     value={divisiId} onChange={onDivisi}>
                                     <option value={''}> Pilih Divisi</option>
-                                    {daftardivisi?.map((item: any, i) => (
+                                    {selectdivisi?.map((item: any, i) => (
                                         <option key={i} value={item.id} label={item.nama} >{item.nama}</option>
                                     ))}
                                 </select>

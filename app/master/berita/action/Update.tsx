@@ -55,6 +55,20 @@ function Update({ berita }: { berita: BeritaTb }) {
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+
         e.preventDefault()
         const newfoto = preview === fotolama ? 'no' : 'yes'
         try {
@@ -66,11 +80,11 @@ function Update({ berita }: { berita: BeritaTb }) {
             formData.append('newfoto', newfoto)
             formData.append('file', file as File)
 
-            if (newfoto==='yes') {
+            if (newfoto === 'yes') {
 
                 await supabase.storage
-                .from(supabaseBUCKET)
-                .remove([`berita-images/${berita.foto}`]);
+                    .from(supabaseBUCKET)
+                    .remove([`berita-images/${berita.foto}`]);
 
                 const image = formData.get('file') as File;
                 const namaunik = Date.now() + '-' + image.name
@@ -87,19 +101,21 @@ function Update({ berita }: { berita: BeritaTb }) {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
+            setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {
+                        router.refresh()
+                    }, 1500);
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

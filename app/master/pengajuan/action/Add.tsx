@@ -62,6 +62,20 @@ function Add() {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang validasi data",
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        });
+        
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -78,7 +92,7 @@ function Add() {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-
+            setTimeout(function () {
             if (xxx.data.pesan == 'berhasil') {
                 handleClose();
                 Swal.fire({
@@ -93,6 +107,7 @@ function Add() {
                     router.refresh()
                 }, 1500);
             }
+        }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }

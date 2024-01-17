@@ -5,16 +5,29 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 
-function Delete({ divisiId }: { divisiId: Number }) {
+function Delete({ divisiId,reload }: { divisiId: Number,reload:Function }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
     const router = useRouter()
 
+    const [isLoading, setIsLoading] = useState(false)
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
+
     const handleDelete = async (divisiId: number) => {
+        setIsLoading(true)
         handleClose()
         await axios.delete(`/admin/api/divisi/${divisiId}`)
+        setTimeout(function () {
         Swal.fire({
             position: 'top-end',
             icon: 'success',
@@ -22,8 +35,11 @@ function Delete({ divisiId }: { divisiId: Number }) {
             showConfirmButton: false,
             timer: 1500
           })
-        setTimeout(function () {
-            router.refresh()
+            setIsLoading(false)
+            reload()
+            setTimeout(function () {
+                router.refresh()
+            }, 1500);
         }, 1500);
     }
 

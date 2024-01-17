@@ -1,21 +1,21 @@
 "use client"
-import Add from "./action/Add"
-import Update from "./action/Update"
-import Delete from "./action/Delete"
-import React, { useState, useEffect } from 'react';
-import { Pagination } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import DataTable from 'react-data-table-component';
+import Add from './action/Add';
+import Update from './action/Update';
+import Delete from './action/Delete';
 
 const Divisi = () => {
   const [datadivisi, setDatadivisi] = useState([])
+  const [filterText, setFilterText] = React.useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
-    fetchDataDivisi()
-  }, [datadivisi])
+    reload()
+  }, [])
 
-  const fetchDataDivisi = async () => {
+  const reload = async () => {
     try {
       const response = await fetch(`/admin/api/divisi`);
       const result = await response.json();
@@ -23,39 +23,42 @@ const Divisi = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  }
+
+  const handleRowsPerPageChange = (newPerPage: number, page: number) => {
+    setItemsPerPage(newPerPage);
+    setCurrentPage(page);
   };
 
-  const filteredData = datadivisi.filter((item: any) =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredItems = datadivisi.filter(
+    (item: any) => item.nama && item.nama.toLowerCase().includes(filterText.toLowerCase()),
   );
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const columns = [
+    {
+      name: 'No',
+      cell: (row: any, index: number) => <div>{(currentPage - 1) * itemsPerPage + index + 1}</div>,
+      sortable: false,
+      width: '80px'
+    },
+    {
+      name: 'Nama Divisi',
+      selector: (row: any) => row.nama,
+      sortable: true,
+      // width: '420px'
+    },
+    {
+      name: 'Action',
+      cell: (row: any) => (
+        <div className="d-flex">
+          <Update reload={reload} divisi={row} />
+          <Delete reload={reload} divisiId={row.id} />
+        </div>
+      ),
+      width: '150px'
+    },
 
-  const globalIndex = (index: any) => indexOfFirstItem + index + 1;
-  const paginate = (pageNumber: any) => setCurrentPage(pageNumber);
-
-  const handleItemsPerPageChange = (e: any) => {
-    setItemsPerPage(parseInt(e.target.value, 10));
-    setCurrentPage(1);
-  };
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
-  const pageNumbers = [];
-  if (totalPages <= 3) {
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(i);
-    }
-  } else {
-    const startPage = Math.max(1, currentPage - 1);
-    const endPage = Math.min(startPage + 2, totalPages);
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-  }
+  ];
 
   return (
     <div>
@@ -63,137 +66,61 @@ const Divisi = () => {
         <div className="col-md-12 grid-margin stretch-card">
           <div className="card">
             <div className="card-header">
-              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 25 }}>Data Divisi</h1>
+              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 20 }}>Data Divisi</h1>
             </div>
             <div className="card-body">
               <div className="row mb-3">
                 <div className="col-md-9">
-                  <Add />
+                  <Add reload={reload} />
                 </div>
                 <div className="col-md-3">
                   <div className="input-group mb-3  input-success">
                     <span className="input-group-text border-0"><i className="mdi mdi-magnify"></i></span>
                     <input
-                      className="form-control"
-                      value={searchTerm}
+                      id="search"
                       type="text"
-                      onChange={(e) => {
-                        setSearchTerm(e.target.value);
-                        setCurrentPage(1);
-                      }}
                       placeholder="Search..."
+                      aria-label="Search Input"
+                      value={filterText}
+                      onChange={(e: any) => setFilterText(e.target.value)}
+                      className="form-control"
                     />
                   </div>
                 </div>
               </div>
-              <div className="table-responsive">
-                <table className="table primary-table-bordered">
-                  <thead className="thead-success">
-                    <tr>
-                      <th style={{ fontSize: 17, color: "black" }}>No</th>
-                      <th style={{ fontSize: 17, color: "black" }}>Nama Divisi</th>
-                      <th style={{ fontSize: 17, color: "black" }}>Action</th>
-                    </tr>
-                  </thead>
-                  {datadivisi.length === 0 ?
-                    <tbody>
-                      <tr >
-                        <td className="text-center">No data available</td>
-                      </tr>
-                    </tbody>
-                    :
-                    <tbody>
-                      {currentItems.map((x: any, index) => (
-                        <tr className="hover" key={x.id}>
-                          <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }} width={100}>{globalIndex(index)}</td>
-                          <td style={{ fontFamily: "initial", fontSize: 17, color: "black" }}>{x.nama}</td>
-                          <td width={100}>
-                            <div className="d-flex">
-                              <Update divisi={x} />
-                              <Delete divisiId={x.id} />
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  }
-                </table>
-              </div>
+              <DataTable
+                columns={columns}
+                data={filteredItems}
+                pagination
+                persistTableHead
+                responsive
+                paginationPerPage={itemsPerPage}
+                paginationTotalRows={filteredItems.length}
+                onChangePage={(page) => setCurrentPage(page)}
+                onChangeRowsPerPage={handleRowsPerPageChange}
+                paginationRowsPerPageOptions={[5, 10, 20]}
+                customStyles={{
+                  headRow: {
+                    style: {
+                      backgroundColor: '#53d0b2',
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      fontFamily: 'initial'
+                    },
+                  },
+                  cells: {
+                    style: {
+                      fontSize: 15,
+                      fontFamily: 'initial',
+                    },
+                  },
+                }}
+              />
 
-              {datadivisi.length > 0 ?
-                <div className="row mb-3">
-                  <div className="col-md-12 d-flex justify-content-end">
-                    <Pagination>
-                      <li>
-                        <label className="col-sm-12 col-form-label mx-2" style={{ fontWeight: "bold" }} >Row per page</label>
-                      </li>
-
-                      <li>
-                        <div className="col-sm-12 mt-2 mx-2">
-                          <select
-                            style={{ backgroundColor: 'white', color: "black", borderColor: "grey" }}
-                            value={itemsPerPage}
-                            onChange={handleItemsPerPageChange}
-                          >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                          </select>
-                        </div>
-                      </li>
-
-                      <li className="page-item page-indicator ">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage(1)}
-                          style={{ pointerEvents: currentPage === 1 ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-double-left"></i></a>
-                      </li>
-
-                      <li className="page-item page-indicator ">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                          style={{ pointerEvents: currentPage === 1 ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-left"></i></a>
-                      </li>
-
-                      {pageNumbers.map((number) => (
-                        <Pagination.Item
-                          key={number}
-                          active={number === currentPage}
-                          onClick={() => paginate(number)}
-                        >
-                          {number}
-                        </Pagination.Item>
-                      ))}
-
-                      <li className="page-item page-indicator">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage((next) => Math.min(next + 1, Math.ceil(filteredData.length / itemsPerPage)))}
-                          style={{ pointerEvents: currentPage === Math.ceil(filteredData.length / itemsPerPage) ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-right"></i></a>
-                      </li>
-
-                      <li className="page-item page-indicator">
-                        <a className="page-link"
-                          onClick={() => setCurrentPage(Math.ceil(filteredData.length / itemsPerPage))}
-                          style={{ pointerEvents: currentPage === Math.ceil(filteredData.length / itemsPerPage) ? 'none' : 'auto' }}
-                        >
-                          <i className="la la-angle-double-right"></i></a>
-                      </li>
-
-                    </Pagination>
-                  </div>
-                </div>
-                :
-                null
-              }
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </div >
   )
 }

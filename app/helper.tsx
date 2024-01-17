@@ -67,19 +67,19 @@ export const warnastatus = (status: any) => {
     switch (status) {
 
       case 'Proses':
-        return 'info';
+        return 'lightblue';
 
       case 'Selesai':
-        return 'success';
+        return 'green';
 
       case 'Tolak':
-        return 'danger';
+        return 'red';
 
       case 'Verifikasi':
-        return 'warning';
+        return 'yellow';
 
       case 'Dalam Proses':
-        return 'info';
+        return 'lightblue';
 
     }
   };

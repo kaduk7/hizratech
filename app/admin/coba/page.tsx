@@ -1,14 +1,15 @@
 "use client"
-import Update from "./action/Update"
-import Delete from "./action/Delete"
-import React, { useState, useEffect } from 'react';
-import { Pagination, Badge } from 'react-bootstrap';
-import { warnastatus } from "@/app/helper";
+import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import Add from './action/Add';
+import Update from './action/Update';
+import Delete from './action/Delete';
+import Cek from './action/Cek';
+import * as XLSX from 'xlsx';
 
-const PengajuanJobdesk = () => {
-  const [datajobdesk, setDatajobdesk] = useState([])
+const Karyawan = () => {
   const [filterText, setFilterText] = React.useState('');
+  const [datakaryawan, setDatakaryawan] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
@@ -17,9 +18,9 @@ const PengajuanJobdesk = () => {
   }, [])
 
   const reload = async () => {
-    const response = await fetch(`/admin/api/verifikasi`);
+    const response = await fetch(`/admin/api/karyawan`);
     const result = await response.json();
-    setDatajobdesk(result);
+    setDatakaryawan(result);
   }
 
   const handleRowsPerPageChange = (newPerPage: number, page: number) => {
@@ -27,8 +28,8 @@ const PengajuanJobdesk = () => {
     setCurrentPage(page);
   };
 
-  const filteredItems = datajobdesk.filter(
-    (item: any) => item.namaJob && item.namaJob.toLowerCase().includes(filterText.toLowerCase()),
+  const filteredItems = datakaryawan.filter(
+    (item: any) => item.nama && item.nama.toLowerCase().includes(filterText.toLowerCase()),
   );
 
   const columns = [
@@ -40,42 +41,38 @@ const PengajuanJobdesk = () => {
     },
     {
       name: 'Nama Karyawan',
-      selector: (row: any) => row.KaryawanTb.nama,
+      selector: (row: any) => row.nama,
       sortable: true,
       width: '420px'
     },
     {
-      name: 'Nama Tugas',
-      selector: (row: any) => row.namaJob,
+      name: 'No Hp',
+      selector: (row: any) => row.hp,
+      width: '150px'
     },
     {
-      name: 'Status',
-      selector: (row: any) =>  row.status,
-      cell: (row:any) => (
-        <div
-          style={{
-            backgroundColor: warnastatus(row.status),
-            padding: '8px',
-            borderRadius: '4px',
-            color: 'black',
-          }}
-        >
-          {row.status}
-        </div>
-      ),
+      name: 'Divisi',
+      selector: (row: any) => row.DivisiTb.nama,
     },
     {
       name: 'Action',
       cell: (row: any) => (
         <div className="d-flex">
-          <Update reload={reload} reqjobdesk={row} karyawanTB={row.KaryawanTb} />
-          <Delete reload={reload} jobdeskId={row.id} />
+          <Update reload={reload} karyawan={row} hakAkses={row.HakAksesTb} caridivisi={row.DivisiTb} />
+          <Delete reload={reload} karyawanId={row.id} />
+          <Cek karyawan={row} hakAkses={row.HakAksesTb} caridivisi={row.DivisiTb} />
         </div>
       ),
     },
 
   ];
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredItems);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'DataKaryawan');
+    XLSX.writeFile(workbook, 'Data Karyawan.xlsx');
+  };
 
   return (
     <div>
@@ -83,11 +80,12 @@ const PengajuanJobdesk = () => {
         <div className="col-md-12 grid-margin stretch-card">
           <div className="card">
             <div className="card-header">
-              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 20 }}>Verifikasi</h1>
+              <h1 className="card-title" style={{ fontFamily: "initial", fontSize: 25 }}>Data Karyawan</h1>
             </div>
             <div className="card-body">
               <div className="row mb-3">
                 <div className="col-md-9">
+                  <Add reload={reload} />
                 </div>
                 <div className="col-md-3">
                   <div className="input-group mb-3  input-success">
@@ -121,7 +119,7 @@ const PengajuanJobdesk = () => {
                       backgroundColor: '#53d0b2',
                       fontSize: 15,
                       fontWeight: 'bold',
-                      fontFamily: 'initial'
+                      fontFamily:'initial'
                     },
                   },
                   cells: {
@@ -132,12 +130,36 @@ const PengajuanJobdesk = () => {
                   },
                 }}
               />
+              {datakaryawan.length > 0 ?
+                <div className="row mb-3">
+                  <div className="col-md-3">
+                    <button type='button' onClick={exportToExcel} className="btn btn-success btn-icon-text">
+                      Ekspor ke Excel
+                    </button>
+                  </div>
+                  <div className="col-md-9 d-flex justify-content-end">
+                    <li>
+                      <button type='button' onClick={exportToExcel} className="btn btn-primary btn-icon-text mx-2">
+                        Download Template
+                      </button>
+                    </li>
+                    <li>
+                      <button type='button' onClick={exportToExcel} className="btn btn-info btn-icon-text">
+                        Import dari Excel
+                      </button>
+                    </li>
+                  </div>
+
+                </div>
+                :
+                null
+              }
             </div>
           </div>
         </div>
       </div >
     </div >
   )
-}
+};
 
-export default PengajuanJobdesk
+export default Karyawan;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 
-function Delete({ pengumumanId }: { pengumumanId: Number }) {
+function Delete({ pengumumanId,reload }: { pengumumanId: Number,reload: Function }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);

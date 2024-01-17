@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 
-function Update({ divisi }: { divisi: DivisiTb }) {
+function Update({ divisi, reload }: { divisi: DivisiTb, reload: Function }) {
 
     const [nama, setNama] = useState(divisi.nama)
     const router = useRouter()
@@ -24,27 +24,44 @@ function Update({ divisi }: { divisi: DivisiTb }) {
         setNama(divisi.nama)
     }
 
+    const [isLoading, setIsLoading] = useState(false)
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
+
     const handleUpdate = async (e: SyntheticEvent) => {
+        setIsLoading(true)
         e.preventDefault()
         setShow(false)
         await axios.patch(`/admin/api/divisi/${divisi.id}`, {
             nama: nama,
         })
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: 'Berhasil diubah',
-            showConfirmButton: false,
-            timer: 1500
-        })
         setTimeout(function () {
-            router.refresh()
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Berhasil diubah',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            setIsLoading(false)
+            reload()
+            setTimeout(function () {
+                router.refresh()
+            }, 1500);
         }, 1500);
     }
 
     return (
         <>
-              <span onClick={handleShow} className="btn btn-success shadow btn-xl sharp mx-1"><i className="fa fa-edit"></i></span>
+            <span onClick={handleShow} className="btn btn-success shadow btn-xl sharp mx-1"><i className="fa fa-edit"></i></span>
 
             <Modal
                 dialogClassName="modal-m"

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 
-function Add() {
+function Add({ reload }: { reload: Function }) {
 
     const [nama, setNama] = useState("")
     const router = useRouter()
@@ -28,24 +28,39 @@ function Add() {
         setNama('')
     }
 
+    const [isLoading, setIsLoading] = useState(false)
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleSubmit = async (e: SyntheticEvent) => {
+        setIsLoading(true)
         e.preventDefault()
         handleClose();
         await axios.post('/admin/api/divisi', {
             nama: nama,
         })
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: 'Berhasil disimpan',
-            showConfirmButton: false,
-            timer: 1500
-        })
-
         setTimeout(function () {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Berhasil disimpan',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            setIsLoading(false)
             clearForm();
-            router.refresh()
+            reload()
+            setTimeout(function () {
+                router.refresh()
+            }, 1500);
         }, 1500);
     }
 

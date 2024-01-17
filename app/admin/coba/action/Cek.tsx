@@ -2,33 +2,192 @@
 "use client"
 import { useState, SyntheticEvent, useEffect } from "react"
 import { DivisiTb, HakAksesTb, KaryawanTb } from "@prisma/client"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
+import Swal from "sweetalert2"
 import moment from "moment"
-import { supabaseUrl, supabaseBUCKET } from '@/app/helper'
+import { useSession } from "next-auth/react"
+import { supabase, supabaseUrl, supabaseBUCKET } from '@/app/helper'
 
-function Cek({ karyawan, caridivisi }: { karyawan: KaryawanTb, caridivisi: DivisiTb }) {
-    const nama = karyawan.nama
-    const tempatLahir = (karyawan?.tempatLahir || "")
-    const tanggalLahir = (moment(karyawan?.tanggalLahir).format("DD-MM-YYYY"))
-    const alamat = (karyawan?.alamat || "")
-    const hp = (karyawan.hp)
-    const preview = (karyawan?.foto)
-    const password = ("")
-    const email = (karyawan.email)
-    const namadivisi = (caridivisi.nama)
-    const ktplama =(karyawan?.ktp)
-    const cvlama = (karyawan?.CV)
-    const ijazahlama = (karyawan?.ijazah)
-    
+function Cek({ karyawan, hakAkses, caridivisi }: { karyawan: KaryawanTb, hakAkses: HakAksesTb, caridivisi: DivisiTb }) {
+    const session = useSession()
+    const [nama, setNama] = useState(karyawan.nama)
+    const [tempatLahir, setTempatlahir] = useState(karyawan?.tempatLahir || "")
+    const [tanggalLahir, setTanggallahir] = useState(moment(karyawan?.tanggalLahir).format("DD-MM-YYYY"))
+    const [alamat, setAlamat] = useState(karyawan?.alamat || "")
+    const [hp, setHp] = useState(karyawan.hp)
+    const [preview, setPreview] = useState(karyawan?.foto)
+    const [password, setPassword] = useState("")
+    const [email, setEmail] = useState(karyawan.email)
+    const [divisiId, setDivisiId] = useState(String(karyawan.divisiId))
+    const [namadivisi, setNamadivisi] = useState(caridivisi.nama)
+    const [selectdivisi, setSelectdivisi] = useState([])
+
+    const [karyawanCek, setKaryawanCek] = useState(false)
+    const [informasiCek, setInformasiCek] = useState(false)
+    const [jobdeskCek, setJobdeskCek] = useState(false)
+    const [karyawanCekValue, setKaryawanCekValue] = useState(hakAkses.datakaryawan)
+    const [informasiCekValue, setInformasiCekValue] = useState(hakAkses.informasi)
+    const [jobdeskCekValue, setJobdeskCekValue] = useState(hakAkses.jobdesk)
+    const [st, setSt] = useState(false);
+    const router = useRouter()
     const [show, setShow] = useState(false)
+
+    const [ktplama, setKtpLama] = useState(karyawan?.ktp)
+    const [cvlama, setCvLama] = useState(karyawan?.CV)
+    const [ijazahlama, setIjazahLama] = useState(karyawan?.ijazah)
+
     const handleClose = () => {
         setShow(false);
+        refreshform()
+        hakAksesceklis()
     }
 
     const handleShow = () => {
         setShow(true);
     }
 
+    useEffect(() => {
+        divisi();
+        hakAksesceklis()
+    }, [])
+
+    const hakAksesceklis = () => {
+        if (hakAkses.datakaryawan === "Ya") {
+            setKaryawanCek(true)
+        }
+
+        if (hakAkses.informasi === "Ya") {
+            setInformasiCek(true)
+        }
+        if (hakAkses.jobdesk === "Ya") {
+            setJobdeskCek(true)
+        }
+    }
+
+    async function divisi() {
+        const response = await axios.get(`/admin/api/divisi`);
+        const data = response.data;
+        setSelectdivisi(data)
+    }
+
+    const onDivisi = async (e: any) => {
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const selectedLabel = selectedOption.getAttribute("label");
+        setDivisiId(e.target.value);
+        setNamadivisi(selectedLabel)
+    }
+
+    const refreshform = () => {
+        setNama(karyawan.nama)
+        setTempatlahir(karyawan?.tempatLahir || '')
+        setTanggallahir(moment(karyawan?.tanggalLahir).format("YYYY-MM-DD"))
+        setAlamat(karyawan?.alamat || '')
+        setHp(karyawan.hp)
+        setEmail(karyawan.email)
+        setDivisiId(String(karyawan.divisiId))
+        setNamadivisi(caridivisi.nama)
+        setPassword('')
+    }
+
+    const hapuspass = () => {
+        setPassword('')
+    }
+
+    const handleUpdate = async (e: SyntheticEvent) => {
+        e.preventDefault()
+        const newpass = password == "" ? 'no' : 'yes'
+        try {
+            const formData = new FormData()
+            formData.append('nama', nama)
+            formData.append('tempatlahir', tempatLahir)
+            formData.append('tanggallahir', new Date(tanggalLahir).toISOString())
+            formData.append('alamat', alamat)
+            formData.append('hp', hp)
+            formData.append('email', email)
+            formData.append('password', password)
+            formData.append('newpass', newpass)
+            formData.append('divisiId', divisiId)
+            formData.append('namadivisi', namadivisi)
+            formData.append('karyawanCekValue', karyawanCekValue)
+            formData.append('informasiCekValue', informasiCekValue)
+            formData.append('jobdeskCekValue', jobdeskCekValue)
+
+            const xxx = await axios.patch(`/admin/api/karyawan/${karyawan.id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+
+            if (xxx.data.pesan == 'sudah ada email') {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'Email ini sudah terdaftar',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+
+            if (xxx.data.pesan == 'sudah ada hp') {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'No Hp ini sudah terdaftar',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+            }
+            if (xxx.data.pesan == 'berhasil') {
+                setShow(false);
+                hapuspass()
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Berhasil diubah',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(function () {
+                    router.refresh()
+                }, 1500);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleCheckboxChangeKaryawan = () => {
+        setKaryawanCek(!karyawanCek);
+        if (!karyawanCek) {
+            setKaryawanCekValue("Ya")
+        }
+        else {
+            setKaryawanCekValue("Tidak")
+        }
+    };
+
+    const handleCheckboxChangeinformasi = () => {
+        setInformasiCek(!informasiCek);
+        if (!informasiCek) {
+            setInformasiCekValue("Ya")
+        }
+        else {
+            setInformasiCekValue("Tidak")
+        }
+    };
+
+    const handleCheckboxChangeJobdesk = () => {
+        setJobdeskCek(!jobdeskCek);
+        if (!jobdeskCek) {
+            setJobdeskCekValue("Ya")
+        }
+        else {
+            setJobdeskCekValue("Tidak")
+        }
+    };
 
     return (
         <>
@@ -39,11 +198,12 @@ function Cek({ karyawan, caridivisi }: { karyawan: KaryawanTb, caridivisi: Divis
                 onHide={handleClose}
                 backdrop="static"
                 keyboard={false}>
-                <form >
+                <form onSubmit={handleUpdate}>
                     <Modal.Header closeButton>
                         <Modal.Title style={{ fontFamily: "initial", fontSize: 30, color: "black" }}>Data Karyawan</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+
                         <div className="row">
                             <div className="col-xl-3 col-lg-4">
                                 <div className="clearfix">
@@ -99,7 +259,10 @@ function Cek({ karyawan, caridivisi }: { karyawan: KaryawanTb, caridivisi: Divis
                             </div>
                             <div className="col-xl-9 col-lg-8">
                                 <div className="card profile-card card-bx m-b30">
-                                    <form className="profile-form">
+                                    {/* <div className="card-header">
+                                        <h6 className="card-title">Data Karyawan</h6>
+                                    </div> */}
+                                    <form className="profile-form" onSubmit={handleUpdate}>
                                         <div className="card-body">
                                             <div className="row">
                                                 <div className="col-sm-12 m-b30">
@@ -126,7 +289,7 @@ function Cek({ karyawan, caridivisi }: { karyawan: KaryawanTb, caridivisi: Divis
                                                         disabled
                                                         type="text"
                                                         className="form-control"
-                                                        value={tanggalLahir}
+                                                        value={tanggalLahir} 
                                                     />
                                                 </div>
                                                 <div className="col-sm-12 m-b30">
@@ -144,7 +307,7 @@ function Cek({ karyawan, caridivisi }: { karyawan: KaryawanTb, caridivisi: Divis
                                                         disabled
                                                         type="text"
                                                         className="form-control"
-                                                        value={hp}
+                                                        value={hp} 
                                                     />
                                                 </div>
                                                 <div className="col-sm-6 m-b30">
@@ -154,7 +317,7 @@ function Cek({ karyawan, caridivisi }: { karyawan: KaryawanTb, caridivisi: Divis
                                                         required
                                                         type="text"
                                                         className="form-control"
-                                                        value={email}
+                                                        value={email} 
                                                     />
                                                 </div>
                                                 <div className="col-sm-6 m-b30">
