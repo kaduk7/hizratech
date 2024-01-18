@@ -14,6 +14,7 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
     const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("DD-MM-YYYY"))
     const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
     const [status, setStatus] = useState(jobdesk.status)
+    const [rincian, setRincian] = useState(jobdesk.rincian)
     const [namakaryawan, setNamakaryawan] = useState(findkaryawan.nama)
     const [alasan, setAlasan] = useState(jobdesk?.alasan)
     const [tanggalkerjaValue, setTanggalkerjaValue] = useState(moment(jobdesk?.tanggalPelaksanaan).format("DD-MM-YYYY"))
@@ -154,6 +155,14 @@ function Cek({ jobdesk, findkaryawan }: { jobdesk: JobdeskTb, findkaryawan: Kary
                                                                 {status}
                                                             </div>
                                         }
+                                    </div>
+
+                                    <div className="mb-3 row">
+                                        <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Rincian </div>
+                                        <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                        <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                            {rincian}
+                                        </div>
                                     </div>
 
                                     <div className="mb-3 row">

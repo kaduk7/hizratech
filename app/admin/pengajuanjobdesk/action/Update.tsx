@@ -16,6 +16,7 @@ function Update({ reqjobdesk, karyawanTB, reload }: { reqjobdesk: RequestJobdesk
     const [tanggalMulai, setTanggalMulai] = useState(moment(reqjobdesk.tanggalMulai).format("YYYY-MM-DD"))
     const [deadline, setDeadline] = useState(moment(reqjobdesk.deadline).format("YYYY-MM-DD"))
     const [keterangan, setKeterangan] = useState(reqjobdesk.keterangan)
+    const [rincian, setRincian] = useState(reqjobdesk.rincian)
 
     const [alasan, setAlasan] = useState("")
     const [namakaryawan, setNamakaryawan] = useState(karyawanTB.nama)
@@ -112,6 +113,7 @@ function Update({ reqjobdesk, karyawanTB, reload }: { reqjobdesk: RequestJobdesk
             const formData = new FormData()
             formData.append('namaJob', namaJob)
             formData.append('keterangan', keterangan)
+            formData.append('rincian', rincian)
             formData.append('deadline', new Date(deadline).toISOString())
             formData.append('tanggalMulai', new Date(tanggalMulai).toISOString())
             formData.append('karyawanId', karyawanId)
@@ -183,6 +185,7 @@ function Update({ reqjobdesk, karyawanTB, reload }: { reqjobdesk: RequestJobdesk
     const refreshform = () => {
         setNamajob(reqjobdesk.namaJob)
         setKeterangan(reqjobdesk.keterangan)
+        setRincian(reqjobdesk.rincian)
         setDeadline(moment(reqjobdesk.deadline).format("YYYY-MM-DD"))
     }
 
@@ -254,6 +257,20 @@ function Update({ reqjobdesk, karyawanTB, reload }: { reqjobdesk: RequestJobdesk
                                             className="form-control"
                                             style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
                                             value={keterangan}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="mb-3 col-md-12">
+                                        <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Rincian</label>
+                                        <input
+                                            required
+                                            disabled
+                                            type="text"
+                                            className="form-control"
+                                            style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
+                                            value={rincian}
                                         />
                                     </div>
                                 </div>

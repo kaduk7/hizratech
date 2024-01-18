@@ -17,6 +17,7 @@ export const POST = async (request: Request) => {
                 team: team.join(', '),
                 namaTeam: String(formData.get('namaterpilih')),
                 status: String(formData.get('status')),
+                rincian: String(formData.get('rincian')),
                 suratTugas:String(formData.get('namaunikSurat')) ,
                 beritaAcara:String(formData.get('namaunikBerita')) ,
                 laporanAnggaran: String(formData.get('namaunikAnggaran')),

@@ -96,6 +96,7 @@ model RequestJobdeskTb {
   tanggalMulai DateTime
   deadline     DateTime
   status       String
+  rincian      String
   team         String
   namaTeam     String
   alasan       String?

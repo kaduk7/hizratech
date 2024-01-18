@@ -3,7 +3,6 @@
 import { useState, SyntheticEvent, useEffect, useRef } from "react"
 import { RequestJobdeskTb } from "@prisma/client"
 import axios from "axios"
-import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 import moment from "moment"
@@ -11,18 +10,29 @@ import { useSession } from "next-auth/react";
 import Select from 'react-select';
 import { StyleSelect } from "@/app/helper"
 
-function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
+function Update({ jobdesk, reload, datateam }: { jobdesk: RequestJobdeskTb, reload: Function, datateam: Array<never> }) {
     const session = useSession()
     const [namaJob, setNamajob] = useState(jobdesk.namaJob)
     const [tanggalMulai, setTanggalMulai] = useState(moment(jobdesk.tanggalMulai).format("YYYY-MM-DD"))
     const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("YYYY-MM-DD"))
     const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
+    const [rincian, setRincian] = useState(jobdesk.rincian)
     const [team, setTeam] = useState<string[]>(["1"]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [namaterpilih, setNamaterpilih] = useState('');
-    const [dataKaryawan, setDataKaryawan] = useState([])
-    const router = useRouter()
     const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleClose = () => {
         setShow(false);
@@ -32,7 +42,6 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
     const handleShow = () => setShow(true);
 
     useEffect(() => {
-        cariKaryawan()
         const namaTeam = jobdesk.namaTeam
         const dataNamaTeam = JSON.parse(namaTeam);
         const valuesArray = dataNamaTeam.map((item: any) => item.value);
@@ -41,19 +50,10 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
     }, [])
 
     useEffect(() => {
-        const selectedData = dataKaryawan.filter((option: any) => team.includes(option.value));
+        const selectedData = datateam.filter((option: any) => team.includes(option.value));
         setSelectedOptions(selectedData);
-    }, [team, dataKaryawan]);
 
-    const cariKaryawan = async () => {
-        const response = await axios.get(`/admin/api/notkaryawan/${session.data?.karyawanId}`);
-        const data = response.data;
-        const options = data.map((item: any) => ({
-            value: item.id,
-            label: item.nama,
-        }));
-        setDataKaryawan(options)
-    }
+    }, [team, datateam]);
 
     const handleSelectChange = (selectedOptions: any) => {
         setTeam(selectedOptions.map((option: any) => option.value));
@@ -71,20 +71,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
-
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+        setIsLoading(true)
 
         e.preventDefault()
 
@@ -96,6 +83,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
             formData.append('deadline', new Date(deadline).toISOString())
             formData.append('namaterpilih', namaterpilih)
             formData.append('team', String(team))
+            formData.append('rincian', String(rincian))
 
             const xxx = await axios.patch(`/master/api/requestjobdesk/${jobdesk.id}`, formData, {
                 headers: {
@@ -112,10 +100,9 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    setTimeout(function () {
-                        handleClose()
-                    }, 1500);
-
+                    handleClose()
+                    setIsLoading(false)
+                    reload()
                 }
                 if (xxx.data.pesan == 'berhasil') {
                     setShow(false);
@@ -126,9 +113,8 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    setTimeout(function () {
-                        router.refresh()
-                    }, 1500);
+                    setIsLoading(false)
+                    reload()
                 }
             }, 1500);
         } catch (error) {
@@ -158,7 +144,7 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                                 <Select
                                     required
                                     isMulti
-                                    options={dataKaryawan}
+                                    options={datateam}
                                     value={selectedOptions}
                                     onChange={handleSelectChange}
                                     styles={StyleSelect}
@@ -213,6 +199,48 @@ function Update({ jobdesk }: { jobdesk: RequestJobdeskTb }) {
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
                                     value={keterangan} onChange={(e) => setKeterangan(e.target.value)}
                                 />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Rincian</label>
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox1"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Ya'}
+                                                onChange={() => setRincian('Ya')}
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox1">
+                                                Ya
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox2"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Tidak'}
+                                                onChange={() => setRincian('Tidak')}
+
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox2">
+                                                Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

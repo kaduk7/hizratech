@@ -8,18 +8,30 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2"
 import moment from "moment"
 
-function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
+function Update({ jobdesk,reload }: { jobdesk: JobdeskTb,reload:Function }) {
 
     const [namaJob, setNamajob] = useState(jobdesk.namaJob)
     const [tanggalMulai, setTanggalMulai] = useState(moment(jobdesk.tanggalMulai).format("DD-MM-YYYY"))
     const [namateam, setNamateam] = useState('');
     const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("YYYY-MM-DD"))
     const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
+    const [rincian, setRincian] = useState(jobdesk.rincian)
     const [alasan, setAlasan] = useState("")
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [show2, setShow2] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
 
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleClose = () => {
         setShow(false);
@@ -53,6 +65,7 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
     }
 
     const handleTolak = async (e: SyntheticEvent) => {
+        setIsLoading(true)
         e.preventDefault()
         const konfirm = 'tolak'
         try {
@@ -64,26 +77,28 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                setShow2(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
+            setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    setShow2(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setIsLoading(false)
+                    reload()
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
     const handleTerima = async (e: SyntheticEvent) => {
+        setIsLoading(true)
         e.preventDefault()
         const konfirm = 'terima'
         try {
@@ -94,19 +109,20 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
                     'Content-Type': 'multipart/form-data',
                 },
             })
-            if (xxx.data.pesan == 'berhasil') {
-                setShow(false);
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil diubah',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
-                    router.refresh()
-                }, 1500);
-            }
+            setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    setShow(false);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil diubah',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setIsLoading(false)
+                    reload()
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -166,6 +182,14 @@ function Update({ jobdesk }: { jobdesk: JobdeskTb }) {
                                     <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
                                     <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
                                         {deadline}
+                                    </div>
+                                </div>
+
+                                <div className="mb-3 row">
+                                    <div className="col-sm-4" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>Rincian </div>
+                                    <div className="col-sm-1" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>:</div>
+                                    <div className="col-sm-7" style={{ fontFamily: "initial", fontSize: 20, color: "black" }}>
+                                        {rincian}
                                     </div>
                                 </div>
 

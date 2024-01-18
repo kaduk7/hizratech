@@ -17,6 +17,7 @@ export const POST = async (request: Request) => {
                 karyawanId: Number(formData.get('karyawanId')),
                 status: 'Verifikasi',
                 team: team.join(', '),
+                rincian:String(formData.get('rincian')),
                 namaTeam: String(formData.get('namaterpilih')),
 
             },

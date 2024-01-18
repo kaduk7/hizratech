@@ -28,6 +28,7 @@ export const PATCH = async (request: Request, { params }: { params: { id: string
                 team: team.join(', '),
                 namaTeam: String(formData.get('namaterpilih')),
                 status: "Dalam Proses",
+                rincian:String(formData.get('rincian')),
                 suratTugas: String(formData.get('namaunikSurat')),
                 beritaAcara: String(formData.get('namaunikBerita')),
                 laporanAnggaran: String(formData.get('namaunikAnggaran')),

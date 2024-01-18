@@ -2,7 +2,6 @@
 "use client"
 import { useState, SyntheticEvent, useRef, useEffect } from "react"
 import axios from "axios"
-import { useRouter } from "next/navigation"
 import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { Editor } from '@tinymce/tinymce-react';
@@ -17,7 +16,6 @@ function Add({ reload, daftardivisi }: { reload: Function, daftardivisi: Array<a
 
     const [divisiId, setDivisiId] = useState<string[]>([]);
     const [selectdivisiId, setSelectDivisiId] = useState<string[]>([]);
-    // const [datadivisi, setDataDivisi] = useState([])
 
     const [show, setShow] = useState(false);
     const ref = useRef<HTMLInputElement>(null);

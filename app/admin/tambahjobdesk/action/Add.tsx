@@ -8,12 +8,13 @@ import Swal from "sweetalert2";
 import Select from 'react-select';
 import { supabase, supabaseBUCKET, supabaseUrl, StyleSelect } from "@/app/helper";
 
-function Add({reload}:{reload:Function}) {
+function Add({ reload }: { reload: Function }) {
     const [namaJob, setNamajob] = useState("")
     const [tanggalMulai, setTanggalMulai] = useState("")
     const [deadline, setDeadline] = useState("")
     const [keterangan, setKeterangan] = useState("")
     const [status, setStatus] = useState("")
+    const [rincian, setRincian] = useState("Ya")
     const [divisiId, setDivisiId] = useState("")
     const [karyawanId, setKaryawanId] = useState("")
     const [selectdivisi, setSelectdivisi] = useState([])
@@ -28,6 +29,19 @@ function Add({reload}:{reload:Function}) {
     const [team, setTeam] = useState<string[]>([]);
     const [namaterpilih, setNamaterpilih] = useState('');
     const [dataKaryawan, setDataKaryawan] = useState([])
+
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleShow = () => setShow(true);
 
@@ -84,19 +98,7 @@ function Add({reload}:{reload:Function}) {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+        setIsLoading(true)
 
         e.preventDefault()
         try {
@@ -104,6 +106,7 @@ function Add({reload}:{reload:Function}) {
             formData.append('namaJob', namaJob)
             formData.append('keterangan', keterangan)
             formData.append('status', status)
+            formData.append('rincian', rincian)
             formData.append('tanggalMulai', new Date(tanggalMulai).toISOString())
             formData.append('deadline', new Date(deadline).toISOString())
             formData.append('karyawanId', karyawanId)
@@ -151,11 +154,10 @@ function Add({reload}:{reload:Function}) {
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    setTimeout(function () {
-                        clearForm();
-                        router.refresh()
-                        reload()
-                    }, 1500);
+                    clearForm();
+                    reload()
+                    setIsLoading(false)
+
                 }
             }, 1500);
         } catch (error) {
@@ -255,7 +257,7 @@ function Add({reload}:{reload:Function}) {
                         </div>
 
                         <div className="row">
-                            <div className="mb-3 col-md-3">
+                            <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Mulai</label>
                                 <input
                                     required
@@ -266,7 +268,7 @@ function Add({reload}:{reload:Function}) {
                                 />
                             </div>
 
-                            <div className="mb-3 col-md-3">
+                            <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Deadline</label>
                                 <input
                                     required
@@ -277,7 +279,11 @@ function Add({reload}:{reload:Function}) {
                                 />
                             </div>
 
-                            <div className="mb-3 col-md-3">
+
+                        </div>
+
+                        <div className="row">
+                            <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Status</label>
                                 <select
                                     required
@@ -291,18 +297,44 @@ function Add({reload}:{reload:Function}) {
                                 </select>
                             </div>
 
-                            <div className="mb-3 col-md-3">
-                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Jenis</label>
-                                <select
-                                    required
-                                    style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
-                                    className="form-control"
-                                    value={status} onChange={(e) => setStatus(e.target.value)}>
-                                    <option value={''}></option>
-                                    <option value={'Proses'}>Proses</option>
-                                    <option value={'Verifikasi'}>Verifikasi</option>
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Rincian</label>
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox1"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Ya'}
+                                                onChange={() => setRincian('Ya')}
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox1">
+                                                Ya
+                                            </label>
+                                        </div>
+                                    </div>
 
-                                </select>
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox2"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Tidak'}
+                                                onChange={() => setRincian('Tidak')}
+
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox2">
+                                                Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -319,9 +351,7 @@ function Add({reload}:{reload:Function}) {
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
                                 />
                             </div>
-                        </div>
 
-                        <div className="row">
                             <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontWeight: 'bold', backgroundColor: 'white', fontSize: 15, color: "black", borderColor: "grey" }}>Upload Berita Acara</label>
                                 <input
@@ -335,6 +365,7 @@ function Add({reload}:{reload:Function}) {
                                 />
                             </div>
                         </div>
+
 
                         <div className="row">
                             <div className="mb-3 col-md-6">

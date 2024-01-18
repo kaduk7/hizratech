@@ -28,7 +28,7 @@ const TambahJobdesk = () => {
   };
 
   const filteredItems = datajobdesk.filter(
-    (item: any) => item.nama && item.nama.toLowerCase().includes(filterText.toLowerCase()),
+    (item: any) => item.namaJob && item.namaJob.toLowerCase().includes(filterText.toLowerCase()),
   );
 
   const columns = [
@@ -40,17 +40,29 @@ const TambahJobdesk = () => {
     },
     {
       name: 'Nama Karyawan',
-      selector: (row: any) => row.nama,
+      selector: (row: any) => row.KaryawanTb.nama,
       sortable: true,
       width: '320px'
     },
     {
       name: 'Nama Tugas',
-      selector: (row: any) => row.hp,
+      selector: (row: any) => row.namaJob,
     },
     {
       name: 'Status',
-      selector: (row: any) => row.DivisiTb.nama,
+      selector: (row: any) => row.status,
+      cell: (row:any) => (
+        <div
+          style={{
+            backgroundColor: warnastatus(row.status),
+            padding: '8px',
+            borderRadius: '4px',
+            color: 'black',
+          }}
+        >
+          {row.status}
+        </div>
+      ),
       width: '150px'
     },
     {

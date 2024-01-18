@@ -6,42 +6,55 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from "sweetalert2";
 import { Button } from "primereact/button";
 
-function Delete({ jobdeskId }: { jobdeskId: Number }) {
+function Delete({ jobdeskId, reload }: { jobdeskId: Number, reload: Function }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [isLoading, setIsLoading] = useState(false)
 
-    const router = useRouter()
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleDelete = async (jobdeskId: number) => {
+        setIsLoading(true)
         handleClose()
         const xxx = await axios.delete(`/master/api/requestjobdesk/${jobdeskId}`)
-        if (xxx.data.pesan == 'tidak bisa dihapus') {
-            Swal.fire({
-                position: 'top-end',
-                icon: 'warning',
-                title: 'Data yang sudah di Acc Tidak bisa dihapus',
-                showConfirmButton: false,
-                timer: 1500
-            })
-        }
-        if (xxx.data.pesan == 'berhasil') {
-            Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Berhasil dihapus',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            setTimeout(function () {
-                router.refresh()
-            }, 1500);
-        }
+        setTimeout(function () {
+            if (xxx.data.pesan == 'tidak bisa dihapus') {
+                setIsLoading(false)
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'Data yang sudah di Acc Tidak bisa dihapus',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+            if (xxx.data.pesan == 'berhasil') {
+                setIsLoading(false)
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Berhasil dihapus',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                reload()
+            }
+        }, 1500);
     }
 
     return (
         <>
-           <span onClick={handleShow} className="btn btn-danger shadow btn-xl sharp mx-1"><i className="fa fa-trash"></i></span>
+            <span onClick={handleShow} className="btn btn-danger shadow btn-xl sharp mx-1"><i className="fa fa-trash"></i></span>
             <Modal
                 dialogClassName="modal-md"
                 show={show}

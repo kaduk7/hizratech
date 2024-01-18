@@ -9,20 +9,31 @@ import { useSession } from "next-auth/react";
 import Select from 'react-select';
 import { StyleSelect } from "@/app/helper";
 
-function Add() {
+function Add({reload,datateam}:{reload:Function,datateam:Array<any>}) {
     const session = useSession()
     const [namaJob, setNamajob] = useState("")
     const [tanggalMulai, setTanggalMulai] = useState("")
     const [deadline, setDeadline] = useState("")
     const [keterangan, setKeterangan] = useState("")
+    const [rincian, setRincian] = useState("Ya")
     const [karyawanId, setKaryawanId] = useState(String(session.data?.karyawanId))
-    const router = useRouter()
     const [show, setShow] = useState(false);
     const ref = useRef<HTMLInputElement>(null);
 
     const [team, setTeam] = useState<string[]>([]);
     const [namaterpilih, setNamaterpilih] = useState('');
-    const [dataKaryawan, setDataKaryawan] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleSelectChange = (selectedOptions: any) => {
         setTeam(selectedOptions.map((option: any) => option.value));
@@ -39,18 +50,7 @@ function Add() {
 
     useEffect(() => {
         ref.current?.focus();
-        cariKaryawan()
     }, [])
-
-    const cariKaryawan = async () => {
-        const response = await axios.get(`/admin/api/notkaryawan/${session.data?.karyawanId}`);
-        const data = response.data;
-        const options = data.map((item: any) => ({
-            value: item.id,
-            label: item.nama,
-        }));
-        setDataKaryawan(options)
-    }
 
     function clearForm() {
         setNamajob('')
@@ -62,20 +62,8 @@ function Add() {
     }
 
     const handleSubmit = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
+        setIsLoading(true)
 
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
-        
         e.preventDefault()
         try {
             const formData = new FormData()
@@ -86,6 +74,7 @@ function Add() {
             formData.append('karyawanId', karyawanId)
             formData.append('namaterpilih', namaterpilih)
             formData.append('team', String(team))
+            formData.append('rincian', String(rincian))
 
             const xxx = await axios.post(`/master/api/requestjobdesk`, formData, {
                 headers: {
@@ -93,26 +82,25 @@ function Add() {
                 },
             })
             setTimeout(function () {
-            if (xxx.data.pesan == 'berhasil') {
-                handleClose();
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Berhasil Simpan',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                setTimeout(function () {
+                if (xxx.data.pesan == 'berhasil') {
+                    handleClose();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Berhasil Simpan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     clearForm();
-                    router.refresh()
-                }, 1500);
-            }
-        }, 1500);
+                    setIsLoading(false)
+                    reload()
+                }
+            }, 1500);
         } catch (error) {
             console.error('Error:', error);
         }
     }
-    
+
 
     return (
         <div>
@@ -149,8 +137,8 @@ function Add() {
                                 <Select
                                     required
                                     isMulti
-                                    options={dataKaryawan}
-                                    value={dataKaryawan.filter((option: any) => team.includes(option.value))}
+                                    options={datateam}
+                                    value={datateam.filter((option: any) => team.includes(option.value))}
                                     onChange={handleSelectChange}
                                     styles={StyleSelect}
                                 />
@@ -190,6 +178,48 @@ function Add() {
                                     style={{ fontFamily: "initial", backgroundColor: 'white', fontSize: 20, color: "black", borderColor: "grey" }}
                                     value={keterangan} onChange={(e) => setKeterangan(e.target.value)}
                                 />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Rincian</label>
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox1"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Ya'}
+                                                onChange={() => setRincian('Ya')}
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox1">
+                                                Ya
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox2"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Tidak'}
+                                                onChange={() => setRincian('Tidak')}
+
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox2">
+                                                Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

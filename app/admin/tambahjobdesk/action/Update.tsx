@@ -17,6 +17,7 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
     const [deadline, setDeadline] = useState(moment(jobdesk.deadline).format("YYYY-MM-DD"))
     const [keterangan, setKeterangan] = useState(jobdesk.keterangan)
     const [status, setStatus] = useState(jobdesk.status)
+    const [rincian, setRincian] = useState(jobdesk.rincian)
     const [divisiId, setDivisiId] = useState(String(karyawan.divisiId))
     const [karyawanId, setKaryawanId] = useState(String(jobdesk.karyawanId))
     const [selectdivisi, setSelectdivisi] = useState([])
@@ -39,6 +40,19 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
     const [namaterpilih, setNamaterpilih] = useState('');
 
     const [dataKaryawan, setDataKaryawan] = useState([])
+
+    const [isLoading, setIsLoading] = useState(false)
+
+    if (isLoading) {
+        Swal.fire({
+            title: "Mohon tunggu!",
+            html: "Sedang mengirim data ke server",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        })
+    }
 
     const handleClose = () => {
         setShow(false);
@@ -162,19 +176,7 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
     }
 
     const handleUpdate = async (e: SyntheticEvent) => {
-        Swal.fire({
-            title: "Mohon tunggu!",
-            html: "Sedang validasi data",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-            }
-        });
+       setIsLoading(true)
 
         e.preventDefault()
         const newsurat = previewSurat === cekpreviewSurat ? 'no' : 'yes'
@@ -188,6 +190,7 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
             formData.append('deadline', new Date(deadline).toISOString())
             formData.append('karyawanId', karyawanId)
             formData.append('status', status)
+            formData.append('rincian', rincian)
             formData.append('divisiId', divisiId)
             formData.append('team', String(team))
             formData.append('namaterpilih', namaterpilih)
@@ -253,10 +256,8 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
                     showConfirmButton: false,
                     timer: 1500
                 })
-                setTimeout(function () {
-                    router.refresh()
-                    reload()
-                }, 1500);
+                reload()
+                setIsLoading(false)
             }
         }, 1500);
         } catch (error) {
@@ -356,7 +357,7 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
                         </div>
 
                         <div className="row">
-                            <div className="mb-3 col-md-4">
+                            <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Tanggal Mulai</label>
                                 <input
                                     required
@@ -367,7 +368,7 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
                                 />
                             </div>
 
-                            <div className="mb-3 col-md-4">
+                            <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Deadline</label>
                                 <input
                                     required
@@ -378,7 +379,11 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
                                 />
                             </div>
 
-                            <div className="mb-3 col-md-4">
+                           
+                        </div>
+
+                        <div className="row">
+                            <div className="mb-3 col-md-6">
                                 <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Status</label>
                                 <select
                                     required
@@ -390,6 +395,46 @@ function Update({ jobdesk, karyawan,reload }: { jobdesk: JobdeskTb, karyawan: Ka
                                     <option value={'Verifikasi'}>Verifikasi</option>
 
                                 </select>
+                            </div>
+
+                            <div className="mb-3 col-md-6">
+                                <label className="form-label" style={{ fontFamily: "initial", fontSize: 15, fontWeight: 'bold', color: "black" }}>Rincian</label>
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox1"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Ya'}
+                                                onChange={() => setRincian('Ya')}
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox1">
+                                                Ya
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3 col-md-6">
+                                        <div className="form-check ">
+                                            <input
+                                                type="radio"
+                                                className="form-check-input"
+                                                id="customRadioBox2"
+                                                name="optradioCustom"
+                                                value={rincian}
+                                                checked={rincian === 'Tidak'}
+                                                onChange={() => setRincian('Tidak')}
+        
+                                            />
+                                            <label className="form-check-label" htmlFor="customRadioBox2">
+                                                Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

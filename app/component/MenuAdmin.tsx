@@ -105,7 +105,7 @@ export default function MenuAdmin() {
                         </ul>
                     </li>
 
-                    <li>
+                    {/* <li>
                         <Link href="/admin/absensi" className="" aria-expanded="false">
                             <div className="menu-icon">
                                 <svg width={25} height={24} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -127,7 +127,7 @@ export default function MenuAdmin() {
                             </div>
                             <span className="nav-text">Coba</span>
                         </Link>
-                    </li>
+                    </li> */}
 
                     {/* <li className="menu-title">Laporan</li>
                     <li>
