@@ -64,6 +64,7 @@ $delete-btn: */
 @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
 @import url("https://fonts.googleapis.com/css?family=Nunito:400,600,700");
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;display=swap");
+@import url("https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css");
 @import url("../icons/simple-line-icons/css/simple-line-icons.css");
 @import url("../icons/fontawesome6/css/all.min.css");
 @import url("../icons/fontawesome/css/all.min.css");
@@ -81,6 +82,7 @@ $delete-btn: */
 @import url(../vendor/metismenu/css/metisMenu.min.css);
 @import url(../vendor/datatables/css/jquery.dataTables.min.css);
 @import url(../vendor/dropzone/dist/dropzone.css);
+@import url(../vendor/select2/css/select2.min.css);
 
 
 :root {

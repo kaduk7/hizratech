@@ -19,7 +19,7 @@ export const GET = async () => {
 
         const divisi = await prisma.divisiTb.findMany({
             orderBy: {
-                id: "asc"
+                nama: "asc"
             }
         });
         return NextResponse.json(divisi, { status: 200 })

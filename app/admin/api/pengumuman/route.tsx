@@ -36,6 +36,7 @@ export const POST = async (request: Request) => {
                 data: x
             })
         }
+        
         return NextResponse.json([pengumuman], { status: 201 })
 
 }

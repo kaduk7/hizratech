@@ -19,6 +19,9 @@ CREATE TABLE "KaryawanTb" (
     "email" TEXT NOT NULL,
     "divisiId" INTEGER NOT NULL,
     "foto" TEXT,
+    "ktp" TEXT,
+    "CV" TEXT,
+    "ijazah" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -36,6 +39,7 @@ CREATE TABLE "JobdeskTb" (
     "team" TEXT NOT NULL,
     "namaTeam" TEXT NOT NULL,
     "status" TEXT NOT NULL,
+    "rincian" TEXT NOT NULL,
     "suratTugas" TEXT NOT NULL,
     "beritaAcara" TEXT NOT NULL,
     "laporanAnggaran" TEXT NOT NULL,
@@ -50,6 +54,19 @@ CREATE TABLE "JobdeskTb" (
 );
 
 -- CreateTable
+CREATE TABLE "RincianJobdeskTb" (
+    "id" SERIAL NOT NULL,
+    "jobdeskId" INTEGER NOT NULL,
+    "judul" TEXT NOT NULL,
+    "keterangan" TEXT NOT NULL,
+    "tanggal" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "RincianJobdeskTb_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "RequestJobdeskTb" (
     "id" SERIAL NOT NULL,
     "karyawanId" INTEGER NOT NULL,
@@ -58,6 +75,7 @@ CREATE TABLE "RequestJobdeskTb" (
     "tanggalMulai" TIMESTAMP(3) NOT NULL,
     "deadline" TIMESTAMP(3) NOT NULL,
     "status" TEXT NOT NULL,
+    "rincian" TEXT NOT NULL,
     "team" TEXT NOT NULL,
     "namaTeam" TEXT NOT NULL,
     "alasan" TEXT,
@@ -163,6 +181,9 @@ ALTER TABLE "KaryawanTb" ADD CONSTRAINT "KaryawanTb_divisiId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "JobdeskTb" ADD CONSTRAINT "JobdeskTb_karyawanId_fkey" FOREIGN KEY ("karyawanId") REFERENCES "KaryawanTb"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RincianJobdeskTb" ADD CONSTRAINT "RincianJobdeskTb_jobdeskId_fkey" FOREIGN KEY ("jobdeskId") REFERENCES "JobdeskTb"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RequestJobdeskTb" ADD CONSTRAINT "RequestJobdeskTb_karyawanId_fkey" FOREIGN KEY ("karyawanId") REFERENCES "KaryawanTb"("id") ON DELETE CASCADE ON UPDATE CASCADE;
